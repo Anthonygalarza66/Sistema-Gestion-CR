@@ -54,10 +54,13 @@
        </div>
      </div>
    </nav>
-   <div class="contenido">
-      <h2><b>Registros de ingresos y salidas:</b></h2>
+   <h2><b>Registros de ingresos y salidas:</b></h2>
+   <button class="btn-excel" (click)="exportarExcel()">
+      <img src="./assets/excel.png" width="40" height="45" alt="Exportar a Excel">
+    </button>    
+    <div class="contenido">
       <button class="btn-add">Agregar</button>
-      <table mat-table>
+      <table  mat-table id="Registros">
         <thead>
           <tr>
             <th>Placa</th>

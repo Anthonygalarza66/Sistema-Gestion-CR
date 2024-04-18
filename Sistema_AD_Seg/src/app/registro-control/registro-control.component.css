@@ -230,3 +230,13 @@ tr:nth-child(even) {
 .btn-add:hover {
   background-color: #0056b3; 
 }
+.btn-excel {
+  border: none;
+  background-color: #ffffff;
+  margin-left: 77%;
+  transition: transform 0.3s ease;
+}
+
+.btn-excel:hover {
+  transform: scale(1.1);
+}

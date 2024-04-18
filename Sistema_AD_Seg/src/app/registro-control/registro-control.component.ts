@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-registro-control',
@@ -28,11 +29,20 @@ export class RegistroControlComponent {
       residenteVisitante: "Visitante",
       direccion: "Avenida del Sol 456",
     },
-    // You can add more rows here...
+    
   ];
 
   logout() {
 
   }
 
+  exportarExcel(): void {
+    const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(document.getElementById('Registros'));
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Registros');
+  
+    /* Guardar el archivo */
+    XLSX.writeFile(wb, 'registros_entrada_salida.xlsx');
+  }
+  
 }
