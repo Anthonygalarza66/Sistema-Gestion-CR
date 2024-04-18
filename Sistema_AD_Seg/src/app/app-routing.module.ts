@@ -6,7 +6,7 @@ import { RegistroControlComponent } from './registro-control/registro-control.co
 
 
 const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' } ,// Redirigir la ruta por defecto 
+  { path: '', redirectTo: 'registro-control', pathMatch: 'full' } ,// Redirigir la ruta por defecto 
   { path: "login", component: LoginComponent, pathMatch: "full" },
   { path: 'Pagina/Principal', component: PrincipalComponent, pathMatch: "full" },
   { path: 'registro-control', component: RegistroControlComponent, pathMatch: "full" },

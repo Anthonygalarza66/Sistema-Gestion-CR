@@ -15,7 +15,6 @@ body {
     padding: 10px 20px; 
   }
   
-  /* Estilo de la parte derecha de la barra de navegación */
   .navbar-right {
     color: white;
   }
@@ -27,7 +26,6 @@ body {
     cursor: pointer;
   }
   
-  /* Estilo del contenido desplegable */
   .dropdown-content-lg {
     display: none;
       position: absolute;
@@ -37,12 +35,10 @@ body {
       height: 13vh;
   }
   
-  /* Mostrar el contenido desplegable al pasar el ratón por encima */
   .dropdown:hover .dropdown-content-lg {
     display: block;
   }
   
-  /* Estilo del botón "Cerrar Sesión" */
 .btn-danger {
   background-color: rgb(236, 34, 34);
   color: white;
@@ -109,7 +105,6 @@ aside ul li {
   display: none;
 }
 
-/* Toggler Functionality para el input dentro de .aw */
 .aw input:checked ~ aside {
   left: -250px;
 }
@@ -130,12 +125,11 @@ ul {
     font-size: 1.2rem;
   }
   
-  /* Estilo para los submenús */
   ul .sub-menu {
     display: none;
     list-style: none;
     padding: 0;
-    margin-left: 2rem; /* Espaciado para submenús */
+    margin-left: 2rem; 
   }
   
   ul .sub-menu li {
@@ -144,7 +138,6 @@ ul {
     padding: 0.3rem 0;
   }
   
-  /* Mostrar submenús al pasar el cursor sobre elementos principales */
   ul li:hover .sub-menu {
     display: block;
   }
@@ -161,31 +154,26 @@ ul {
     font-variant: normal; 
     line-height: 26.4px;
     font-weight: bold;
+    margin-left: 7%;
+    margin-right: 7%;
   }
 
 
-.contenido{
-  margin-left: 7%;
-  margin-right: 7%;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.contenido .tabla-container {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
+.contenido {
+    justify-content:center;
+    align-items: center; 
 }
 
 table {
-  width: 50%;
   border-collapse: collapse;
-  border-spacing: 16px;
+  float: left;
+  border-spacing: 10px;
+  margin-left: 7%;
+  margin-top: 1%;
 }
 
 th, td {
-  padding: 8px;
+  padding: 5px;
   text-align: center;
   white-space: nowrap;
 }
@@ -193,7 +181,7 @@ th, td {
 th {
   background-color: #cccbcb;
   font-weight: bold;
-  padding: 9px;
+  padding: 7px;
   margin: 0 9px;
 }
 
@@ -209,7 +197,7 @@ tr:nth-child(even) {
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 14px; 
+  font-size: 16px; 
   margin: 4px 2px;
   cursor: pointer;
   border-radius: 15px; 
@@ -221,23 +209,24 @@ tr:nth-child(even) {
 }
 
 .btn-add {
-  background-color: #007bff; /* Color de fondo azul */
+  background-color: #007bff; 
   border: none;
   color: white;
   padding: 12px 24px; 
   text-align: center;
   text-decoration: none;
-  display: inline-block;
   font-size: 16px; 
   cursor: pointer;
   border-radius: 15px; 
   transition-duration: 0.4s;
   font-weight: bold;
   font-family: 'Times New Roman', Times, serif;
-  margin-left: auto; 
-  margin-top: 10px; 
+  margin-left: 2%;
+  margin-top: 8px; 
+  margin-bottom: 2px;
+  
 }
 
 .btn-add:hover {
-  background-color: #0056b3; /* Color de fondo azul oscuro al pasar el mouse */
+  background-color: #0056b3; 
 }
