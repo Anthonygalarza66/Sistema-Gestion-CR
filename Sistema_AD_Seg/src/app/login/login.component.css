@@ -8,13 +8,13 @@
     justify-content: center;
     align-items: center;
     height: 100vh;
-    width: 40%;
+    width: 42%;
     background-color: #033c6b;
   }
   
-  .container {
+  .contenedor {
     display: flex;
-    justify-content: flex-end; /* Alinea el contenido a la derecha */
+    justify-content: flex-end; 
     align-items: center;
     background-repeat: no-repeat;
     background-size: contain;

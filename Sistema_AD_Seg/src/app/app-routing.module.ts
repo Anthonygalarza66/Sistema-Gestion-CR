@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './login/login.component';
 import { PrincipalComponent } from './Pagina/principal/principal.component';
 import { RegistroControlComponent } from './registro-control/registro-control.component';
+import { FormularioControlComponent } from './formulario-control/formulario-control.component';
 
 
 const routes: Routes = [
@@ -10,6 +11,8 @@ const routes: Routes = [
   { path: "login", component: LoginComponent, pathMatch: "full" },
   { path: 'Pagina/Principal', component: PrincipalComponent, pathMatch: "full" },
   { path: 'registro-control', component: RegistroControlComponent, pathMatch: "full" },
+  { path: 'formulario-control', component: FormularioControlComponent, pathMatch: "full" },
+
 ];
 
 @NgModule({

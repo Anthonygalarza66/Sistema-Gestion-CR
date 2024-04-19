@@ -7,13 +7,15 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { PrincipalComponent } from './Pagina/principal/principal.component';
 import { RegistroControlComponent } from './registro-control/registro-control.component';
+import { FormularioControlComponent } from './formulario-control/formulario-control.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     PrincipalComponent,
-    RegistroControlComponent
+    RegistroControlComponent,
+    FormularioControlComponent
   ],
   imports: [
     BrowserModule,
