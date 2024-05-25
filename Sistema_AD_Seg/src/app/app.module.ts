@@ -8,6 +8,15 @@ import { LoginComponent } from './login/login.component';
 import { PrincipalComponent } from './Pagina/principal/principal.component';
 import { RegistroControlComponent } from './registro-control/registro-control.component';
 import { FormularioControlComponent } from './formulario-control/formulario-control.component';
+import { RegistroPersonalComponent } from './registro-personal/registro-personal.component';
+import { FormularioPersonalComponent } from './formulario-personal/formulario-personal.component';
+import { RegistroResidentesComponent } from './registro-residentes/registro-residentes.component';
+import { FormularioResidentesComponent } from './formulario-residentes/formulario-residentes.component';
+import { EventosComponent } from './eventos/eventos.component';
+import { RegistroEventoComponent } from './registro-evento/registro-evento.component';
+import { RegistroVisitantesComponent } from './registro-visitantes/registro-visitantes.component';
+import { RegistroAlicuotasComponent } from './registro-alicuotas/registro-alicuotas.component';
+import { AlicuotasComponent } from './alicuotas/alicuotas.component';
 
 @NgModule({
   declarations: [
@@ -15,7 +24,16 @@ import { FormularioControlComponent } from './formulario-control/formulario-cont
     LoginComponent,
     PrincipalComponent,
     RegistroControlComponent,
-    FormularioControlComponent
+    FormularioControlComponent,
+    RegistroPersonalComponent,
+    FormularioPersonalComponent,
+    RegistroResidentesComponent,
+    FormularioResidentesComponent,
+    EventosComponent,
+    RegistroEventoComponent,
+    RegistroVisitantesComponent,
+    RegistroAlicuotasComponent,
+    AlicuotasComponent
   ],
   imports: [
     BrowserModule,

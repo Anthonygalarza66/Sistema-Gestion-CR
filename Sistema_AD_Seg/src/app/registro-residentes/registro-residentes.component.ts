@@ -1,27 +1,24 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-registro-control',
-  templateUrl: './registro-control.component.html',
-  styleUrls: ['./registro-control.component.css'] // Use styleUrls instead of styleUrl
+  selector: 'app-registro-residentes',
+  templateUrl: './registro-residentes.component.html',
+  styleUrl: './registro-residentes.component.css'
 })
-export class RegistroControlComponent {
+export class RegistroResidentesComponent {
   username: string = "Admin"; 
   data = [
     {
       placa: "ABC123",
-      fecha: "2023-11-14",
-      hora: "11:00",
       nombre: "Juan",
       apellido: "Pérez",
       sexo:"M",
       cedula: "123456789",
-      residenteVisitante: "Residente",
+      celular: "+593",
       direccion: "Calle Mayor 123",
     },
     {
       placa: "DEF456",
-      fecha: "2023-11-15",
       nombre: "María",
       apellido: "Gómez",
       sexo:"F",
@@ -40,4 +37,5 @@ export class RegistroControlComponent {
     
   }
   
+
 }

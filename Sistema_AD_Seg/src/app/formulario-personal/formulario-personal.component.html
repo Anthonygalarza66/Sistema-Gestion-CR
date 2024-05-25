@@ -54,7 +54,7 @@
 		</div>
 	</nav>
 	<div class="formulario">
-		<h2>Registro de control de acceso: </h2>
+		<h2>Registro de personal de seguridad: </h2>
 
     <div class="container">
       <form class="form">
@@ -71,6 +71,17 @@
             <label for="identificacion">Cédula<span class="text-danger"> :</span></label>
             <input type="text" id="identificacion" name="identificacion" placeholder="ID / Pasaporte" required>
           </div>
+        </div>
+    
+        <div class="row">
+          <div class="form-group col">
+            <label for="email">Email<span class="text-danger"> :</span></label>
+            <input type="email" id="placas" name="email" placeholder="ejemplo@email.com">
+          </div>
+          <div class="form-group col">
+            <label for="password">Contraseña<span class="text-danger"> :</span></label>
+            <input type="text" id="password" name="password" placeholder="">
+          </div>
           <div class="form-group col">
             <label for="sexo">Sexo<span class="text-danger"> :</span></label>
             <select id="sexo" name="sexo" required>
@@ -82,42 +93,14 @@
         </div>
     
         <div class="row">
-          <div class="form-group col">
-            <label for="placas">Placas<span class="text-danger"> :</span></label>
-            <input type="text" id="placas" name="placas" placeholder="">
-          </div>
-          <div class="form-group col">
-            <label for="direccion">Dirección<span class="text-danger"> :</span></label>
-            <input type="text" id="direccion" name="direccion" placeholder="Mz / V">
-          </div>
-          <div class="form-group col">
-            <label for="Ingresante">Ingresante<span class="text-danger"> :</span></label>
-            <select id="Ingresante" name="Ingresante">
-              <option value=""  disabled selected >Seleccione</option>
-              <option value="Residente">Residente</option>
-              <option value="Visitante">Visitante</option>
-              <option value="Delivery">Delivery</option>
-            </select>
-          </div>
-          <div class="form-group col">
-            <label for="in_out">IN / OUT<span class="text-danger"> :</span></label>
-            <select id="in_out" name="in_out">
-              <option value=""  disabled selected>Seleccione</option>
-              <option value="in">Entrada</option>
-              <option value="out">Salida</option>
-            </select>
-          </div>
-        </div>
-    
-        <div class="row">
-          <div class="form-group col">
-            <label for="fecha">Fecha <span class="text-danger"> :</span></label>
-            <input type="date" id="fecha" name="fecha">
-          </div>
-          <div class="form-group col">
-            <label for="hora">Hora <span class="text-danger"> :</span></label>
-            <input type="time" id="hora" name="hora">
-          </div>
+            <div class="form-group col">
+                <label for="perfil">Perfil<span class="text-danger"> :</span></label>
+                <select id="perfil" name="perfil">
+                  <option value=""  disabled selected >Seleccione</option>
+                  <option value="seguridad">Seguridad</option>
+                  <option value="administracion">Administración</option>
+                </select>
+              </div>
           <div class="form-group col-span-6">
             <label for="Observaciones">Observaciones<span class="text-danger">*</span></label>
             <textarea id="Observaciones" name="Observaciones" rows="3"></textarea>

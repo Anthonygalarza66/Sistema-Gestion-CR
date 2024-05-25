@@ -171,6 +171,7 @@ table {
   border-spacing: 10px;
   margin-left: 7%;
   margin-top: 1%;
+  width: 68%;
 }
 
 th, td {
@@ -184,7 +185,7 @@ th {
   font-weight: bold;
   padding: 7px;
   margin: 0 9px;
-  font-size: 20px;
+  font-size: 22px;
 }
 
 td{
@@ -240,7 +241,7 @@ tr:nth-child(even) {
 .btn-excel {
   border: none;
   background-color: #ffffff;
-  margin-left: 77%;
+  margin-left: 70%;
   transition: transform 0.3s ease;
 }
 
