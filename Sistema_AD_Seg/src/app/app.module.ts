@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule, provideClientHydration } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
+import { QRCodeModule } from 'angularx-qrcode';
+import {jsPDF} from 'jspdf';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -38,7 +40,10 @@ import { AlicuotasComponent } from './alicuotas/alicuotas.component';
   imports: [
     BrowserModule,
     FormsModule,
-    AppRoutingModule
+    AppRoutingModule,
+    QRCodeModule,
+    
+    
   ],
   providers: [
     provideClientHydration()
