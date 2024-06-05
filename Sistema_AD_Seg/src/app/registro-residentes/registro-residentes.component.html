@@ -1,5 +1,6 @@
 
     <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css">
+    
     <div class="aw">
       <input type="checkbox" id="toggler" />
       <aside class="aside-wrapper" >
@@ -56,8 +57,9 @@
        <img src="./assets/excel.png" width="40" height="45" alt="Exportar a Excel">
      </button>    
      <div class="contenido">
-       <a href="formulario-residentes" class="btn-add">Agregar</a>
-       <table  mat-table id="Registros">
+      <input class="form-control" type="search" placeholder="Buscar.." [(ngModel)]="filtro">
+      <a href="formulario-residentes" class="btn-add">Agregar</a>
+       <table  mat-table id="residentes">
          <thead>
            <tr>
              <th>Placa</th>
@@ -70,8 +72,8 @@
              <th>Acciones</th>
            </tr>
          </thead>
-         <tbody>
-           <tr *ngFor="let row of data">
+         <tbody id="listado">
+          <tr *ngFor="let row of filtrar()">
              <td>{{row.placa}}</td>
              <td>{{row.nombre}}</td>
              <td>{{row.apellido}}</td>
@@ -87,3 +89,9 @@
          </tbody>
        </table>
      </div>    
+     
+    
+    
+
+
+    

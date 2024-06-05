@@ -3,11 +3,12 @@ import { Router } from '@angular/router';
 
 
 @Component({
-  selector: 'app-formulario-personal',
-  templateUrl: './formulario-personal.component.html',
-  styleUrl: './formulario-personal.component.css'
+  selector: 'app-notificaciones',
+  templateUrl: './notificaciones.component.html',
+  styleUrl: './notificaciones.component.css'
 })
-export class FormularioPersonalComponent {
+export class NotificacionesComponent {
+
   username: string = "Admin"; 
   private loggedIn = false;
 
@@ -20,4 +21,5 @@ export class FormularioPersonalComponent {
     this.router.navigate(['/login']);
 
   }
+
 }

@@ -19,6 +19,7 @@ import { RegistroEventoComponent } from './registro-evento/registro-evento.compo
 import { RegistroVisitantesComponent } from './registro-visitantes/registro-visitantes.component';
 import { RegistroAlicuotasComponent } from './registro-alicuotas/registro-alicuotas.component';
 import { AlicuotasComponent } from './alicuotas/alicuotas.component';
+import { NotificacionesComponent } from './notificaciones/notificaciones.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { AlicuotasComponent } from './alicuotas/alicuotas.component';
     RegistroEventoComponent,
     RegistroVisitantesComponent,
     RegistroAlicuotasComponent,
-    AlicuotasComponent
+    AlicuotasComponent,
+    NotificacionesComponent
   ],
   imports: [
     BrowserModule,

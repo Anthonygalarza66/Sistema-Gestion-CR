@@ -74,44 +74,44 @@
     align-items: center;
 }
 
+.botones a {
+  margin: 10px;
+  padding: 90px 100px; 
+  font-size: 50px; 
+  background-color:#033c6b;
+  color: white;
+  border-radius: 9px;
+  border-color: #dbdee0;
+  font-family: Didot, "Didot LT STD", "Hoefler Text", Garamond, "Times New Roman", serif;
+  font-style: normal;
+  font-weight: bold;
+  width: 50%;
+  transition: background-color 0.3s ease;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+
+}
+
+.botones a:hover {
+background-color: #045a9b; 
+}
+@media (max-width: 768px) {
+.navbar {
+  justify-content: center; 
+}
+
+.dropdown-content-lg {
+  width: 100%; 
+}
+
+.btn-danger {
+  margin: 5px 0;
+}
+}
+@media (max-width: 768px) {
 .botones button {
-    margin: 10px;
-    padding: 90px 100px; 
-    font-size: 50px; 
-    background-color:#033c6b;
-    color: white;
-    border-radius: 9px;
-    border-color: #dbdee0;
-    font-family: Didot, "Didot LT STD", "Hoefler Text", Garamond, "Times New Roman", serif;
-    font-style: normal;
-    font-weight: bold;
-    width: 50%;
-    transition: background-color 0.3s ease;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-
+  padding: 30px 50px; 
+  font-size: 30px; 
+  width: 80%; 
 }
-
-.botones button:hover {
-  background-color: #045a9b; 
-}
-@media (max-width: 768px) {
-  .navbar {
-    justify-content: center; 
-  }
-
-  .dropdown-content-lg {
-    width: 100%; 
-  }
-
-  .btn-danger {
-    margin: 5px 0;
-  }
-}
-@media (max-width: 768px) {
-  .botones button {
-    padding: 30px 50px; 
-    font-size: 30px; 
-    width: 80%; 
-  }
 
 }

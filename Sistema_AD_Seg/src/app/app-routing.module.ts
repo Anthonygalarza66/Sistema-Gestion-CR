@@ -13,10 +13,12 @@ import { RegistroEventoComponent } from './registro-evento/registro-evento.compo
 import { RegistroVisitantesComponent } from './registro-visitantes/registro-visitantes.component';
 import { RegistroAlicuotasComponent } from './registro-alicuotas/registro-alicuotas.component';
 import { AlicuotasComponent } from './alicuotas/alicuotas.component';
+import { NotificacionesComponent } from './notificaciones/notificaciones.component';
+
 
 
 const routes: Routes = [
-  { path: '', redirectTo: 'registro-control', pathMatch: 'full' } ,// Redirigir la ruta por defecto 
+  { path: '', redirectTo: 'Pagina/Principal', pathMatch: 'full' } ,// Redirigir la ruta por defecto 
   { path: "login", component: LoginComponent, pathMatch: "full" },
   { path: 'Pagina/Principal', component: PrincipalComponent, pathMatch: "full" },
   { path: 'registro-control', component: RegistroControlComponent, pathMatch: "full" },
@@ -30,6 +32,7 @@ const routes: Routes = [
   { path: 'registro-visitantes', component: RegistroVisitantesComponent, pathMatch: "full" },
   { path: 'registro-alicuotas', component: RegistroAlicuotasComponent, pathMatch: "full" },
   { path: 'alicuotas', component: AlicuotasComponent, pathMatch: "full" },
+  { path: 'notificaciones', component: NotificacionesComponent, pathMatch: "full" },
 ];
 
 @NgModule({

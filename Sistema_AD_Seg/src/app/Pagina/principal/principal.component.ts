@@ -8,9 +8,4 @@ import { Router } from '@angular/router';
 })
 export class PrincipalComponent {
   username: string = "Admin"; 
-
-  logout() {
-
-  }
-
 }

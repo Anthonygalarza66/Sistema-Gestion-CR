@@ -184,7 +184,7 @@ th {
   font-weight: bold;
   padding: 7px;
   margin: 0 9px;
-  font-size: 22px;
+  font-size: 18px;
 }
 
 td{
@@ -246,4 +246,9 @@ tr:nth-child(even) {
 
 .btn-excel:hover {
   transform: scale(1.1);
+}
+input{
+  margin-left: 10%;
+  margin-right: 10%;
+  width: 580px;
 }

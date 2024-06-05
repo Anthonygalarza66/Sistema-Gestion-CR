@@ -1,6 +1,8 @@
 import { Component ,} from '@angular/core';
 import { jsPDF } from 'jspdf';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
+
 
 
 @Component({
@@ -10,6 +12,8 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 })
 export class RegistroVisitantesComponent  {
   username: string = "Admin"; 
+  private loggedIn = false;
+
   public qrdata: string = '';
   public nombre: string = '';
   public apellido: string = '';
@@ -22,10 +26,11 @@ export class RegistroVisitantesComponent  {
   public Observaciones: string='';
 
 
-  constructor(private fb: FormBuilder) {
+  constructor(private router: Router , private fb: FormBuilder) {
     console.log('AppComponent running');
     this.qrdata = '...';
   }
+  
 
   generarQR() {
     const datosQR = `${this.nombre};${this.apellido};${this.identificacion};${this.direccion};${this.nombreEvento};${this.fecha};${this.hora};${this.placas};${this.Observaciones}`;
@@ -43,10 +48,14 @@ export class RegistroVisitantesComponent  {
     link.click();
   }
   
-  
 
   logout() {
+    this.loggedIn = false; // Marcar al usuario como no autenticado
+  
+    // Redirige a la página de inicio de sesión
+    this.router.navigate(['/login']);
 
   }
+  
   
 }

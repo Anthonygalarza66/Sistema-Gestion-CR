@@ -1,4 +1,7 @@
-import { Component } from '@angular/core';
+import { Component , OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import * as XLSX from 'xlsx'; 
+
 
 @Component({
   selector: 'app-registro-residentes',
@@ -7,6 +10,9 @@ import { Component } from '@angular/core';
 })
 export class RegistroResidentesComponent {
   username: string = "Admin"; 
+  private loggedIn = false;
+  filtro: string = '';
+
   data = [
     {
       placa: "ABC123",
@@ -29,13 +35,33 @@ export class RegistroResidentesComponent {
     
   ];
 
+  constructor(private router: Router) {}
+
   logout() {
+    this.loggedIn = false; // Marcar al usuario como no autenticado
+  
+    // Redirige a la página de inicio de sesión
+    this.router.navigate(['/login']);
 
   }
 
   exportarExcel(): void {
-    
+    console.log('Exportando a Excel...');
+    const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(document.getElementById('residentes'));
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'residentes');
+    XLSX.writeFile(wb, 'Listado_Residentes.xlsx');
+ 
   }
   
-
+  filtrar() {
+    return this.data.filter(row =>
+      row.placa.toLowerCase().includes(this.filtro.toLowerCase()) ||
+      row.nombre.toLowerCase().includes(this.filtro.toLowerCase()) ||
+      row.apellido.toLowerCase().includes(this.filtro.toLowerCase()) ||
+      row.sexo.toLowerCase().includes(this.filtro.toLowerCase()) ||
+      row.cedula.toLowerCase().includes(this.filtro.toLowerCase()) ||
+      row.direccion.toLowerCase().includes(this.filtro.toLowerCase())
+    );
+  }
 }

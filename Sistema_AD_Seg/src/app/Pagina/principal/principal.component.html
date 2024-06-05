@@ -1,23 +1,20 @@
-
-  <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css">
-
+<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css">
 <body>
   <nav class="navbar" id="nav-bar">
-     <div class="navbar-right" >
-        <div class="dropdown">
-           <button class="dropbtn"><img src="./assets/users.png" width="35" height="40"></button>
-           <span>Hola , {{ username }}</span>
-           <div class="dropdown-content-lg"><br>
-              <button class="btn btn-danger" (click)="logout()" ><i class="fa fa-sign-out"></i>Cerrar Sesión</button>
-           </div>
-        </div>
-     </div>
+    <div class="navbar-right" >
+      <div class="dropdown">
+      </div>
+    </div>
   </nav>
   <div class="botones-container">
-     <div class="botones">
-        <button class="btn btn-lg"><i class="fa fa-solid fa-user-shield"></i>
-        <br>Seguridad</button>
-        <button class="btn btn-lg"><i class="fa fa-solid fa-briefcase"></i>
-        <br>Administración</button>
-     </div>
+    <div class="botones">
+      <a href="login" class="btn btn-lg">
+      <i class="fa fa-solid fa-user-shield"></i>
+      <br>Seguridad
+      </a>
+      <a href="login" class="btn btn-lg">
+      <i class="fa fa-solid fa-briefcase"></i>
+      <br>Administración
+      </a>
+    </div>
   </div>

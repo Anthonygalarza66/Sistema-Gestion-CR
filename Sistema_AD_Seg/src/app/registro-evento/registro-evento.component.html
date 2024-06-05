@@ -1,79 +1,76 @@
-
-	<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css">
-
-  <div class="aw">
-    <input type="checkbox" id="toggler" />
-    <aside class="aside-wrapper" >
-      <h1 class="logo-text"><span>Menú</span> 
-        <label for="toggler"><i class="fas fa-bars sidebar-toggle"></i></label>
-      </h1>
-      <ul>
-        <li>
-          <i class="fa fa-briefcase"></i> Administración 
-          <ul class="sub-menu">
-            <li href="#"><i class="fas fa-sack-dollar"></i> <a href="alicuotas"> Alicuotas</a></li>
-            <li><i class="fas fa-user-plus"></i> <a href="registro-personal">Personal</a></li>
-            <li><i class="fas fa-home"></i> <a href="registro-residentes">Residentes</a></li>
-          </ul>
-        </li>
-        <li>
-          <i class="fa fa-calendar-alt"></i> Eventos
-          <ul class="sub-menu">
-            <li><i class="fas fa-history"></i><a href="eventos">Eventos</a></li>
-            <li><i class="fas fa-edit"></i><a href="registro-eventos">Registro de Eventos</a></li>
-            <li><i class="fas fa-user-check"></i><a href="registro-visitantes">Registro de Visitantes</a></li>
-          </ul>
-        </li>
-        <li>
-          <i class="fa fa-shield"></i> Seguridad
-          <ul class="sub-menu">
-            <li><i class="fas fa-car"></i> <a href="registro-control">Control de acceso</a></li>
-            <li><i class="fas fa-address-book"></i> <a href="formulario-control">Registro de acceso</a></li>
-            <li><i class="fas fa-home"></i> <a href="registro-residentes">Residentes</a></li>
-          </ul>
-        </li>
-        <li>
-          <i class="fa fa-paper-plane"></i> Notificaciones 
-          <ul class="sub-menu">
-            <li><i class="fas fa-paper-plane"></i> <a href="notificaciones">Notificaciones</a></li>
-          </ul>
-        </li>
-      </ul>
-    </aside>
+<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css">
+<div class="aw">
+  <input type="checkbox" id="toggler" />
+  <aside class="aside-wrapper" >
+    <h1 class="logo-text"><span>Menú</span> 
+      <label for="toggler"><i class="fas fa-bars sidebar-toggle"></i></label>
+    </h1>
+    <ul>
+      <li>
+        <i class="fa fa-briefcase"></i> Administración 
+        <ul class="sub-menu">
+          <li href="#"><i class="fas fa-sack-dollar"></i> <a href="alicuotas"> Alicuotas</a></li>
+          <li><i class="fas fa-user-plus"></i> <a href="registro-personal">Personal</a></li>
+          <li><i class="fas fa-home"></i> <a href="registro-residentes">Residentes</a></li>
+        </ul>
+      </li>
+      <li>
+        <i class="fa fa-calendar-alt"></i> Eventos
+        <ul class="sub-menu">
+          <li><i class="fas fa-history"></i><a href="eventos">Eventos</a></li>
+          <li><i class="fas fa-edit"></i><a href="registro-eventos">Registro de Eventos</a></li>
+          <li><i class="fas fa-user-check"></i><a href="registro-visitantes">Registro de Visitantes</a></li>
+        </ul>
+      </li>
+      <li>
+        <i class="fa fa-shield"></i> Seguridad
+        <ul class="sub-menu">
+          <li><i class="fas fa-car"></i> <a href="registro-control">Control de acceso</a></li>
+          <li><i class="fas fa-address-book"></i> <a href="formulario-control">Registro de acceso</a></li>
+          <li><i class="fas fa-home"></i> <a href="registro-residentes">Residentes</a></li>
+        </ul>
+      </li>
+      <li>
+        <i class="fa fa-paper-plane"></i> Notificaciones 
+        <ul class="sub-menu">
+          <li><i class="fas fa-paper-plane"></i> <a href="notificaciones">Notificaciones</a></li>
+        </ul>
+      </li>
+    </ul>
+  </aside>
+</div>
+<nav class="navbar" id="nav-bar">
+  <div class="navbar-right">
+    <div class="dropdown">
+      <button class="dropbtn"><img src="./assets/users.png" width="35" height="40"></button>
+      <span>Hola , {{ username }}</span>
+      <div class="dropdown-content-lg"><br>
+        <button class="btn btn-danger" (click)="logout()"><i class="fa fa-sign-out"></i>Cerrar Sesión</button>
+      </div>
+    </div>
   </div>
-	<nav class="navbar" id="nav-bar">
-		<div class="navbar-right">
-			<div class="dropdown">
-				<button class="dropbtn"><img src="./assets/users.png" width="35" height="40"></button>
-				<span>Hola , {{ username }}</span>
-				<div class="dropdown-content-lg"><br>
-					<button class="btn btn-danger" (click)="logout()"><i class="fa fa-sign-out"></i>Cerrar Sesión</button>
-				</div>
-			</div>
-		</div>
-	</nav>
-	<div class="formulario">
-		<h2>Registro de Evento:</h2>
+</nav>
+<div class="formulario">
+  <h2>Registro de Evento:</h2>
   <div class="container">
     <form class="form">
-      <!-- Detalles del Evento -->
       <div class="row">
         <div class="form-group col">
-            <label for="nombre">Nombre<span class="text-danger"> :</span></label>
-            <input type="text" id="nombre" name="nombre" placeholder="Ingrese nombre" required>
-          </div>
-          <div class="form-group col">
-            <label for="apellido">Apellidos<span class="text-danger"> :</span></label>
-            <input type="text" id="apellido" name="apellido" placeholder="Ingrese apellidos" required>
-          </div>
-          <div class="form-group col">
-            <label for="celular">Celular<span class="text-danger"> :</span></label>
-            <input type="text" id="celular" name="celular" placeholder="+593" required>
-          </div>
-          <div class="form-group col">
-            <label for="cedula">Cédula<span class="text-danger"> :</span></label>
-            <input type="text" id="cedula" name="cedula" placeholder="ID / Pasaporte" required>
-          </div>
+          <label for="nombre">Nombre<span class="text-danger"> :</span></label>
+          <input type="text" id="nombre" name="nombre" placeholder="Ingrese nombre" required>
+        </div>
+        <div class="form-group col">
+          <label for="apellido">Apellidos<span class="text-danger"> :</span></label>
+          <input type="text" id="apellido" name="apellido" placeholder="Ingrese apellidos" required>
+        </div>
+        <div class="form-group col">
+          <label for="celular">Celular<span class="text-danger"> :</span></label>
+          <input type="text" id="celular" name="celular" placeholder="+593" required>
+        </div>
+        <div class="form-group col">
+          <label for="cedula">Cédula<span class="text-danger"> :</span></label>
+          <input type="text" id="cedula" name="cedula" placeholder="ID / Pasaporte" required>
+        </div>
       </div>
       <div class="row">
         <div class="form-group col">
@@ -81,27 +78,29 @@
           <input type="text" id="direccionOrganizador" name="direccionOrganizador" placeholder="Mz / V">
         </div>
         <div class="form-group col">
-            <label for="nombreEvento">Nombre del Evento<span class="text-danger"> :</span></label>
-            <input type="text" id="nombreEvento" name="nombreEvento" placeholder="Ingrese nombre del evento" required>
-          </div>
-          <div class="form-group col">
-            <label for="direccionEvento">Dirección del Evento<span class="text-danger"> :</span></label>
-            <input type="text" id="direccionEvento" name="direccionEvento" placeholder="Ingrese dirección" required>
-          </div>
-        
+          <label for="nombreEvento">Nombre del Evento<span class="text-danger"> :</span></label>
+          <input type="text" id="nombreEvento" name="nombreEvento" placeholder="Ingrese nombre del evento" required>
+        </div>
+        <div class="form-group col">
+          <label for="direccionEvento">Dirección del Evento<span class="text-danger"> :</span></label>
+          <input type="text" id="direccionEvento" name="direccionEvento" placeholder="Ingrese dirección" required>
+        </div>
+        <div class="form-group col">
+          <label for="cantVehiculos">Cantidad de Vehículos<span class="text-danger"> :</span></label>
+          <input type="number" id="cantVehiculos" name="cantVehiculos" placeholder="Número de vehículos">
+        </div>
       </div>
-      
       <div class="row">
         <div class="form-group col">
-            <label for="tipoEvento">Tipo de Evento<span class="text-danger"> :</span></label>
-            <select id="tipoEvento" name="tipoEvento" required>
-              <option value="">Seleccione</option>
-              <option value="Conferencia">Conferencia</option>
-              <option value="Taller">Taller</option>
-              <option value="Seminario">Seminario</option>
-              <option value="Reunión">Reunión</option>
-            </select>
-          </div>
+          <label for="tipoEvento">Tipo de Evento<span class="text-danger"> :</span></label>
+          <select id="tipoEvento" name="tipoEvento" required>
+            <option value="">Seleccione</option>
+            <option value="Conferencia">Conferencia</option>
+            <option value="Taller">Taller</option>
+            <option value="Seminario">Seminario</option>
+            <option value="Reunión">Reunión</option>
+          </select>
+        </div>
         <div class="form-group col">
           <label for="fechaHora">Fecha y Hora<span class="text-danger"> :</span></label>
           <input type="datetime-local" id="fechaHora" name="fechaHora" required>
@@ -110,22 +109,23 @@
           <label for="duracion">Duración del Evento (horas)<span class="text-danger"> :</span></label>
           <input type="number" id="duracion" name="duracion" placeholder="Duración en horas" required>
         </div>
-      </div>
-      <div class="row">
         <div class="form-group col">
           <label for="cantPersonas">Cantidad de Personas<span class="text-danger"> :</span></label>
           <input type="number" id="cantPersonas" name="cantPersonas" placeholder="Número de personas" required>
         </div>
+      </div>
+      <div class="row">
         <div class="form-group col">
-          <label for="cantVehiculos">Cantidad de Vehículos<span class="text-danger"> :</span></label>
-          <input type="number" id="cantVehiculos" name="cantVehiculos" placeholder="Número de vehículos">
+          <label for="observaciones">Observaciones<span class="text-danger"> :</span></label>
+          <textarea id="observaciones" name="observaciones" placeholder="Ingrese observaciones" rows="3"></textarea>
         </div>
         <div class="form-group col">
-            <label for="observaciones">Observaciones<span class="text-danger"> :</span></label>
-            <textarea id="observaciones" name="observaciones" placeholder="Ingrese observaciones"></textarea>
-          </div>
+          <label for="listado">Adjuntar listado: <span class="text-danger"> :</span></label>
+          <input type="file" id="listado" name="listado" placeholder="" required class="small-input" >
+        </div>
       </div>
-      </form>
-      <button type="submit" class="btn btn-primary">Guardar</button>
-    </div>
-	</div>
+    </form>
+    <button type="submit" class="btn btn-primary">Guardar</button>
+    <a href="registro-visitantes" class="btn btn-info">Registar invitados</a>
+  </div>
+</div>
