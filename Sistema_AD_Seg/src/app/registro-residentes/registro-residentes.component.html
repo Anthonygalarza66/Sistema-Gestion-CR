@@ -63,22 +63,30 @@
          <thead>
            <tr>
              <th>Placa</th>
+             <th>Solar</th>
+             <th>M2</th>
              <th>Nombre</th>
              <th>Apellido</th>
              <th>Sexo</th>
              <th>Cédula</th>
+             <th>Email</th>
+             <th>Contraseña</th>
              <th>Celular</th>
              <th>Dirección</th>
              <th>Acciones</th>
-           </tr>
+           </tr> 
          </thead>
          <tbody id="listado">
           <tr *ngFor="let row of filtrar()">
              <td>{{row.placa}}</td>
+             <td>{{row.solar}}</td>
+             <td>{{row.m2}}</td>
              <td>{{row.nombre}}</td>
              <td>{{row.apellido}}</td>
              <td>{{row.sexo}}</td>
              <td>{{row.cedula}}</td>
+             <td>{{row.email}}</td>
+             <td>{{row.password}}</td>
              <td>{{row.celular}}</td>
              <td>{{row.direccion}}</td>
              <td>

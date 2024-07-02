@@ -51,9 +51,10 @@
   </div>
 </nav>
 <h2><b>EVENTOS:</b></h2>
+<input class="form-control" type="search" placeholder="Buscar.." [(ngModel)]="filtro">
 <button class="btn-excel" (click)="exportarExcel()">
 <img src="./assets/excel.png" width="40" height="45" alt="Exportar a Excel">
-</button>    
+</button> 
 <a href="registro-evento" class="btn-add">Agregar</a>
 <div class="table-container">
   <div class="table-responsive table-responsive-xl">
@@ -64,7 +65,6 @@
           <th>Apellidos</th>
           <th>Celular</th>
           <th>Cédula</th>
-          <th>Dirección</th>
           <th>Evento</th>
           <th>Dirección Evento</th>
           <th>Vehículos</th>
@@ -77,13 +77,12 @@
           <th>Acciones</th>
         </tr>
       </thead>
-      <tbody>
-        <tr *ngFor="let row of data">
+      <tbody id="listado">
+        <tr *ngFor="let row of filtrar()">
           <td>{{row.nombre}}</td>
           <td>{{row.apellido}}</td>
           <td>{{row.celular}}</td>
           <td>{{row.cedula}}</td>
-          <td>{{row.direccion}}</td>
           <td>{{row.nombreEvento}}</td>
           <td>{{row.direccionEvento}}</td>
           <td>{{row.cantidadVehiculos}}</td>

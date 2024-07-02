@@ -1,4 +1,4 @@
-import { Component,  } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import * as XLSX from 'xlsx'; 
 
@@ -11,9 +11,12 @@ export class AlicuotasComponent {
 
   username: string = "Admin"; 
   private loggedIn = false;
+  filtro: string = '';
 
   data = [
     {
+      solar: "44",
+      m2: "25,44",
       nombre: "Juan",
       apellido: "Perez",
       cedula: "123456789",
@@ -21,8 +24,20 @@ export class AlicuotasComponent {
       fecha: "10/04/2022",
       mes: "Abril",
       deuda: "",
+      total: "0",
+    },
+    {
+      solar: "44",
+      m2: "25,44",
+      nombre: "Ana",
+      apellido: "Perez",
+      cedula: "123456789",
+      direccion: "mz villa",
+      fecha: "10/05/2022",
+      mes: "Mayo",
+      deuda: "150",
       total: "150",
-    }
+    },
     
   ];
 
@@ -45,5 +60,16 @@ export class AlicuotasComponent {
 
   }
   
+  filtrar() {
+    return this.data.filter(row =>
+      row.nombre.toLowerCase().includes(this.filtro.toLowerCase()) ||
+      row.apellido.toLowerCase().includes(this.filtro.toLowerCase()) ||
+      row.cedula.toLowerCase().includes(this.filtro.toLowerCase()) ||
+      row.fecha.toLowerCase().includes(this.filtro.toLowerCase()) ||
+      row.mes.toLowerCase().includes(this.filtro.toLowerCase()) ||
+      row.total.toLowerCase().includes(this.filtro.toLowerCase()) ||
+      row.direccion.toLowerCase().includes(this.filtro.toLowerCase())
+    );
+  }
 
 }

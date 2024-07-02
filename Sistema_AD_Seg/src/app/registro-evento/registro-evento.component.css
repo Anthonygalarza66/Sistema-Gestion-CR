@@ -231,3 +231,7 @@ ul {
 .btn-info :hover {
   background-color: #31047a;
 }
+
+.download-link{
+  color: #066cda;
+}

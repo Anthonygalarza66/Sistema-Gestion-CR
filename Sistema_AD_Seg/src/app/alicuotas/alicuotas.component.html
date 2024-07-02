@@ -54,11 +54,14 @@
 <button class="btn-excel" (click)="exportarExcel()">
 <img src="./assets/excel.png" width="40" height="45" alt="Exportar a Excel">
 </button>    
+<input class="form-control" type="search" placeholder="Buscar.." [(ngModel)]="filtro">
 <div class="contenido">
   <a href="registro-alicuotas" class="btn-add">Agregar</a>
   <table  mat-table id="alicuotas">
     <thead>
       <tr>
+        <th>Solar</th>
+        <th>M2</th>
         <th>Nombre</th>
         <th>Apellido</th>
         <th>Cédula</th>
@@ -70,8 +73,10 @@
         <th>Acciones</th>
       </tr>
     </thead>
-    <tbody>
-      <tr *ngFor="let row of data">
+    <tbody id="listado">
+      <tr *ngFor="let row of filtrar()">
+        <td>{{row.solar}}</td>
+        <td>{{row.m2}}</td>
         <td>{{row.nombre}}</td>
         <td>{{row.apellido}}</td>
         <td>{{row.cedula}}</td>

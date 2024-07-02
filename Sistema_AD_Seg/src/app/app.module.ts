@@ -7,7 +7,6 @@ import {jsPDF} from 'jspdf';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
-import { PrincipalComponent } from './Pagina/principal/principal.component';
 import { RegistroControlComponent } from './registro-control/registro-control.component';
 import { FormularioControlComponent } from './formulario-control/formulario-control.component';
 import { RegistroPersonalComponent } from './registro-personal/registro-personal.component';
@@ -25,7 +24,6 @@ import { NotificacionesComponent } from './notificaciones/notificaciones.compone
   declarations: [
     AppComponent,
     LoginComponent,
-    PrincipalComponent,
     RegistroControlComponent,
     FormularioControlComponent,
     RegistroPersonalComponent,

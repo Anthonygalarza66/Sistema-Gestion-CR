@@ -56,6 +56,7 @@
        <img src="./assets/excel.png" width="40" height="45" alt="Exportar a Excel">
      </button>    
      <div class="contenido">
+      <input class="form-control" type="search" placeholder="Buscar.." [(ngModel)]="filtro">
        <a href="formulario-personal" class="btn-add">Agregar</a>
        <table  mat-table id="personal">
          <thead>
@@ -71,12 +72,12 @@
              <th>Acciones</th>
            </tr>
          </thead>
-         <tbody>
-           <tr *ngFor="let row of personal">
+         <tbody id="listado">
+          <tr *ngFor="let row of filtrar()">
              <td>{{row.nombre}}</td>
              <td>{{row.apellido}}</td>
              <td>{{row.sexo}}</td>
-             <td>{{row.identificacion}}</td>
+             <td>{{row.identificacion}}</td> 
              <td>{{row.perfil}}</td>
              <td>{{row.email}}</td>
              <td>{{row.password}}</td>

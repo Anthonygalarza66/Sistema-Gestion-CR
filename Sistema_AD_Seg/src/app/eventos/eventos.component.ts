@@ -10,12 +10,13 @@ import * as XLSX from 'xlsx';
 export class EventosComponent {
   username: string = "Admin"; 
   private loggedIn = false;
+  filtro: string = '';
+
  
   nombre: string = '';
   apellido: string = '';
   celular: string = '';
   cedula: string = '';
-  direccion: string = '';
   nombreEvento: string = '';
   direccionEvento: string = '';
   cantidadVehiculos?: number  ;
@@ -32,7 +33,6 @@ export class EventosComponent {
     apellido: 'Pérez',
     celular: '123456789',
     cedula: '0011223344',
-    direccion: 'Calle Falsa 123',
     nombreEvento: 'Conferencia de Tecnología',
     direccionEvento: 'Centro de Convenciones',
     cantidadVehiculos: 10,
@@ -42,7 +42,23 @@ export class EventosComponent {
     duracionEvento: '4 horas',
     observaciones: 'Requiere proyector y sonido',
     invitados: null
-    }
+    },
+
+    {
+      nombre: 'Ana',
+      apellido: 'Pérez',
+      celular: '45897',
+      cedula: '0011223344',
+      nombreEvento: 'Conferencia de Tecnología',
+      direccionEvento: 'Centro de Convenciones',
+      cantidadVehiculos: 10,
+      cantidadPersonas: 200,
+      tipoEvento: 'Conferencia',
+      fechaHora: '2023-07-01T09:00',
+      duracionEvento: '4 horas',
+      observaciones: 'Requiere proyector y sonido',
+      invitados: null
+      },
     
   ];
 
@@ -64,5 +80,15 @@ export class EventosComponent {
     XLSX.writeFile(wb, 'eventos.xlsx');
  
   }
-  
+  filtrar() {
+    return this.data.filter(row =>
+      row.nombre.toLowerCase().includes(this.filtro.toLowerCase()) ||
+      row.apellido.toLowerCase().includes(this.filtro.toLowerCase()) ||
+      row.cedula.toLowerCase().includes(this.filtro.toLowerCase()) ||
+      row.nombreEvento.toLowerCase().includes(this.filtro.toLowerCase()) ||
+      row.tipoEvento.toLowerCase().includes(this.filtro.toLowerCase()) ||
+      row.fechaHora.toLowerCase().includes(this.filtro.toLowerCase()) ||
+      row.direccionEvento.toLowerCase().includes(this.filtro.toLowerCase())
+    );
+  }
 }

@@ -10,13 +10,26 @@ import * as XLSX from 'xlsx';
 export class RegistroPersonalComponent {
   username: string = "Admin"; 
   private loggedIn = false;
+  filtro: string = '';
+
  
   personal = [
-    {
+    { 
       nombre: "Juan",
       apellido: "Pérez",
       sexo:"M",
       identificacion: "123456789",
+      perfil: "seguridad",
+      email: "ejemplo@",
+      password: "*****",
+      observaciones: "*****",
+      
+    },
+    { 
+      nombre: "Ana",
+      apellido: "Pérez",
+      sexo:"M",
+      identificacion: "0920720018",
       perfil: "seguridad",
       email: "ejemplo@",
       password: "*****",
@@ -44,5 +57,13 @@ export class RegistroPersonalComponent {
  
   }
 
+  filtrar() {
+    return this.personal.filter(row =>
+      row.nombre.toLowerCase().includes(this.filtro.toLowerCase()) ||
+      row.apellido.toLowerCase().includes(this.filtro.toLowerCase()) ||
+      row.sexo.toLowerCase().includes(this.filtro.toLowerCase()) ||
+      row.identificacion.toLowerCase().includes(this.filtro.toLowerCase())
+    );
+  }
 
 }

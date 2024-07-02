@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
   styleUrl: './registro-evento.component.css'
 })
 export class RegistroEventoComponent {
-  username: string = "Admin"; 
+  username: string = "Residente"; 
   private loggedIn = false;
 
 

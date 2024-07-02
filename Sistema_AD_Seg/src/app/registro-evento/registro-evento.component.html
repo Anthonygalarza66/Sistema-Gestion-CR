@@ -74,10 +74,6 @@
       </div>
       <div class="row">
         <div class="form-group col">
-          <label for="direccionOrganizador">Dirección del Organizador<span class="text-danger"> :</span></label>
-          <input type="text" id="direccionOrganizador" name="direccionOrganizador" placeholder="Mz / V">
-        </div>
-        <div class="form-group col">
           <label for="nombreEvento">Nombre del Evento<span class="text-danger"> :</span></label>
           <input type="text" id="nombreEvento" name="nombreEvento" placeholder="Ingrese nombre del evento" required>
         </div>
@@ -88,6 +84,10 @@
         <div class="form-group col">
           <label for="cantVehiculos">Cantidad de Vehículos<span class="text-danger"> :</span></label>
           <input type="number" id="cantVehiculos" name="cantVehiculos" placeholder="Número de vehículos">
+        </div>
+        <div class="form-group col">
+          <label for="cantPersonas">Cantidad de Personas<span class="text-danger"> :</span></label>
+          <input type="number" id="cantPersonas" name="cantPersonas" placeholder="Número de personas" required>
         </div>
       </div>
       <div class="row">
@@ -110,8 +110,8 @@
           <input type="number" id="duracion" name="duracion" placeholder="Duración en horas" required>
         </div>
         <div class="form-group col">
-          <label for="cantPersonas">Cantidad de Personas<span class="text-danger"> :</span></label>
-          <input type="number" id="cantPersonas" name="cantPersonas" placeholder="Número de personas" required>
+          <label for="listado">Adjuntar listado: <span class="text-danger"> :</span></label>
+          <input type="file" id="listado" name="listado" placeholder="" required class="small-input" >
         </div>
       </div>
       <div class="row">
@@ -120,9 +120,8 @@
           <textarea id="observaciones" name="observaciones" placeholder="Ingrese observaciones" rows="3"></textarea>
         </div>
         <div class="form-group col">
-          <label for="listado">Adjuntar listado: <span class="text-danger"> :</span></label>
-          <input type="file" id="listado" name="listado" placeholder="" required class="small-input" >
-        </div>
+          <a id="formato" class="download-link" href="assets/formato-listado-camino-real.docx " download>Descargar Formato de Listado</a>     
+        </div> 
       </div>
     </form>
     <button type="submit" class="btn btn-primary">Guardar</button>

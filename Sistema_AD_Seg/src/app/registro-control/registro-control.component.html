@@ -52,6 +52,7 @@
      </div>
    </nav>
    <h2><b>Registros de ingresos y salidas:</b></h2>
+   <input class="form-control" type="search" placeholder="Buscar.." [(ngModel)]="filtro">
    <button class="btn-excel" (click)="exportarExcel()">
       <img src="./assets/excel.png" width="40" height="45" alt="Exportar a Excel">
     </button>    
@@ -61,28 +62,32 @@
         <thead>
           <tr>
             <th>Placa</th>
-            <th>Fecha</th>
-            <th>Hora</th>
+            <th>Fecha Ingreso</th>
+            <th>Fecha Salida</th>
             <th>Nombre</th>
             <th>Apellido</th>
             <th>Sexo</th>
             <th>Cédula</th>
-            <th>Residente/Visitante</th>
+            <th>Res/Vis</th>
             <th>Dirección</th>
+            <th>Turno</th>
+            <th>Observaciones</th>
             <th>Acciones</th>
           </tr>
         </thead>
-        <tbody>
-          <tr *ngFor="let row of data">
+        <tbody id="listado">
+          <tr *ngFor="let row of filtrar()">
             <td>{{row.placa}}</td>
-            <td>{{row.fecha}}</td>
-            <td>{{row.hora}}</td>
+            <td>{{row.fechaingreso}}</td>
+            <td>{{row.fechasalida}}</td>
             <td>{{row.nombre}}</td>
             <td>{{row.apellido}}</td>
             <td>{{row.sexo}}</td>
             <td>{{row.cedula}}</td>
             <td>{{row.residenteVisitante}}</td>
             <td>{{row.direccion}}</td>
+            <td>{{row.turno}}</td>
+            <td>{{row.observaciones}}</td>
             <td>
               <button class="btn-edit"><i class="fas fa-edit"></i></button>
               <button class="btn-trash"><i class="fas fa-trash"></i></button>
