@@ -13,6 +13,7 @@ import { RegistroVisitantesComponent } from './registro-visitantes/registro-visi
 import { RegistroAlicuotasComponent } from './registro-alicuotas/registro-alicuotas.component';
 import { AlicuotasComponent } from './alicuotas/alicuotas.component';
 import { NotificacionesComponent } from './notificaciones/notificaciones.component';
+import { LoginpasswordComponent } from './loginpassword/loginpassword.component';
 
 
 
@@ -31,6 +32,7 @@ const routes: Routes = [
   { path: 'registro-alicuotas', component: RegistroAlicuotasComponent, pathMatch: "full" },
   { path: 'alicuotas', component: AlicuotasComponent, pathMatch: "full" },
   { path: 'notificaciones', component: NotificacionesComponent, pathMatch: "full" },
+  { path: 'loginpassword' , component: LoginpasswordComponent, pathMatch: "full"}
 ];
 
 @NgModule({
