@@ -20,8 +20,6 @@ export class RegistroPersonalComponent {
       sexo:"M",
       identificacion: "123456789",
       perfil: "seguridad",
-      email: "ejemplo@",
-      password: "*****",
       observaciones: "*****",
       
     },
@@ -31,8 +29,6 @@ export class RegistroPersonalComponent {
       sexo:"M",
       identificacion: "0920720018",
       perfil: "seguridad",
-      email: "ejemplo@",
-      password: "*****",
       observaciones: "*****",
       
     },

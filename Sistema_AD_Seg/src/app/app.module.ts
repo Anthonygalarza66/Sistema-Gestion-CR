@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { BrowserModule, provideClientHydration } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { QRCodeModule } from 'angularx-qrcode';
-import {jsPDF} from 'jspdf';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -20,6 +19,9 @@ import { RegistroAlicuotasComponent } from './registro-alicuotas/registro-alicuo
 import { AlicuotasComponent } from './alicuotas/alicuotas.component';
 import { NotificacionesComponent } from './notificaciones/notificaciones.component';
 import { LoginpasswordComponent } from './loginpassword/loginpassword.component';
+import { GestionusuarioComponent } from './gestionusuario/gestionusuario.component';
+import { RegistroUsuarioComponent } from './registro-usuario/registro-usuario.component';
+import { LectorQrComponent } from './lector-qr/lector-qr.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +39,10 @@ import { LoginpasswordComponent } from './loginpassword/loginpassword.component'
     RegistroAlicuotasComponent,
     AlicuotasComponent,
     NotificacionesComponent,
-    LoginpasswordComponent
+    LoginpasswordComponent,
+    GestionusuarioComponent,
+    RegistroUsuarioComponent,
+    LectorQrComponent
   ],
   imports: [
     BrowserModule,

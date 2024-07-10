@@ -3,7 +3,7 @@ body {
     padding: 0;
     font-family: Didot, "Didot LT STD", "Hoefler Text", Garamond, "Times New Roman", serif; font-size: 20px; font-style: normal; font-variant: normal; font-weight: 700; line-height: 26.4px;
    }
-
+  
   span{
     padding-top: 10px; 
     font-family: Didot, "Didot LT STD", "Hoefler Text", Garamond, "Times New Roman", serif; font-size: 20px; font-style: normal; font-variant: normal; font-weight: 700; line-height: 26.4px;
@@ -39,7 +39,7 @@ body {
     display: block;
   }
   
-.btn-danger {
+  .btn-danger {
   background-color: rgb(236, 34, 34);
   color: white;
   cursor: pointer;
@@ -51,13 +51,13 @@ body {
   padding: 0.5rem 1rem; 
   border: none;
   border-radius: 8px; 
-}
-
-.btn-danger:hover {
+  }
+  
+  .btn-danger:hover {
   background-color: rgb(151, 9, 9);
-}
-
-aside {
+  }
+  
+  aside {
   width: 250px;
   height: 100vh;
   background: #033c6b;
@@ -67,30 +67,30 @@ aside {
   flex-direction: column;
   justify-content:space-around;
   box-shadow: 3px 1px 5px 0px rgba(0, 0, 0, 0.75)
-}
-
-aside ul {
+  }
+  
+  aside ul {
   padding-inline-start: 0;
-}
-
-aside ul li {
+  }
+  
+  aside ul li {
   list-style: none;
   font-size: 17px;
   padding: 18px 0;
   cursor: pointer;
-}
-
-.aside-wrapper {
+  }
+  
+  .aside-wrapper {
   padding: 0 35px;
   box-sizing: border-box;
-}
-
-.logo-text {
+  }
+  
+  .logo-text {
   font-size: 32px;
   position: relative;
-}
-
-.sidebar-toggle {
+  }
+  
+  .sidebar-toggle {
   position: absolute;
   top: 1px;
   left: 205px;
@@ -99,16 +99,16 @@ aside ul li {
   text-align: center;
   border-radius: 8px;
   cursor: pointer;
-}
-
-.aw input {
+  }
+  
+  .aw input {
   display: none;
-}
-
-.aw input:checked ~ aside {
+  }
+  
+  .aw input:checked ~ aside {
   left: -250px;
-}
-ul {
+  }
+  ul {
     list-style: none;
   }
   
@@ -157,58 +157,93 @@ ul {
     margin-left: 7%;
     margin-right: 7%;
     margin-top: 2%;
-    margin-bottom: 2%;
   }
 
-.formulario {
-    justify-content:center;
-    align-items: center; 
+  
+  .container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    width: 100%;
 }
 
-
-.container {
-  width: 90%;
-  margin: 0 auto;
-  padding: 20px;
-  margin-left: 7%;
-  margin-top: 1%;
-}
-
-.form {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
 }
 
 .form-group {
-  display: flex;
-  flex-direction: column;
+    margin-bottom: 15px;
 }
 
 .form-group label {
-  margin-bottom: 5px;
+    display: block;
+    margin-bottom: 5px;
 }
 
 .form-group input,
-.form-group select,
-.form-group textarea {
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  resize: none;
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
 }
 
-.btn {
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-top: 2%;
+.container {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    width: 100%;
 }
 
-.btn:hover {
-  background-color: #066cda;
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
 }
 
+.form-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.form-group {
+    width: 48%;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.btn-registrar {
+    width: 100%;
+    padding: 10px;
+    background-color: #28a745;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    margin-left: 50%;
+}
+
+.btn-registrar:hover {
+    background-color: #218838;
+}
+
+.btn-registrar:hover {
+    background-color: #218838;
+}

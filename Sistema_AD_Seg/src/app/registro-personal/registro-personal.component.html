@@ -10,6 +10,7 @@
           <li>
             <i class="fa fa-briefcase"></i> Administración 
             <ul class="sub-menu">
+              <li href="#"><i class="fas fa-user"></i> <a href="gestionusuario">Gestion de Usuarios</a></li>
               <li href="#"><i class="fas fa-sack-dollar"></i> <a href="alicuotas"> Alicuotas</a></li>
               <li><i class="fas fa-user-plus"></i> <a href="registro-personal">Personal</a></li>
               <li><i class="fas fa-home"></i> <a href="registro-residentes">Residentes</a></li>
@@ -51,7 +52,7 @@
         </div>
       </div>
     </nav>
-    <h2><b>Registros de Personal de Seguridad:</b></h2>
+    <h2><b>Registros de Personal :</b></h2>
     <button class="btn-excel" (click)="exportarExcel()">
        <img src="./assets/excel.png" width="40" height="45" alt="Exportar a Excel">
      </button>    
@@ -66,8 +67,6 @@
              <th>Sexo</th>
              <th>Cédula</th>
              <th>Perfil</th>
-             <th>Email</th>
-             <th>Contraseña</th>
              <th>Observaciones</th>
              <th>Acciones</th>
            </tr>
@@ -79,8 +78,6 @@
              <td>{{row.sexo}}</td>
              <td>{{row.identificacion}}</td> 
              <td>{{row.perfil}}</td>
-             <td>{{row.email}}</td>
-             <td>{{row.password}}</td>
              <td>{{row.observaciones}}</td>
              <td>
                <button class="btn-edit"><i class="fas fa-edit"></i></button>

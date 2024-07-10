@@ -1,3 +1,4 @@
+
 <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css">
 <div class="aw">
   <input type="checkbox" id="toggler" />
@@ -9,7 +10,7 @@
       <li>
         <i class="fa fa-briefcase"></i> Administración 
         <ul class="sub-menu">
-          <li href="#"><i class="fas fa-user"></i> <a href="gestionusuario">Gestion de Usuarios</a></li>
+         <li href="#"><i class="fas fa-user"></i> <a href="gestionusuario">Gestion de Usuarios</a></li>
           <li href="#"><i class="fas fa-sack-dollar"></i> <a href="alicuotas"> Alicuotas</a></li>
           <li><i class="fas fa-user-plus"></i> <a href="registro-personal">Personal</a></li>
           <li><i class="fas fa-home"></i> <a href="registro-residentes">Residentes</a></li>
@@ -41,45 +42,48 @@
   </aside>
 </div>
 <nav class="navbar" id="nav-bar">
-  <div class="navbar-right">
+  <div class="navbar-right" >
     <div class="dropdown">
       <button class="dropbtn"><img src="./assets/users.png" width="35" height="40"></button>
       <span>Hola , {{ username }}</span>
       <div class="dropdown-content-lg"><br>
-        <button class="btn btn-danger" (click)="logout()"><i class="fa fa-sign-out"></i>Cerrar Sesión</button>
+        <button class="btn btn-danger" (click)="logout()" ><i class="fa fa-sign-out"></i>Cerrar Sesión</button>
       </div>
     </div>
   </div>
 </nav>
-<div class="formulario">
-  <h2>Registro de Alicuotas Mensuales: </h2>
-  <div class="container">
-    <form class="form">
-      <div class="row">
-        <div class="form-group col">
-          <label for="nombre">Nombre<span class="text-danger"> :</span></label>
-          <input type="text" id="nombre" name="nombre" placeholder="Ingrese nombre" required>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col">
-          <label for="fechalicuota">Fecha<span class="text-danger"> :</span></label>
-          <input type="date" id="fechalicuota" name="fechalicuota"  required>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col">
-          <label for="mesalicuota">Mes<span class="text-danger"> :</span></label>
-          <input type="month" id="mesalicuota" name="mesalicuota" required>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col">
-          <label for="mpcobrar">Monto Por cobrar<span class="text-danger"> :</span></label>
-          <input type="number" id="mpcobrar" name="mpcobrar" placeholder="Ingrese monto $" required>
-        </div>
-      </div>
-    </form>
-    <button type="submit" class="btn btn-primary">Guardar</button>
-  </div>
-</div>
+<h2><b>Gestion de Usuarios:</b></h2>
+<input class="form-control" type="search" placeholder="Buscar.." [(ngModel)]="filtro">
+<button class="btn-excel" (click)="exportarExcel()">
+   <img src="./assets/excel.png" width="40" height="45" alt="Exportar a Excel">
+ </button>    
+ <div class="contenido">
+   <a href="registro-usuario" class="btn-add">Crear Usuario</a>
+   <table  mat-table id="Usuarios">
+     <thead>
+       <tr>
+         <th>Nombres</th>
+         <th>Apellidos</th>
+         <th>Perfil</th>
+         <th>Usuario</th>
+         <th>Email</th>
+         <th>Contraseña</th>
+         <th>Acciones</th>
+       </tr>
+     </thead>
+     <tbody id="listado">
+       <tr *ngFor="let row of filtrar()">
+         <td>{{row.nombre}}</td>
+         <td>{{row.apellido}}</td>
+         <td>{{row.perfil}}</td>
+         <td>{{row.usuario}}</td>
+         <td>{{row.email}}</td>
+         <td>{{row.password}}</td>
+         <td>
+           <button class="btn-edit"><i class="fas fa-edit"></i></button>
+           <button class="btn-trash"><i class="fas fa-trash"></i></button>
+         </td>
+       </tr>
+     </tbody>
+   </table>
+ </div>    

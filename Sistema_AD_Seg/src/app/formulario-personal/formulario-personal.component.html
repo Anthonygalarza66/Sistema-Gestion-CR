@@ -9,6 +9,7 @@
       <li>
         <i class="fa fa-briefcase"></i> Administración 
         <ul class="sub-menu">
+          <li href="#"><i class="fas fa-user"></i> <a href="gestionusuario">Gestion de Usuarios</a></li>
           <li href="#"><i class="fas fa-sack-dollar"></i> <a href="alicuotas"> Alicuotas</a></li>
           <li><i class="fas fa-user-plus"></i> <a href="registro-personal">Personal</a></li>
           <li><i class="fas fa-home"></i> <a href="registro-residentes">Residentes</a></li>
@@ -45,13 +46,13 @@
       <button class="dropbtn"><img src="./assets/users.png" width="35" height="40"></button>
       <span>Hola , {{ username }}</span>
       <div class="dropdown-content-lg"><br>
-        <button class="btn btn-danger" (click)="logout()"><i class="fa fa-sign-out"></i>Cerrar Sesión</button>
+        <button class="btn-danger" (click)="logout()"><i class="fa fa-sign-out"></i>Cerrar Sesión</button>
       </div>
     </div>
   </div>
 </nav>
 <div class="formulario">
-  <h2>Registro de personal de seguridad: </h2>
+  <h2>Registro de personal: </h2>
   <div class="container">
     <form class="form">
       <div class="row">
@@ -63,10 +64,6 @@
           <label for="apellido">Apellidos<span class="text-danger"> :</span></label>
           <input type="text" id="apellido" name="apellido" placeholder="Ingrese apellidos" required>
         </div>
-        <div class="form-group col">
-          <label for="identificacion">Cédula<span class="text-danger"> :</span></label>
-          <input type="text" id="identificacion" name="identificacion" placeholder="ID / Pasaporte" required>
-        </div>
       </div>
       <div class="row">
         <div class="form-group col">
@@ -74,9 +71,11 @@
           <input type="email" id="placas" name="email" placeholder="ejemplo@email.com">
         </div>
         <div class="form-group col">
-          <label for="password">Contraseña<span class="text-danger"> :</span></label>
-          <input type="text" id="password" name="password" placeholder="">
+          <label for="identificacion">Cédula<span class="text-danger"> :</span></label>
+          <input type="text" id="identificacion" name="identificacion" placeholder="ID / Pasaporte" required>
         </div>
+      </div>
+      <div class="row">
         <div class="form-group col">
           <label for="sexo">Sexo<span class="text-danger"> :</span></label>
           <select id="sexo" name="sexo" required>
@@ -85,8 +84,6 @@
             <option value="F">Femenino</option>
           </select>
         </div>
-      </div>
-      <div class="row">
         <div class="form-group col">
           <label for="perfil">Perfil<span class="text-danger"> :</span></label>
           <select id="perfil" name="perfil">
@@ -95,6 +92,8 @@
             <option value="administracion">Administración</option>
           </select>
         </div>
+      </div>
+      <div class="row">
         <div class="form-group col-span-6">
           <label for="Observaciones">Observaciones<span class="text-danger">*</span></label>
           <textarea id="Observaciones" name="Observaciones" rows="3"></textarea>
