@@ -15,6 +15,7 @@ export class LectorQrComponent implements AfterViewInit {
   username: string = "Admin"; 
   private loggedIn = false;
 
+
   constructor(@Inject(PLATFORM_ID) private platformId: Object, private router: Router) {}
 
   ngAfterViewInit(): void {
@@ -31,9 +32,9 @@ export class LectorQrComponent implements AfterViewInit {
   }
 
   parseQRData(): void {
-    const dataParts = this.qrData.split(';').filter(Boolean); // Filtrar elementos vacíos
-    console.log('Data Parts:', dataParts); // Verificar las partes divididas del QR
-    if (dataParts.length === 8) { // Asumiendo que siempre hay 8 partes
+    const dataParts = this.qrData.split(';').filter(Boolean); 
+    console.log('Data Parts:', dataParts); 
+    if (dataParts.length === 8) { 
       this.parsedData = {
         nombre: dataParts[0] ? dataParts[0].trim() : '',
         apellido: dataParts[1] ? dataParts[1].trim() : '',
@@ -44,7 +45,7 @@ export class LectorQrComponent implements AfterViewInit {
         hora: dataParts[6] ? dataParts[6].trim() : '',
         observaciones: dataParts[7] ? dataParts[7].trim() : ''
       };
-      console.log('Parsed Data:', this.parsedData); // Verificar los datos parseados
+      console.log('Parsed Data:', this.parsedData); 
     } else {
       console.error('Error: El número de partes no es el esperado.');
     }
@@ -55,5 +56,20 @@ export class LectorQrComponent implements AfterViewInit {
   
     // Redirige a la página de inicio de sesión
     this.router.navigate(['/login']);
+  }
+
+  guardarDatosEnTabla() {
+    // Llama al servicio para guardar los datos
+   // this.dataService.guardarDatos(this.parsedData).subscribe(
+    //  response => {
+     //   console.log('Datos guardados exitosamente:', response);
+        // Aquí podrías hacer algo después de guardar, como redirigir a otra página
+     //   this.router.navigate(['/otra-ruta']);
+     // },
+     // error => {
+     //   console.error('Error al guardar datos:', error);
+        // Manejar el error apropiadamente
+      //}
+   // );
   }
 }
