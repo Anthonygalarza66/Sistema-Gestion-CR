@@ -2,6 +2,8 @@ import { NgModule } from '@angular/core';
 import { BrowserModule, provideClientHydration } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { QRCodeModule } from 'angularx-qrcode';
+import { NgxScannerQrcodeModule } from 'ngx-scanner-qrcode';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -49,6 +51,8 @@ import { LectorQrComponent } from './lector-qr/lector-qr.component';
     FormsModule,
     AppRoutingModule,
     QRCodeModule,
+    NgxScannerQrcodeModule,
+    BrowserAnimationsModule,
     
     
   ],
