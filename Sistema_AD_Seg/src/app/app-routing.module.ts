@@ -13,6 +13,10 @@ import { RegistroVisitantesComponent } from './registro-visitantes/registro-visi
 import { RegistroAlicuotasComponent } from './registro-alicuotas/registro-alicuotas.component';
 import { AlicuotasComponent } from './alicuotas/alicuotas.component';
 import { NotificacionesComponent } from './notificaciones/notificaciones.component';
+import { LoginpasswordComponent } from './loginpassword/loginpassword.component';
+import { GestionusuarioComponent } from './gestionusuario/gestionusuario.component';
+import { RegistroUsuarioComponent } from './registro-usuario/registro-usuario.component';
+import { LectorQrComponent } from './lector-qr/lector-qr.component';
 
 
 
@@ -31,6 +35,10 @@ const routes: Routes = [
   { path: 'registro-alicuotas', component: RegistroAlicuotasComponent, pathMatch: "full" },
   { path: 'alicuotas', component: AlicuotasComponent, pathMatch: "full" },
   { path: 'notificaciones', component: NotificacionesComponent, pathMatch: "full" },
+  { path: 'loginpassword' , component: LoginpasswordComponent, pathMatch: "full"},
+  { path: 'gestionusuario' , component: GestionusuarioComponent, pathMatch: "full"},
+  { path: 'registro-usuario' , component: RegistroUsuarioComponent, pathMatch: "full"},
+  { path: 'lector-qr' , component: LectorQrComponent, pathMatch: "full"}
 ];
 
 @NgModule({

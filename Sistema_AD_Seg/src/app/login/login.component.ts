@@ -23,6 +23,6 @@ export class LoginComponent {
   }
 
   forgotPassword() {
-    this.router.navigate(['/restablecer-password']);
+    this.router.navigate(['/loginpassword']);
   }
 }

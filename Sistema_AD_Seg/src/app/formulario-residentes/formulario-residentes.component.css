@@ -159,6 +159,13 @@ ul {
     margin-top: 2%;
     margin-bottom: 2%;
   }
+  h5{
+    font-family: 'Times New Roman', Times, serif; 
+    font-style: normal; 
+    font-variant: normal; 
+    line-height: 26.4px;
+    font-weight: bold;
+  }
 
 .formulario {
     justify-content:center;

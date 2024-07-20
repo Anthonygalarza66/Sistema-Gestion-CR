@@ -9,6 +9,7 @@
       <li>
         <i class="fa fa-briefcase"></i> Administración 
         <ul class="sub-menu">
+          <li href="#"><i class="fas fa-user"></i> <a href="gestionusuario">Gestion de Usuarios</a></li>
           <li href="#"><i class="fas fa-sack-dollar"></i> <a href="alicuotas"> Alicuotas</a></li>
           <li><i class="fas fa-user-plus"></i> <a href="registro-personal">Personal</a></li>
           <li><i class="fas fa-home"></i> <a href="registro-residentes">Residentes</a></li>
@@ -27,6 +28,7 @@
         <ul class="sub-menu">
           <li><i class="fas fa-car"></i> <a href="registro-control">Control de acceso</a></li>
           <li><i class="fas fa-address-book"></i> <a href="formulario-control">Registro de acceso</a></li>
+          <li><i class="fas fa-expand"></i> <a href="lector-qr">Lector QR</a></li>
           <li><i class="fas fa-home"></i> <a href="registro-residentes">Residentes</a></li>
         </ul>
       </li>
@@ -45,7 +47,7 @@
       <button class="dropbtn"><img src="./assets/users.png" width="35" height="40"></button>
       <span>Hola , {{ username }}</span>
       <div class="dropdown-content-lg"><br>
-        <button class="btn btn-danger" (click)="logout()"><i class="fa fa-sign-out"></i>Cerrar Sesión</button>
+        <button class="btn-danger" (click)="logout()"><i class="fa fa-sign-out"></i>Cerrar Sesión</button>
       </div>
     </div>
   </div>
@@ -53,6 +55,7 @@
 <div class="formulario">
   <h2>Registro de Residentes: </h2>
   <div class="container">
+    <h5>Información Personal</h5>
     <form class="form">
       <div class="row">
         <div class="form-group col">
@@ -63,9 +66,19 @@
           <label for="apellido">Apellidos<span class="text-danger"> :</span></label>
           <input type="text" id="apellido" name="apellido" placeholder="Ingrese apellidos" required>
         </div>
+      </div>
+      <div class="row">
         <div class="form-group col">
           <label for="identificacion">Cédula<span class="text-danger"> :</span></label>
           <input type="text" id="identificacion" name="identificacion" placeholder="ID / Pasaporte" required>
+        </div>
+        <div class="form-group col">
+          <label for="perfil">Perfil<span class="text-danger"> :</span></label>
+          <select id="perfil" name="perfil" required>
+            <option value="">Seleccione</option>
+            <option value="M">Residente</option>
+            <option value="F">Propietario</option>
+          </select>
         </div>
       </div>
       <div class="row">
@@ -81,26 +94,46 @@
           <label for="direccion">Dirección<span class="text-danger"> :</span></label>
           <input type="text" id="direccion" name="direccion" placeholder="Mz / V">
         </div>
+        </div>
+      <div class="row">
         <div class="form-group col">
           <label for="celular">Celular<span class="text-danger"> :</span></label>
           <input type="text" id="celular" name="celular" placeholder="+593">
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col">
-          <label for="placas">Placas<span class="text-danger"> :</span></label>
-          <input type="text" id="placas" name="placas" placeholder="">
         </div>
         <div class="form-group col">
           <label for="email">Email<span class="text-danger"> :</span></label>
           <input type="email" id="placas" name="email" placeholder="ejemplo@email.com">
         </div>
+      </div>
+    </form>
+    <br>
+    <form class="form">
+      <div class="row">
+        <h5>Información Vehicular:</h5>
         <div class="form-group col">
-          <label for="password">Contraseña<span class="text-danger"> :</span></label>
-          <input type="text" id="password" name="password" placeholder="">
+          <label for="cant_vehi">Cantidad de Vehículos<span class="text-danger"> :</span></label>
+          <input type="number" id="cant_vehi" name="cant_vehi" placeholder="">
+        </div>
+        <div class="form-group col">
+          <label for="placas">Placas<span class="text-danger"> :</span></label>
+          <input type="text" id="placas1" name="placas1" placeholder="">
+          <br>
+          <input type="text" id="placas2" name="placas2" placeholder="Opcional">
+          <br>
+          <input type="text" id="placas3" name="placas3" placeholder="Opcional">
+        </div>
+        </div>
+        <div class="row">
+        <div class="form-group col">
+          <br>
+          <br>
+          <label for="observacionesvehicular">Observaciones del vehículo <span class="text-danger"> :</span></label>
+          <textarea id="observacionesvehicular" name="observacionesvehicular" placeholder="Ingrese observaciones (caracteristicas)" rows="3"></textarea>
+       
         </div>
       </div>
       <div class="row">
+        <h5>Información De Propiedad:</h5>
         <div class="form-group col">
           <label for="solar">Solar<span class="text-danger"> :</span></label>
           <input type="text" id="solar" name="nombre" placeholder="Ingrese numero de solar" required>

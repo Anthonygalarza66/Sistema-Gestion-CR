@@ -2,7 +2,8 @@ import { NgModule } from '@angular/core';
 import { BrowserModule, provideClientHydration } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { QRCodeModule } from 'angularx-qrcode';
-import {jsPDF} from 'jspdf';
+import { NgxScannerQrcodeModule } from 'ngx-scanner-qrcode';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -19,6 +20,10 @@ import { RegistroVisitantesComponent } from './registro-visitantes/registro-visi
 import { RegistroAlicuotasComponent } from './registro-alicuotas/registro-alicuotas.component';
 import { AlicuotasComponent } from './alicuotas/alicuotas.component';
 import { NotificacionesComponent } from './notificaciones/notificaciones.component';
+import { LoginpasswordComponent } from './loginpassword/loginpassword.component';
+import { GestionusuarioComponent } from './gestionusuario/gestionusuario.component';
+import { RegistroUsuarioComponent } from './registro-usuario/registro-usuario.component';
+import { LectorQrComponent } from './lector-qr/lector-qr.component';
 
 @NgModule({
   declarations: [
@@ -35,13 +40,19 @@ import { NotificacionesComponent } from './notificaciones/notificaciones.compone
     RegistroVisitantesComponent,
     RegistroAlicuotasComponent,
     AlicuotasComponent,
-    NotificacionesComponent
+    NotificacionesComponent,
+    LoginpasswordComponent,
+    GestionusuarioComponent,
+    RegistroUsuarioComponent,
+    LectorQrComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
     AppRoutingModule,
     QRCodeModule,
+    NgxScannerQrcodeModule,
+    BrowserAnimationsModule,
     
     
   ],

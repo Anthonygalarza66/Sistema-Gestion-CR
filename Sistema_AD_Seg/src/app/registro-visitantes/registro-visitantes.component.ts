@@ -39,16 +39,6 @@ export class RegistroVisitantesComponent  {
     
   }
 
-  descargarQR() {
-    const link = document.createElement('a');
-    link.href = this.qrdata; 
-    link.download = 'codigoQR.png'; 
-  
-    
-    link.click();
-  }
-  
-
   logout() {
     this.loggedIn = false; // Marcar al usuario como no autenticado
   
@@ -56,6 +46,9 @@ export class RegistroVisitantesComponent  {
     this.router.navigate(['/login']);
 
   }
-  
+
+  enviarQR(){
+    
+  }
   
 }

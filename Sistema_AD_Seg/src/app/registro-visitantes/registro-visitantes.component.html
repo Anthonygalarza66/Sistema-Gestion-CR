@@ -9,6 +9,7 @@
       <li>
         <i class="fa fa-briefcase"></i> Administración 
         <ul class="sub-menu">
+          <li href="#"><i class="fas fa-user"></i> <a href="gestionusuario">Gestion de Usuarios</a></li>
           <li href="#"><i class="fas fa-sack-dollar"></i> <a href="alicuotas"> Alicuotas</a></li>
           <li><i class="fas fa-user-plus"></i> <a href="registro-personal">Personal</a></li>
           <li><i class="fas fa-home"></i> <a href="registro-residentes">Residentes</a></li>
@@ -27,6 +28,7 @@
         <ul class="sub-menu">
           <li><i class="fas fa-car"></i> <a href="registro-control">Control de acceso</a></li>
           <li><i class="fas fa-address-book"></i> <a href="formulario-control">Registro de acceso</a></li>
+          <li><i class="fas fa-expand"></i> <a href="lector-qr">Lector QR</a></li>
           <li><i class="fas fa-home"></i> <a href="registro-residentes">Residentes</a></li>
         </ul>
       </li>
@@ -103,9 +105,9 @@
             </div>
           </div>
           <qrcode #qrElement [qrdata]="qrdata" [width]="280" elementType="img" [errorCorrectionLevel]="'M'"></qrcode>
-    </form>
+    
+        </form>
     <button type="submit" class="btn btn-primary"(click)="generarQR()">Generar QR</button>
-    <button type="button" class="btn btn-enviar" >Enviar mail</button>
-    <button type="button" class="btn-download" (click)="descargarQR()">Descargar QR</button>
+    <button type="button" class="btn-download" (click)="enviarQR()">Enviar mail</button>
     </div>
   </div>

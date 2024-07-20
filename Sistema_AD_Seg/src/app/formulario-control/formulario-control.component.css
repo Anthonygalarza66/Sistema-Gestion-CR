@@ -212,3 +212,20 @@ ul {
   background-color: #066cda;
 }
 
+.btn-info {
+  display: inline-block;
+  background-color: #0b3abb; 
+  border: none;
+  color: white;
+  padding: 12px 24px; 
+  text-align: center;
+  text-decoration: none;
+  font-size: 16px; 
+  cursor: pointer;
+  border-radius: 8px; 
+  transition-duration: 0.4s;
+  margin-left: 2%;
+}
+.btn-info:hover {
+  background-color: #092b8a;
+}

@@ -16,29 +16,28 @@ export class RegistroResidentesComponent {
   data = [
     {
       placa: "ABC123",
+      observacionesvehicular: "Kia Negro",
       solar: "44",
       m2: "25,59",
+      perfil: "Propietario",
       nombre: "Juan",
       apellido: "Pérez",
       sexo:"M",
       cedula: "123456789",
-      email: "ejemplo@",
-      password: "*****",
       celular: "+593",
       direccion: "Calle Mayor 123",
     },
     {
-      placa: "DEF456",
+      placa: "DEF456 , GGG555",
+      observacionesvehicular: "Ford Range , Kia Picanto Rojo",
       solar: "44",
       m2: "25,59",
+      perfil: "Residente",
       nombre: "María",
       apellido: "Gómez",
       sexo:"F",
       cedula: "987654321",
-      email: "ejemplo@",
-      password: "*****",
       celular: "+593",
-      residenteVisitante: "Visitante",
       direccion: "Avenida del Sol 456",
     },
     
@@ -71,6 +70,7 @@ export class RegistroResidentesComponent {
       row.sexo.toLowerCase().includes(this.filtro.toLowerCase()) ||
       row.cedula.toLowerCase().includes(this.filtro.toLowerCase()) ||
       row.celular.toLowerCase().includes(this.filtro.toLowerCase()) ||
+      row.perfil.toLowerCase().includes(this.filtro.toLowerCase()) ||
       row.direccion.toLowerCase().includes(this.filtro.toLowerCase())
     );
   }
