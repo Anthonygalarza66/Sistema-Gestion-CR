@@ -1,27 +1,69 @@
-# SistemaADSeg
+# SISTEMA INTEGRAL DE GESTIÓN PARA LA URBANIZACIÓN ‘CAMINO REAL’: MONITOREO DE ACCESO VEHICULAR, CONTROL DE ALÍCUOTAS Y COMUNICACIÓN ÁGIL
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.3.
+## Descripción del Proyecto
+**Autor:** Freya López López
 
-## Development server
+**Institución:** Universidad de Guayaquil
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+## Resumen:
 
-## Code scaffolding
+El SISTEMA INTEGRAL DE GESTIÓN PARA LA URBANIZACIÓN ‘CAMINO REAL’ es una herramienta web completa diseñada para optimizar la administración y gestión de la urbanización Camino Real. Este sistema abarca tres módulos principales:
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+1. **Monitoreo de Acceso Vehicular:**
+    - Registro y control del ingreso y salida de vehículos y personas a la urbanización.
+    - Generación de reportes detallados de accesos.
+    - Visualización en tiempo real del estado de acceso (entrada/salida).
 
-## Build
+2. **Control de Alicuotas:**
+    - Registro mensual de los valores a pagar por parte de residentes y propietarios.
+    - Visualización de las deudas pendientes de pago.
+    - Envío de notificaciones automáticas a residentes y propietarios sobre sus obligaciones.
+    - Generación de estados de cuenta personalizados.
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+3. **Comunicación Ágil:**
+    - Creación y gestión de eventos sociales dentro de la urbanización.
+    - Envío de anuncios y notificaciones importantes a los residentes.
+    - Foro comunitario para la comunicación y el intercambio de información entre residentes.
 
-## Running unit tests
+## Tecnologías Utilizadas
+- **Front-end:** Angular 17.3.0
+- **Back-end:** PHP 8.1.10
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+### Librerías:
+- Font-Awesome
+- ngx-scanner-qrcode
+- angularx-qrcode
+- Bootstrap
+- xlsx
 
-## Running end-to-end tests
+## Imágenes del Sistema
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+**Módulo de Monitoreo de Acceso Vehicular:**
 
-## Further help
+![Imagen del módulo de Monitoreo de Acceso Vehicular](Imagen del módulo de Monitoreo de Acceso Vehicular)
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+**Módulo de Control de Alicuotas:**
+
+(Imagen del módulo de Control de Alicuotas)
+
+**Módulo de Comunicación Ágil:**
+
+(Imagen del módulo de Comunicación Ágil)
+
+## Levantamiento del Servidor
+
+### Requisitos:
+- Servidor web con soporte para PHP y MySQL
+- Base de datos MySQL
+
+### Pasos:
+1. Clonar el repositorio del proyecto en su servidor.
+2. Configurar la conexión a la base de datos en el archivo `config.php`.
+3. Ejecutar el comando `composer install` para instalar las dependencias de PHP.
+4. Ejecutar el comando `npm install` para instalar las dependencias de Angular.
+5. Ejecutar el comando `ng build` para compilar el front-end de Angular.
+6. Copiar la carpeta `dist` de Angular a la raíz del servidor web.
+7. Acceder al sistema a través de la URL `http://localhost/` (o la URL correspondiente a su servidor).
+
+**Nota:**
+Se recomienda consultar la documentación detallada del proyecto para obtener instrucciones más completas sobre la instalación y configuración del sistema.
