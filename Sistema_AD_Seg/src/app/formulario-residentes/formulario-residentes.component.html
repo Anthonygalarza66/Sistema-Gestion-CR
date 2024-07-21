@@ -56,7 +56,7 @@
   <h2>Registro de Residentes: </h2>
   <div class="container">
     <h5>Información Personal</h5>
-    <form class="form">
+   <form class="form" (ngSubmit)="guardar()">
       <div class="row">
         <div class="form-group col">
           <label for="nombre">Nombre<span class="text-danger"> :</span></label>
@@ -69,15 +69,15 @@
       </div>
       <div class="row">
         <div class="form-group col">
-          <label for="identificacion">Cédula<span class="text-danger"> :</span></label>
-          <input type="text" id="identificacion" name="identificacion" placeholder="ID / Pasaporte" required>
+          <label for="cedula">Cédula<span class="text-danger"> :</span></label>
+          <input type="text" id="cedula" name="cedula" placeholder="ID / Pasaporte" required>
         </div>
         <div class="form-group col">
           <label for="perfil">Perfil<span class="text-danger"> :</span></label>
           <select id="perfil" name="perfil" required>
             <option value="">Seleccione</option>
-            <option value="M">Residente</option>
-            <option value="F">Propietario</option>
+            <option value="Residente">Residente</option>
+            <option value="Propietario">Propietario</option>
           </select>
         </div>
       </div>
@@ -86,61 +86,67 @@
           <label for="sexo">Sexo<span class="text-danger"> :</span></label>
           <select id="sexo" name="sexo" required>
             <option value="">Seleccione</option>
-            <option value="M">Masculino</option>
-            <option value="F">Femenino</option>
+            <option value="Masculino">Masculino</option>
+            <option value="Femenino">Femenino</option>
           </select>
         </div>
         <div class="form-group col">
           <label for="direccion">Dirección<span class="text-danger"> :</span></label>
           <input type="text" id="direccion" name="direccion" placeholder="Mz / V">
         </div>
-        </div>
+      </div>
       <div class="row">
         <div class="form-group col">
           <label for="celular">Celular<span class="text-danger"> :</span></label>
           <input type="text" id="celular" name="celular" placeholder="+593">
         </div>
         <div class="form-group col">
-          <label for="email">Email<span class="text-danger"> :</span></label>
-          <input type="email" id="placas" name="email" placeholder="ejemplo@email.com">
+          <label for="correo_electronico">Email<span class="text-danger"> :</span></label>
+          <input type="email" id="correo_electronico" name="correo_electronico" placeholder="ejemplo@email.com">
         </div>
       </div>
     </form>
     <br>
-    <form class="form">
+    <form class="form" >
       <div class="row">
         <h5>Información Vehicular:</h5>
         <div class="form-group col">
-          <label for="cant_vehi">Cantidad de Vehículos<span class="text-danger"> :</span></label>
-          <input type="number" id="cant_vehi" name="cant_vehi" placeholder="">
+          <label for="cantidad_vehiculos">Cantidad de Vehículos<span class="text-danger"> :</span></label>
+          <input type="number" id="cantidad_vehiculos" name="cantidad_vehiculos" placeholder="">
         </div>
         <div class="form-group col">
-          <label for="placas">Placas<span class="text-danger"> :</span></label>
-          <input type="text" id="placas1" name="placas1" placeholder="">
+          <label for="vehiculo1_placa">Placas<span class="text-danger"> :</span></label>
+          <input type="text" id="vehiculo1_placa" name="vehiculo1_placa" placeholder="">
           <br>
-          <input type="text" id="placas2" name="placas2" placeholder="Opcional">
+          <input type="text" id="vehiculo2_placa" name="vehiculo2_placa" placeholder="Opcional">
           <br>
-          <input type="text" id="placas3" name="placas3" placeholder="Opcional">
+          <input type="text" id="vehiculo3_placa" name="vehiculo3_placa" placeholder="Opcional">
         </div>
-        </div>
-        <div class="row">
+      </div>
+      <div class="row">
         <div class="form-group col">
           <br>
-          <br>
-          <label for="observacionesvehicular">Observaciones del vehículo <span class="text-danger"> :</span></label>
-          <textarea id="observacionesvehicular" name="observacionesvehicular" placeholder="Ingrese observaciones (caracteristicas)" rows="3"></textarea>
-       
+          <label for="vehiculo1_observaciones">Observaciones del vehículo 1 <span class="text-danger"> :</span></label>
+          <textarea id="vehiculo1_observaciones" name="vehiculo1_observaciones" placeholder="Ingrese observaciones (características)" rows="2"></textarea>
+        </div>
+        <div class="form-group col">
+          <label for="vehiculo2_observaciones">Observaciones del vehículo 2 <span class="text-danger"> :</span></label>
+          <textarea id="vehiculo2_observaciones" name="vehiculo2_observaciones"  rows="2"></textarea>
+        </div>
+        <div class="form-group col">
+          <label for="vehiculo3_observaciones">Observaciones del vehículo 3 <span class="text-danger"> :</span></label>
+          <textarea id="vehiculo3_observaciones" name="vehiculo3_observaciones"  rows="2"></textarea>
         </div>
       </div>
       <div class="row">
         <h5>Información De Propiedad:</h5>
         <div class="form-group col">
           <label for="solar">Solar<span class="text-danger"> :</span></label>
-          <input type="text" id="solar" name="nombre" placeholder="Ingrese numero de solar" required>
+          <input type="text" id="solar" name="solar" placeholder="Ingrese número de solar" required>
         </div>
         <div class="form-group col">
-          <label for="terreno">M2<span class="text-danger"> :</span></label>
-          <input type="number" id="terreno" name="terreno" placeholder="M2 Terreno" required>
+          <label for="m2">M2<span class="text-danger"> :</span></label>
+          <input type="number" id="m2" name="m2" placeholder="M2 Terreno" required>
         </div>
       </div>
     </form>

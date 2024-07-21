@@ -206,6 +206,53 @@ export class ApiService {
       );
   }
 
+  // Método para obtener un residente por ID
+  getResidente(id: number): Observable<any> {
+    console.log(`Solicitando residente con ID ${id} a la API...`);
+    return this.http.get<any>(`${this.apiUrl}/residentes/${id}`)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  // Método para guardar (crear o actualizar) un residente
+  guardarResidente(residente: any): Observable<any> {
+    if (residente.id) {
+      console.log(`Actualizando residente con ID ${residente.id}...`);
+      return this.http.put<any>(`${this.apiUrl}/residentes/${residente.id}`, residente)
+        .pipe(
+          catchError(this.handleError)
+        );
+    } else {
+      console.log('Creando un nuevo residente...');
+      return this.http.post<any>(`${this.apiUrl}/residentes`, residente)
+        .pipe(
+          catchError(this.handleError)
+        );
+    }
+  }
+
+  // Método para crear un nuevo residente
+  createResidente(residente: any): Observable<any> {
+    console.log('Enviando datos para crear residente:', residente);
+    return this.http.post<any>(`${this.apiUrl}/residentes`, residente, this.httpOptions)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  // Método para eliminar un residente
+  deleteResidente(id: number): Observable<any> {
+    console.log(`Eliminando residente con ID ${id}...`);
+    return this.http.delete<any>(`${this.apiUrl}/residentes/${id}`)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+
+ 
+
   // Manejo de errores
   private handleError(error: any) {
     let errorMessage = 'Ocurrió un error desconocido';
