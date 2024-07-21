@@ -53,54 +53,63 @@
   </div>
 </nav>
 <div class="formulario">
-  <h2>Registro de personal: </h2>
-  <div class="container">
-    <form class="form">
+  <h2>Registro de personal:</h2>
+  <div class="contenedor">
+    <form class="form" (ngSubmit)="guardar()">
       <div class="row">
         <div class="form-group col">
           <label for="nombre">Nombre<span class="text-danger"> :</span></label>
-          <input type="text" id="nombre" name="nombre" placeholder="Ingrese nombre" required>
+          <input type="text" id="nombre" name="nombre" placeholder="Ingrese nombre" [(ngModel)]="nuevoPersonal.nombre" required>
+          <div *ngIf="validationErrors.nombre" class="text-danger">{{ validationErrors.nombre[0] }}</div>
         </div>
         <div class="form-group col">
           <label for="apellido">Apellidos<span class="text-danger"> :</span></label>
-          <input type="text" id="apellido" name="apellido" placeholder="Ingrese apellidos" required>
+          <input type="text" id="apellido" name="apellido" placeholder="Ingrese apellidos" [(ngModel)]="nuevoPersonal.apellido" required>
+          <div *ngIf="validationErrors.apellido" class="text-danger">{{ validationErrors.apellido[0] }}</div>
         </div>
       </div>
       <div class="row">
         <div class="form-group col">
-          <label for="email">Email<span class="text-danger"> :</span></label>
-          <input type="email" id="placas" name="email" placeholder="ejemplo@email.com">
+          <label for="correo_electronico">Email<span class="text-danger"> :</span></label>
+          <input type="email" id="correo_electronico" name="correo_electronico" placeholder="ejemplo@email.com" [(ngModel)]="nuevoPersonal.correo_electronico" required>
+          <div *ngIf="validationErrors.correo_electronico" class="text-danger">{{ validationErrors.correo_electronico[0] }}</div>
         </div>
         <div class="form-group col">
-          <label for="identificacion">Cédula<span class="text-danger"> :</span></label>
-          <input type="text" id="identificacion" name="identificacion" placeholder="ID / Pasaporte" required>
+          <label for="cedula">Cédula<span class="text-danger"> :</span></label>
+          <input type="text" id="cedula" name="cedula" placeholder="ID / Pasaporte" [(ngModel)]="nuevoPersonal.cedula" required>
+          <div *ngIf="validationErrors.cedula" class="text-danger">{{ validationErrors.cedula[0] }}</div>
         </div>
       </div>
       <div class="row">
         <div class="form-group col">
           <label for="sexo">Sexo<span class="text-danger"> :</span></label>
-          <select id="sexo" name="sexo" required>
+          <select id="sexo" name="sexo" [(ngModel)]="nuevoPersonal.sexo" required>
             <option value="">Seleccione</option>
-            <option value="M">Masculino</option>
-            <option value="F">Femenino</option>
+            <option value="Masculino">Masculino</option>
+            <option value="Femenino">Femenino</option>
           </select>
+          <div *ngIf="validationErrors.sexo" class="text-danger">{{ validationErrors.sexo[0] }}</div>
         </div>
         <div class="form-group col">
           <label for="perfil">Perfil<span class="text-danger"> :</span></label>
-          <select id="perfil" name="perfil">
-            <option value=""  disabled selected >Seleccione</option>
-            <option value="seguridad">Seguridad</option>
-            <option value="administracion">Administración</option>
+          <select id="perfil" name="perfil" [(ngModel)]="nuevoPersonal.perfil" required>
+            <option value="" disabled selected>Seleccione</option>
+            <option value="Seguridad">Seguridad</option> 
+            <option value="Administracion">Administración</option>
           </select>
+          <div *ngIf="validationErrors.perfil" class="text-danger">{{ validationErrors.perfil[0] }}</div>
         </div>
       </div>
-      <div class="row">
+      <div class="row observaciones-row">
         <div class="form-group col-span-6">
-          <label for="Observaciones">Observaciones<span class="text-danger">*</span></label>
-          <textarea id="Observaciones" name="Observaciones" rows="3"></textarea>
+          <label for="observaciones">Observaciones<span class="text-danger">*</span></label>
+          <textarea id="observaciones" name="observaciones" rows="3" [(ngModel)]="nuevoPersonal.observaciones"></textarea>
+          <div *ngIf="validationErrors.observaciones" class="text-danger">{{ validationErrors.observaciones[0] }}</div>
         </div>
       </div>
+      <button type="submit" class="btn btn-primary">Guardar</button>
     </form>
-    <button type="submit" class="btn btn-primary">Guardar</button>
   </div>
 </div>
+
+

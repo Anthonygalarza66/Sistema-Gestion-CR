@@ -62,6 +62,51 @@ export class ApiService {
       );
   }
 
+   // Método para obtener todos los personales
+   getPersonales(): Observable<any> {
+    console.log('Solicitando personales a la API...');
+    return this.http.get<any>(`${this.apiUrl}/personal`)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  // Método para obtener un personal específico por ID
+  getPersonal(id: number): Observable<any> {
+    console.log(`Solicitando personal con ID ${id} a la API...`);
+    return this.http.get<any>(`${this.apiUrl}/personal/${id}`)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  // Método para crear un nuevo personal
+  createPersonal(personal: any): Observable<any> {
+    console.log('Enviando datos para crear personal:', personal);
+    return this.http.post<any>(`${this.apiUrl}/personal`, personal, this.httpOptions)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  // Método para actualizar un personal existente
+  updatePersonal(id: number, personal: any): Observable<any> {
+    console.log(`Enviando datos para actualizar personal con ID ${id}:`, personal);
+    return this.http.put<any>(`${this.apiUrl}/personal/${id}`, personal, this.httpOptions)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  // Método para eliminar un personal
+  deletePersonal(id: number): Observable<any> {
+    console.log(`Solicitando eliminación del personal con ID ${id}`);
+    return this.http.delete<any>(`${this.apiUrl}/personal/${id}`, this.httpOptions)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
   // Método para obtener todas las alícuotas
   getAlicuotas(): Observable<any> {
     console.log('Solicitando alícuotas a la API...');
