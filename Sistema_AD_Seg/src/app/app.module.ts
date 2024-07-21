@@ -4,6 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { QRCodeModule } from 'angularx-qrcode';
 import { NgxScannerQrcodeModule } from 'ngx-scanner-qrcode';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { HttpClientModule } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
+import { NgxPaginationModule } from 'ngx-pagination';
+
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -53,6 +57,9 @@ import { LectorQrComponent } from './lector-qr/lector-qr.component';
     QRCodeModule,
     NgxScannerQrcodeModule,
     BrowserAnimationsModule,
+    CommonModule,
+    HttpClientModule,
+    NgxPaginationModule
     
     
   ],

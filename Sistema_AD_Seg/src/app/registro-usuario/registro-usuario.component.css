@@ -247,3 +247,9 @@ h2 {
 .btn-registrar:hover {
     background-color: #218838;
 }
+
+.error-message {
+  color: red; 
+  font-size: 0.875rem; 
+  margin-top: 0.5rem; 
+}

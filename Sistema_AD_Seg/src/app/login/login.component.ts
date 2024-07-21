@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { ApiService } from '../api.service';
 
 @Component({
   selector: 'app-login',
@@ -7,7 +8,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  username: string = ''; // Propiedades username y password definidas aquí
+  username: string = ''; 
   password: string = '';
   showNotification: boolean = false;
   notificationMessage: string = '';
