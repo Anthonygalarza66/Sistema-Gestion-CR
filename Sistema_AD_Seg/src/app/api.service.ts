@@ -250,8 +250,19 @@ export class ApiService {
       );
   }
 
+  checkCedula(cedula: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/residentes/check-cedula/${cedula}`)
+      .pipe(
+        catchError(this.handleError) 
+      );
+  }
 
- 
+  checkCorreo(correo: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/residentes/check-correo/${correo}`)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
 
   // Manejo de errores
   private handleError(error: any) {

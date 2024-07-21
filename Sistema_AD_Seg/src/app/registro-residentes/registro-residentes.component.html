@@ -79,6 +79,7 @@
             <th>Cédula</th>
             <th>Celular</th>
             <th>Dirección</th>
+            <th>Observaciones</th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -95,6 +96,7 @@
             <td>{{ row.cedula }}</td>
             <td>{{ row.celular }}</td>
             <td>{{ row.direccion }}</td>
+            <td>{{ row.observaciones }}</td>
             <td>
               <button class="btn-edit" (click)="editResidentes(row.id_residente)">
                 <i class="fas fa-edit"></i>
