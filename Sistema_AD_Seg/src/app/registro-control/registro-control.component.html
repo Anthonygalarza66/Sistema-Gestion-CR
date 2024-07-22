@@ -6,7 +6,7 @@
        <h1 class="logo-text"><span>Menú</span> 
          <label for="toggler"><i class="fas fa-bars sidebar-toggle"></i></label>
        </h1>
-       <ul>
+       <ul> 
          <li>
            <i class="fa fa-briefcase"></i> Administración 
            <ul class="sub-menu">
@@ -54,47 +54,58 @@
      </div>
    </nav>
    <h2><b>Registros de ingresos y salidas:</b></h2>
+
+   <!-- Campo de búsqueda -->
    <input class="form-control" type="search" placeholder="Buscar.." [(ngModel)]="filtro">
+   <!-- Botón para exportar a Excel -->
    <button class="btn-excel" (click)="exportarExcel()">
-      <img src="./assets/excel.png" width="40" height="45" alt="Exportar a Excel">
-    </button>    
-    <div class="contenido">
-      <a href="formulario-control" class="btn-add">Agregar</a>
-      <table  mat-table id="Registros">
-        <thead>
-          <tr>
-            <th>Placa</th>
-            <th>Fecha Ingreso</th>
-            <th>Fecha Salida</th>
-            <th>Nombre</th>
-            <th>Apellido</th>
-            <th>Sexo</th>
-            <th>Cédula</th>
-            <th>Res/Vis</th>
-            <th>Dirección</th>
-            <th>Turno</th>
-            <th>Observaciones</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody id="listado">
-          <tr *ngFor="let row of filtrar()">
-            <td>{{row.placa}}</td>
-            <td>{{row.fechaingreso}}</td>
-            <td>{{row.fechasalida}}</td>
-            <td>{{row.nombre}}</td>
-            <td>{{row.apellido}}</td>
-            <td>{{row.sexo}}</td>
-            <td>{{row.cedula}}</td>
-            <td>{{row.residenteVisitante}}</td>
-            <td>{{row.direccion}}</td>
-            <td>{{row.turno}}</td>
-            <td>{{row.observaciones}}</td>
-            <td>
-              <button class="btn-edit"><i class="fas fa-edit"></i></button>
-              <button class="btn-trash"><i class="fas fa-trash"></i></button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+   <img src="./assets/excel.png" width="40" height="45" alt="Exportar a Excel">
+   </button>
+   <!-- Enlace para crear un nuevo residente -->  
+   <a href="formulario-control" class="btn-add">Agregar</a>
+    <div class="contenido"> 
+     <!-- Tabla para mostrar los usuarios -->
+     <table mat-table id="control_acceso">
+      <thead>
+        <tr>
+          <th>Placa</th>
+          <th>Fecha Ingreso</th>
+          <th>Fecha Salida</th>
+          <th>Nombre</th>
+          <th>Apellido</th>
+          <th>Sexo</th>
+          <th>Cédula</th>
+          <th>Res/Vis</th>
+          <th>Dirección</th>
+          <th>Turno</th>
+          <th>Observaciones</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="listado">
+        <tr *ngFor="let row of (filtrar() | paginate: { itemsPerPage: 5, currentPage: p })">
+          <td>{{row.placas}}</td>
+          <td>{{row.fecha_ingreso}}</td>
+          <td>{{row.fecha_salida}}</td>
+          <td>{{row.nombre}}</td>
+          <td>{{row.apellidos}}</td>
+          <td>{{row.sexo}}</td>
+          <td>{{row.cedula}}</td>
+          <td>{{row.ingresante}}</td>
+          <td>{{row.direccion}}</td>
+          <td>{{row.username}}</td>
+          <td>{{row.observaciones}}</td>
+          <td>
+            <button class="btn-edit" (click)="editControl(row.id_acceso)">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn-trash" (click)="deleteControl(row.id_acceso)">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>    
+        <!-- Controles de paginación -->
+        <pagination-controls (pageChange)="p = $event"></pagination-controls>
     </div>    

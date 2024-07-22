@@ -4,14 +4,14 @@ import { ApiService } from "../api.service";
 import { PLATFORM_ID, Inject } from "@angular/core";
 import { isPlatformBrowser } from "@angular/common";
 import * as XLSX from "xlsx";
-
-
+ 
 @Component({
   selector: 'app-registro-residentes',
   templateUrl: './registro-residentes.component.html',
   styleUrl: './registro-residentes.component.css'
 })
 export class RegistroResidentesComponent implements OnInit {
+  
   username: string = ""; // Inicialmente vacío
   p: number = 1; // Página actual de paginacion
   private loggedIn = false;

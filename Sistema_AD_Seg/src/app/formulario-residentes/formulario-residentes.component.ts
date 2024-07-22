@@ -10,6 +10,7 @@ import { isPlatformBrowser } from "@angular/common";
   styleUrl: "./formulario-residentes.component.css",
 })
 export class FormularioResidentesComponent {
+  
   username: string = ""; // Inicialmente vacío
   p: number = 1; // Página actual de paginacion
   private loggedIn = false;

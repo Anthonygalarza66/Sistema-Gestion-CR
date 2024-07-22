@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders ,HttpErrorResponse} from '@angular/common/http';
 import { Observable, catchError, throwError } from 'rxjs';
+
 
 @Injectable({
   providedIn: 'root'
@@ -178,13 +179,16 @@ export class ApiService {
   }
 
   // Método para crear un nuevo evento
-  createEvento(evento: any): Observable<any> {
+   createEvento(evento: FormData): Observable<any> {
     console.log('Enviando datos para crear evento:', evento);
-    return this.http.post<any>(`${this.apiUrl}/eventos`, evento, this.httpOptions)
-      .pipe(
-        catchError(this.handleError)
-      );
+    return this.http.post<any>(`${this.apiUrl}/eventos`, evento, {
+      headers: new HttpHeaders({
+      })
+    }).pipe(
+      catchError(this.handleError)
+    );
   }
+  
 
   // Método para actualizar un evento existente
   updateEvento(id: number, evento: any): Observable<any> {
@@ -257,6 +261,77 @@ export class ApiService {
       );
   }
 
+  // Método para obtener todos los registros de control de acceso
+  getControlAcceso(): Observable<any> {
+    console.log('Solicitando registros de control de acceso a la API...');
+    return this.http.get<any>(`${this.apiUrl}/control-acceso`)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  // Método para obtener un registro de control de acceso por ID
+  getControlAccesoById(id: number): Observable<any> {
+    console.log(`Solicitando registro de control de acceso con ID ${id} a la API...`);
+    return this.http.get<any>(`${this.apiUrl}/control-acceso/${id}`)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  // Método para crear un nuevo registro de control de acceso
+  createControlAcceso(controlAcceso: FormData): Observable<any> {
+    console.log('Enviando datos para crear control de acceso:', controlAcceso);
+    return this.http.post<any>(`${this.apiUrl}/control-acceso`, controlAcceso)
+        .pipe(
+            catchError(this.handleError)
+        );
+  }  
+
+  // Método para actualizar un registro de control de acceso existente
+  updateControlAcceso(id: number, controlAcceso: FormData): Observable<any> {
+    console.log(`Enviando datos para actualizar control de acceso con ID ${id}:`, controlAcceso);
+    return this.http.put<any>(`${this.apiUrl}/${id}`, controlAcceso, {
+      headers: new HttpHeaders({
+        // Aquí puedes agregar otros encabezados si es necesario
+      })
+    }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  // Método para guardar (crear o actualizar) un registro de control de acceso
+  guardarControlAcceso(controlAcceso: any): Observable<any> {
+    if (controlAcceso.id_acceso) {
+      console.log(`Actualizando registro de control de acceso con ID ${controlAcceso.id_acceso}...`);
+      return this.http.put<any>(`${this.apiUrl}/control-acceso/${controlAcceso.id_acceso}`, controlAcceso, this.httpOptions)
+        .pipe(
+          catchError(this.handleError)
+        );
+    } else {
+      console.log('Creando un nuevo registro de control de acceso...');
+      return this.http.post<any>(`${this.apiUrl}/control-acceso`, controlAcceso, this.httpOptions)
+        .pipe(
+          catchError(this.handleError)
+        );
+    }
+  }
+
+  // Método para eliminar un registro de control de acceso
+  deleteControlAcceso(id: number): Observable<any> {
+    console.log(`Eliminando registro de control de acceso con ID ${id}...`);
+    return this.http.delete<any>(`${this.apiUrl}/control-acceso/${id}`)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+   // Obtener usuarios con perfil y rol de seguridad
+   getUsuariosSeguridad(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/usuarios/seguridad`);
+  }
+
+
   checkCedula(cedula: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/residentes/check-cedula/${cedula}`)
       .pipe(
@@ -272,14 +347,19 @@ export class ApiService {
   }
 
   // Manejo de errores
-  private handleError(error: any) {
+  handleError(error: HttpErrorResponse): Observable<never> {
     let errorMessage = 'Ocurrió un error desconocido';
-    if (error && error.error && error.error.message) {
-      errorMessage = `Error: ${error.error.message}`;
-    } else if (error.status) {
-      errorMessage = `Código de error: ${error.status}\nMensaje: ${error.message || 'Sin mensaje'}`;
+    if (error.error instanceof ErrorEvent) {
+        // Errores del cliente o de red
+        errorMessage = `Error: ${error.error.message}`;
+    } else {
+        // Errores del backend
+        errorMessage = `Código de error: ${error.status}\nMensaje: ${error.message}`;
     }
-    console.error('Error en la solicitud:', errorMessage); // Log para ver los errores
     return throwError(() => new Error(errorMessage));
+}
+
+  getFileUrl(filename: string): string {
+    return `${this.apiUrl}/uploads/${filename}`;
   }
 }
