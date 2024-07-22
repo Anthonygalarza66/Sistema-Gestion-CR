@@ -26,7 +26,7 @@ export class FormularioControlComponent implements OnInit {
     fecha_ingreso: '',
     fecha_salida: '',
     observaciones: '',
-    username: '' // Campo que se debe completar antes de enviar el formulario
+    username: '' 
   };
 
   usuarios: any[] = []; 

@@ -2,6 +2,7 @@ import { AfterViewInit, Component, Inject, PLATFORM_ID, ViewChild } from '@angul
 import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 import { NgxScannerQrcodeComponent, ScannerQRCodeResult } from 'ngx-scanner-qrcode';
+import { ApiService } from "../api.service";
 
 @Component({
   selector: 'app-lector-qr',
@@ -9,14 +10,20 @@ import { NgxScannerQrcodeComponent, ScannerQRCodeResult } from 'ngx-scanner-qrco
   styleUrls: ['./lector-qr.component.css']
 })
 export class LectorQrComponent implements AfterViewInit {
+
   @ViewChild('scanner') scanner!: NgxScannerQrcodeComponent;
   qrData: string = '';
   parsedData: any = {};
-  username: string = "Admin"; 
+  username: string = ''; // Inicialmente vacío
   private loggedIn = false;
 
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object, private router: Router) {}
+  constructor(@Inject(PLATFORM_ID) private platformId: Object, private router: Router, private apiService: ApiService) {}
+  ngOnInit(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      this.username = localStorage.getItem('username') || 'Invitado';
+    }
+  }
 
   ngAfterViewInit(): void {
     if (isPlatformBrowser(this.platformId)) {
@@ -34,7 +41,7 @@ export class LectorQrComponent implements AfterViewInit {
   parseQRData(): void {
     const dataParts = this.qrData.split(';').filter(Boolean); 
     console.log('Data Parts:', dataParts); 
-    if (dataParts.length === 8) { 
+    if (dataParts.length === 9) { 
       this.parsedData = {
         nombre: dataParts[0] ? dataParts[0].trim() : '',
         apellido: dataParts[1] ? dataParts[1].trim() : '',
@@ -43,7 +50,8 @@ export class LectorQrComponent implements AfterViewInit {
         evento: dataParts[4] ? dataParts[4].trim() : '',
         fecha: dataParts[5] ? dataParts[5].trim() : '',
         hora: dataParts[6] ? dataParts[6].trim() : '',
-        observaciones: dataParts[7] ? dataParts[7].trim() : ''
+        placa: dataParts[7] ? dataParts[7].trim() : '',
+        observaciones: dataParts[8] ? dataParts[8].trim() : ''
       };
       console.log('Parsed Data:', this.parsedData); 
     } else {
@@ -59,17 +67,49 @@ export class LectorQrComponent implements AfterViewInit {
   }
 
   guardarDatosEnTabla() {
-    // Llama al servicio para guardar los datos
-   // this.dataService.guardarDatos(this.parsedData).subscribe(
-    //  response => {
-     //   console.log('Datos guardados exitosamente:', response);
-        // Aquí podrías hacer algo después de guardar, como redirigir a otra página
-     //   this.router.navigate(['/otra-ruta']);
-     // },
-     // error => {
-     //   console.error('Error al guardar datos:', error);
-        // Manejar el error apropiadamente
-      //}
-   // );
-  }
+    if (!this.parsedData.nombre || !this.parsedData.apellido || !this.parsedData.cedula || !this.parsedData.direccion || !this.parsedData.fecha || !this.parsedData.hora || !this.parsedData.placa) {
+      console.error('Error: faltan datos obligatorios.');
+      return;
+    }
+  
+    // Verifica y ajusta el valor de `sexo`
+    const sexo = ['M', 'F'].includes(this.parsedData.sexo) ? this.parsedData.sexo : 'Indefinido'; // Valor por defecto 'Indefinido'
+  
+    // Verifica y ajusta el valor de `ingresante`
+    const ingresante = ['Residente', 'Visitante', 'Delivery'].includes(this.parsedData.ingresante) ? this.parsedData.ingresante : 'Visitante'; // Valor por defecto 'Visitante'
+  
+    // Prepara los datos para enviar
+    const controlAccesoData = {
+      nombre: this.parsedData.nombre,
+      apellidos: this.parsedData.apellido,
+      cedula: this.parsedData.cedula,
+      direccion: this.parsedData.direccion,
+      fecha_ingreso: `${this.parsedData.fecha} ${this.parsedData.hora}`,
+      fecha_salida: '', // Puedes dejar esto vacío si no se requiere
+      id_usuario: 19, // Asegúrate de que este ID sea válido en tu base de datos
+      ingresante: ingresante,
+      observaciones: this.parsedData.observaciones || '', // Opcional, por defecto vacío
+      placas: this.parsedData.placa,
+      sexo: sexo,
+      username: this.username
+    };
+  
+    // Imprime los datos en la consola
+    console.log('Datos a enviar:', controlAccesoData);
+  
+    this.apiService.guardarControlAcceso(controlAccesoData).subscribe(
+      response => {
+        console.log('Datos guardados exitosamente:', response);
+        this.router.navigate(['/registro-control']); // Redirigir a otra página si es necesario
+      },
+      error => {
+        console.error('Error al guardar datos:', error);
+        if (error.status === 422) {
+          console.error('Error de validación:', error.error.errors);
+        }
+      }
+    );
+  }  
+  
 }
+

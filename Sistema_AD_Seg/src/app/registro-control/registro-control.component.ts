@@ -54,16 +54,32 @@ export class RegistroControlComponent {
     this.router.navigate(["/login"]); // Redirige a la página de inicio de sesión
   }
 
+
+
   exportarExcel(): void {
     console.log("Exportando a Excel...");
     if (this.control_acceso.length === 0) {
       console.warn("No hay datos para exportar");
       return;
     }
-    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.control_acceso);
+    const exportData = this.control_acceso.map(row => ({
+      Placas:row.placas,
+      Fecha_de_ingreso:row.fecha_ingreso,
+      Fecha_de_salida:row.fecha_salida,
+      Nombres: row.nombre,
+      Apellidos: row.apellidos,
+      Sexo: row.sexo,
+      Cédula: row.cedula,
+      Tipo_de_ingreso: row.ingresante,
+      Dirección:row.direccion,
+      Personal_de_turno: row.username,
+      Observaciones: row.observaciones,
+    }));
+  
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData);
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "ControlAcceso");
-    XLSX.writeFile(wb, "Listado_ControlAcceso.xlsx");
+    XLSX.utils.book_append_sheet(wb, ws, "Alicuotas");
+    XLSX.writeFile(wb, "Listado_Accesos.xlsx");
   }
 
   filtrar() {
