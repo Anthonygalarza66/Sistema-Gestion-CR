@@ -152,6 +152,13 @@ export class ApiService {
       );
   }
 
+  marcarpagoAlicuitas(id: number): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/alicuotas/${id}/marcar-pago`, this.httpOptions)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
   // Método para obtener todos los eventos
   getEventos(): Observable<any> {
     console.log('Solicitando eventos a la API...');
