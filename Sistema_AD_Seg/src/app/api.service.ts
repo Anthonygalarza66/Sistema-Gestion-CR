@@ -324,7 +324,6 @@ export class ApiService {
       .pipe(
         catchError(this.handleError)
       );
-      
   }
 
    // Obtener usuarios con perfil y rol de seguridad
@@ -342,6 +341,15 @@ export class ApiService {
 
   checkCorreo(correo: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/residentes/check-correo/${correo}`)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  // Método para enviar correos
+  sendEmail(emailData: any): Observable<any> {
+    console.log('Enviando correo con datos:', emailData);
+    return this.http.post<any>(`${this.apiUrl}/enviar-correo`, emailData, this.httpOptions)
       .pipe(
         catchError(this.handleError)
       );
