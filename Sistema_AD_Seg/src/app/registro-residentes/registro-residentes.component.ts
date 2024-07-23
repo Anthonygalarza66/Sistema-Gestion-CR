@@ -26,6 +26,8 @@ export class RegistroResidentesComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      this.username = localStorage.getItem('username') || 'Invitado';
     this.apiService.getResidentes().subscribe((data: any) => {
       this.residentes = data.map((residente: any) => ({
         ...residente,
@@ -34,6 +36,8 @@ export class RegistroResidentesComponent implements OnInit {
       }));
     });
   }
+  }
+
 
   loadResidentes(): void {
     console.log("Cargando residentes...");

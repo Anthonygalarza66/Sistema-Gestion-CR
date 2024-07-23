@@ -231,3 +231,14 @@ ul {
 .download-link{
   color: #066cda;
 }
+
+input[disabled] {
+  background-color: #f0f0f0; 
+}
+
+
+.disabled {
+  pointer-events: none; /* Deshabilita las interacciones con el campo */
+  background-color: #f0f0f0; /* Cambia el color de fondo para indicar deshabilitación */
+  color: #a0a0a0; /* Cambia el color del texto */
+}
