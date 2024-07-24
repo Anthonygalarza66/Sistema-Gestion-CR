@@ -4,6 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { QRCodeModule } from 'angularx-qrcode';
 import { NgxScannerQrcodeModule } from 'ngx-scanner-qrcode';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { HttpClientModule, provideHttpClient, withFetch } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
+import { NgxPaginationModule } from 'ngx-pagination';
+
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -24,6 +28,8 @@ import { LoginpasswordComponent } from './loginpassword/loginpassword.component'
 import { GestionusuarioComponent } from './gestionusuario/gestionusuario.component';
 import { RegistroUsuarioComponent } from './registro-usuario/registro-usuario.component';
 import { LectorQrComponent } from './lector-qr/lector-qr.component';
+import { AccessDeniedComponent } from './access-denied/access-denied.component';
+import { RolePipe } from './role.pipe';
 
 @NgModule({
   declarations: [
@@ -44,7 +50,9 @@ import { LectorQrComponent } from './lector-qr/lector-qr.component';
     LoginpasswordComponent,
     GestionusuarioComponent,
     RegistroUsuarioComponent,
-    LectorQrComponent
+    LectorQrComponent,
+    AccessDeniedComponent,
+    RolePipe
   ],
   imports: [
     BrowserModule,
@@ -53,11 +61,15 @@ import { LectorQrComponent } from './lector-qr/lector-qr.component';
     QRCodeModule,
     NgxScannerQrcodeModule,
     BrowserAnimationsModule,
+    CommonModule,
+    HttpClientModule,
+    NgxPaginationModule
     
     
   ],
   providers: [
-    provideClientHydration()
+    provideClientHydration(),
+    provideHttpClient(withFetch())
   ],
   bootstrap: [AppComponent]
 })

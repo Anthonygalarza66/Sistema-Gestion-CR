@@ -1,6 +1,9 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-
+import { Component, OnInit } from "@angular/core";
+import { Router } from "@angular/router";
+import { ApiService } from "../api.service";
+import { PLATFORM_ID, Inject } from "@angular/core";
+import { isPlatformBrowser } from "@angular/common";
+import * as XLSX from "xlsx";
 
 @Component({
   selector: 'app-registro-alicuotas',
@@ -8,19 +11,64 @@ import { Router } from '@angular/router';
   styleUrl: './registro-alicuotas.component.css'
 })
 export class RegistroAlicuotasComponent {
-  username: string = "Admin"; 
-  private loggedIn = false;
-
-
-  constructor(private router: Router) {}
-
-  logout() {
-    this.loggedIn = false; // Marcar al usuario como no autenticado
   
-    // Redirige a la página de inicio de sesión
-    this.router.navigate(['/login']);
+  username: string = ""; // Inicialmente vacío
+  p: number = 1; // Página actual de paginacion
+  private loggedIn = false;
+  filtro: string = "";
 
+  nuevoAlicuota: any = {
+    id_residente: null,
+    fecha: '',
+    mes: '',
+    monto_por_cobrar: null
+  };
+
+  validationErrors: any = {};
+  residentes: any[] = []; // Lista de residentes
+
+  constructor(private router: Router, private apiService: ApiService ,@Inject(PLATFORM_ID) private platformId: Object) {}
+
+  ngOnInit(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      this.username = localStorage.getItem('username') || 'Invitado';
+    };
+    this.loadResidentes(); // Cargar residentes al inicializar el componente
   }
 
+  loadResidentes(): void {
+    this.apiService.getResidentes().subscribe(
+      (data: any[]) => {
+        this.residentes = data;
+      },
+      (error) => {
+        console.error('Error al obtener residentes:', error);
+      }
+    );
+  }
+
+  // Método para manejar el envío del formulario
+  guardar() {
+    this.apiService.createAlicuota(this.nuevoAlicuota).subscribe(
+      (response) => {
+        console.log('Alicuota creada:', response);
+        this.router.navigate(['alicuotas']);
+      },
+      (error) => {
+        console.error('Error al crear Alicuota:', error);
+        if (error.status === 422) {
+          this.validationErrors = error.error.errors;
+        } else {
+          this.validationErrors = { general: 'Ocurrió un error inesperado. Por favor, inténtelo de nuevo más tarde.' };
+        }
+      }
+    );
+  }
+
+  logout() {
+    this.loggedIn = false;
+    localStorage.removeItem('username'); // Limpiar nombre de usuario del localStorage
+    this.router.navigate(['/login']); // Redirige a la página de inicio de sesión
+  }
 
 }

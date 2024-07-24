@@ -1,6 +1,11 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import * as XLSX from 'xlsx'; 
+import { Component, OnInit } from "@angular/core";
+import { Router } from "@angular/router";
+import { ApiService } from "../api.service";
+import { PLATFORM_ID, Inject } from "@angular/core";
+import { isPlatformBrowser } from "@angular/common";
+import * as XLSX from "xlsx";
+import { RolePipe } from "../role.pipe";
+
 
 @Component({
   selector: 'app-eventos',
@@ -8,87 +13,105 @@ import * as XLSX from 'xlsx';
   styleUrl: './eventos.component.css'
 })
 export class EventosComponent {
-  username: string = "Admin"; 
+
+  username: string = ""; // Inicialmente vacío
+  p: number = 1; // Página actual de paginacion
   private loggedIn = false;
-  filtro: string = '';
+  filtro: string = "";
 
  
-  nombre: string = '';
-  apellido: string = '';
-  celular: string = '';
-  cedula: string = '';
-  nombreEvento: string = '';
-  direccionEvento: string = '';
-  cantidadVehiculos?: number  ;
-  cantidadPersonas?: number ;
-  tipoEvento: string = '';
-  fechaHora: string = '';
-  duracionEvento: string = '';
-  observaciones: string = '';
-  invitados?: File ;
+  eventos: any[] = [];
 
-  data = [
-    {
-    nombre: 'Juan',
-    apellido: 'Pérez',
-    celular: '123456789',
-    cedula: '0011223344',
-    nombreEvento: 'Conferencia de Tecnología',
-    direccionEvento: 'Centro de Convenciones',
-    cantidadVehiculos: 10,
-    cantidadPersonas: 200,
-    tipoEvento: 'Conferencia',
-    fechaHora: '2023-07-01T09:00',
-    duracionEvento: '4 horas',
-    observaciones: 'Requiere proyector y sonido',
-    invitados: null
-    },
 
-    {
-      nombre: 'Ana',
-      apellido: 'Pérez',
-      celular: '45897',
-      cedula: '0011223344',
-      nombreEvento: 'Conferencia de Tecnología',
-      direccionEvento: 'Centro de Convenciones',
-      cantidadVehiculos: 10,
-      cantidadPersonas: 200,
-      tipoEvento: 'Conferencia',
-      fechaHora: '2023-07-01T09:00',
-      duracionEvento: '4 horas',
-      observaciones: 'Requiere proyector y sonido',
-      invitados: null
+  constructor(
+    private router: Router,
+    private apiService: ApiService,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {}
+
+  ngOnInit(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      this.username = localStorage.getItem("username") || "Invitado";
+    }
+    this.loadEventos();
+  }
+
+  loadEventos(): void {
+    console.log("Cargando Eventos...");
+    this.apiService.getEventos().subscribe(
+      (data: any[]) => {
+        console.log("Datos recibidos:", data);
+        this.eventos = data;
       },
-    
-  ];
+      (error) => {
+        console.error("Error al obtener eventos:", error);
+      }
+    );
+  }
 
-  constructor(private router: Router) {}
-
-  logout() {
-    this.loggedIn = false; // Marcar al usuario como no autenticado
-  
-    // Redirige a la página de inicio de sesión
-    this.router.navigate(['/login']);
-
+  logout(): void {
+    this.loggedIn = false;
+    localStorage.removeItem("username"); // Limpiar nombre de usuario del localStorage
+    this.router.navigate(["/login"]); // Redirige a la página de inicio de sesión
   }
 
   exportarExcel(): void {
-    console.log('Exportando a Excel...');
-    const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(document.getElementById('eventos'));
+    console.log("Exportando a Excel...");
+    if (this.eventos.length === 0) {
+      console.warn("No hay datos para exportar");
+      return;
+    }
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.eventos);
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'eventos');
-    XLSX.writeFile(wb, 'eventos.xlsx');
- 
+    XLSX.utils.book_append_sheet(wb, ws, "Eventos");
+    XLSX.writeFile(wb, "Listado_Eventos.xlsx");
   }
-  filtrar() {
-    return this.data.filter(row =>
-      row.nombre.toLowerCase().includes(this.filtro.toLowerCase()) ||
-      row.apellido.toLowerCase().includes(this.filtro.toLowerCase()) ||
-      row.cedula.toLowerCase().includes(this.filtro.toLowerCase()) ||
-      row.nombreEvento.toLowerCase().includes(this.filtro.toLowerCase()) ||
-      row.tipoEvento.toLowerCase().includes(this.filtro.toLowerCase()) ||
-      row.fechaHora.toLowerCase().includes(this.filtro.toLowerCase()) ||
-      row.direccionEvento.toLowerCase().includes(this.filtro.toLowerCase())
+
+  filtrar(): any[] {
+    const filtroLower = this.filtro.toLowerCase();
+    return this.eventos.filter(row =>
+      row.nombre.toLowerCase().includes(filtroLower) ||
+      row.apellidos.toLowerCase().includes(filtroLower) ||
+      row.cedula.toLowerCase().includes(filtroLower) ||
+      row.nombre_evento.toLowerCase().includes(filtroLower) ||
+      row.direccion_evento.toLowerCase().includes(filtroLower) ||
+      row.tipo_evento.toLowerCase().includes(filtroLower) ||
+      row.observaciones?.toLowerCase().includes(filtroLower) || 
+      row.invitados?.toLowerCase().includes(filtroLower) 
     );
   }
+
+  // Métodos para editar y eliminar eventos
+  editEventos(id: number): void {
+    console.log("Editando Evento con ID:", id);
+    this.router.navigate(["/formulario-evento", id]);
+  }
+
+  deleteEventos(id: number): void {
+    const confirmDeletion = window.confirm("¿Está seguro de eliminar este evento?");
+    if (confirmDeletion) {
+      console.log("Eliminando evento con ID:", id);
+      this.apiService.deleteEvento(id).subscribe(
+        () => {
+          console.log("Evento eliminado con éxito");
+          this.loadEventos(); // Volver a cargar la lista de eventos después de la eliminación
+        },
+        (error) => {
+          console.error("Error al eliminar evento:", error);
+        }
+      );
+    } else {
+      console.log("Eliminación cancelada");
+    }
+  }
+
+  getFileUrl(filename: string): string {
+    return this.apiService.getFileUrl(filename);
+  }
+
+  isRole(role: string): boolean {
+    const userRole = localStorage.getItem('role');
+    return userRole === role;
+  }
+  
 }

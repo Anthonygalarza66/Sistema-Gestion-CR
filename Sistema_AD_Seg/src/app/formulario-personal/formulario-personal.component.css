@@ -1,8 +1,4 @@
-body {
-    margin: 0;
-    padding: 0;
-    font-family: Didot, "Didot LT STD", "Hoefler Text", Garamond, "Times New Roman", serif; font-size: 20px; font-style: normal; font-variant: normal; font-weight: 700; line-height: 26.4px;
-   }
+
 
   span{
     padding-top: 10px; 
@@ -160,55 +156,78 @@ ul {
     margin-bottom: 2%;
   }
 
-.formulario {
-    justify-content:center;
-    align-items: center; 
-}
-
-
-.container {
-  width: 90%;
-  margin: 0 auto;
-  padding: 20px;
-  margin-left: 7%;
-  margin-top: 1%;
-}
-
-.form {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-}
-
-.form-group label {
-  margin-bottom: 5px;
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea {
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  resize: none;
-}
-
-.btn {
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-top: 2%;
-}
-
-.btn:hover {
-  background-color: #066cda;
-}
+  .formulario {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 5px;
+  }
+  
+  .contenedor {
+    width: 90%;
+    margin: 0 auto;
+    padding: 15px;
+  }
+  
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+  }
+  
+  .col {
+    flex: 1;
+    margin-right: 10px;
+    max-width: 45%;
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 5px;
+  }
+  
+  .form-group label {
+    margin-bottom: 5px;
+  }
+  
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 90%;
+    box-sizing: border-box;
+  }
+  
+  .form-group textarea {
+    resize: none;
+  }
+  
+  .observaciones-row {
+    margin-top: 5px;
+  }
+  
+  .btn {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    align-self: flex-start;
+    margin-top: 5px;
+  }
+  
+  .btn:hover {
+    background-color: #066cda;
+  }
+  
 

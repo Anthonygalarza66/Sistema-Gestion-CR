@@ -17,28 +17,29 @@ import { LoginpasswordComponent } from './loginpassword/loginpassword.component'
 import { GestionusuarioComponent } from './gestionusuario/gestionusuario.component';
 import { RegistroUsuarioComponent } from './registro-usuario/registro-usuario.component';
 import { LectorQrComponent } from './lector-qr/lector-qr.component';
-
-
+import { authGuard } from './auth.guard';
+import { AccessDeniedComponent } from './access-denied/access-denied.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' } ,// Redirigir la ruta por defecto 
   { path: "login", component: LoginComponent, pathMatch: "full" },
-  { path: 'registro-control', component: RegistroControlComponent, pathMatch: "full" },
-  { path: 'formulario-control', component: FormularioControlComponent, pathMatch: "full" },
-  { path: 'registro-personal', component: RegistroPersonalComponent, pathMatch: "full" },
-  { path: 'formulario-personal', component: FormularioPersonalComponent, pathMatch: "full" },
-  { path: 'registro-residentes', component: RegistroResidentesComponent, pathMatch: "full" },
-  { path: 'formulario-residentes', component: FormularioResidentesComponent, pathMatch: "full" },
-  { path: 'eventos', component: EventosComponent, pathMatch: "full" },
-  { path: 'registro-evento', component: RegistroEventoComponent, pathMatch: "full" },
-  { path: 'registro-visitantes', component: RegistroVisitantesComponent, pathMatch: "full" },
-  { path: 'registro-alicuotas', component: RegistroAlicuotasComponent, pathMatch: "full" },
-  { path: 'alicuotas', component: AlicuotasComponent, pathMatch: "full" },
-  { path: 'notificaciones', component: NotificacionesComponent, pathMatch: "full" },
+  { path: 'registro-control', component: RegistroControlComponent, pathMatch: "full" ,canActivate: [authGuard] },
+  { path: 'formulario-control', component: FormularioControlComponent, pathMatch: "full",canActivate: [authGuard]  },
+  { path: 'registro-personal', component: RegistroPersonalComponent, pathMatch: "full", canActivate: [authGuard]  },
+  { path: 'formulario-personal', component: FormularioPersonalComponent, pathMatch: "full",canActivate: [authGuard]  },
+  { path: 'registro-residentes', component: RegistroResidentesComponent, pathMatch: "full" ,canActivate: [authGuard] },
+  { path: 'formulario-residentes', component: FormularioResidentesComponent, pathMatch: "full",canActivate: [authGuard]  },
+  { path: 'eventos', component: EventosComponent, pathMatch: "full" , canActivate: [authGuard] },
+  { path: 'registro-evento', component: RegistroEventoComponent, pathMatch: "full", canActivate: [authGuard]  },
+  { path: 'registro-visitantes', component: RegistroVisitantesComponent, pathMatch: "full", canActivate: [authGuard]  },
+  { path: 'registro-alicuotas', component: RegistroAlicuotasComponent, pathMatch: "full", canActivate: [authGuard]  },
+  { path: 'alicuotas', component: AlicuotasComponent, pathMatch: "full", canActivate: [authGuard] },
+  { path: 'notificaciones', component: NotificacionesComponent, pathMatch: "full", canActivate: [authGuard] },
   { path: 'loginpassword' , component: LoginpasswordComponent, pathMatch: "full"},
-  { path: 'gestionusuario' , component: GestionusuarioComponent, pathMatch: "full"},
-  { path: 'registro-usuario' , component: RegistroUsuarioComponent, pathMatch: "full"},
-  { path: 'lector-qr' , component: LectorQrComponent, pathMatch: "full"}
+  { path: 'gestionusuario' , component: GestionusuarioComponent, pathMatch: "full", canActivate: [authGuard] },
+  { path: 'registro-usuario' , component: RegistroUsuarioComponent, pathMatch: "full", canActivate: [authGuard] },
+  { path: 'lector-qr' , component: LectorQrComponent, pathMatch: "full" , canActivate: [authGuard] },
+  { path: 'access-denied', component: AccessDeniedComponent },
 ];
 
 @NgModule({

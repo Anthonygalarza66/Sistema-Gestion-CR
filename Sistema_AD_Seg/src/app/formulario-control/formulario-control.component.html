@@ -53,25 +53,25 @@
   </div>
 </nav>
 <div class="formulario">
-  <h2>Registro de control de acceso: </h2>
+  <h2>Registro de control de acceso:</h2>
   <div class="container">
-    <form class="form">
+    <form class="form" (ngSubmit)="guardar()" #controlForm="ngForm">
       <div class="row">
         <div class="form-group col">
           <label for="nombre">Nombre<span class="text-danger"> :</span></label>
-          <input type="text" id="nombre" name="nombre" placeholder="Ingrese nombre" required>
+          <input type="text" id="nombre" name="nombre" placeholder="Ingrese nombre" required [(ngModel)]="nuevoControl.nombre">
         </div>
         <div class="form-group col">
           <label for="apellido">Apellidos<span class="text-danger"> :</span></label>
-          <input type="text" id="apellido" name="apellido" placeholder="Ingrese apellidos" required>
+          <input type="text" id="apellido" name="apellido" placeholder="Ingrese apellidos" required [(ngModel)]="nuevoControl.apellidos">
         </div>
         <div class="form-group col">
           <label for="identificacion">Cédula<span class="text-danger"> :</span></label>
-          <input type="text" id="identificacion" name="identificacion" placeholder="ID / Pasaporte" required>
+          <input type="text" id="identificacion" name="identificacion" placeholder="ID / Pasaporte" required [(ngModel)]="nuevoControl.cedula">
         </div>
         <div class="form-group col">
           <label for="sexo">Sexo<span class="text-danger"> :</span></label>
-          <select id="sexo" name="sexo" required>
+          <select id="sexo" name="sexo" required [(ngModel)]="nuevoControl.sexo">
             <option value="">Seleccione</option>
             <option value="M">Masculino</option>
             <option value="F">Femenino</option>
@@ -81,16 +81,16 @@
       <div class="row">
         <div class="form-group col">
           <label for="placas">Placas<span class="text-danger"> :</span></label>
-          <input type="text" id="placas" name="placas" placeholder="">
+          <input type="text" id="placas" name="placas" placeholder="" [(ngModel)]="nuevoControl.placas">
         </div>
         <div class="form-group col">
           <label for="direccion">Dirección<span class="text-danger"> :</span></label>
-          <input type="text" id="direccion" name="direccion" placeholder="Mz / V">
+          <input type="text" id="direccion" name="direccion" placeholder="Mz / V" [(ngModel)]="nuevoControl.direccion">
         </div>
         <div class="form-group col">
-          <label for="Ingresante">Ingresante<span class="text-danger"> :</span></label>
-          <select id="Ingresante" name="Ingresante">
-            <option value=""  disabled selected >Seleccione</option>
+          <label for="ingresante">Ingresante<span class="text-danger"> :</span></label>
+          <select id="ingresante" name="ingresante" [(ngModel)]="nuevoControl.ingresante">
+            <option value="" disabled>Seleccione</option>
             <option value="Residente">Residente</option>
             <option value="Visitante">Visitante</option>
             <option value="Delivery">Delivery</option>
@@ -100,19 +100,29 @@
       <div class="row">
         <div class="form-group col">
           <label for="fechaingreso">Fecha de Ingreso:<span class="text-danger"> :</span></label>
-          <input type="datetime-local" id="fechaingreso" name="fechaingreso">
+          <input type="datetime-local" id="fechaingreso" name="fecha_ingreso" [(ngModel)]="nuevoControl.fecha_ingreso">
         </div>
         <div class="form-group col">
           <label for="fechasalida">Fecha de Salida:<span class="text-danger"> :</span></label>
-          <input type="datetime-local" id="fechasalida" name="fechasalida">
+          <input type="datetime-local" id="fechasalida" name="fecha_salida" [(ngModel)]="nuevoControl.fecha_salida">
         </div>
         <div class="form-group col-span-6">
-          <label for="Observaciones">Observaciones<span class="text-danger">*</span></label>
-          <textarea id="Observaciones" name="Observaciones" rows="3"></textarea>
+          <label for="observaciones">Observaciones<span class="text-danger">*</span></label>
+          <textarea id="observaciones" name="observaciones" rows="3" [(ngModel)]="nuevoControl.observaciones"></textarea>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col">
+          <label for="turno">Personal de Turno:<span class="text-danger"> :</span></label>
+          <select id="usuario" [(ngModel)]="nuevoControl.id_usuario" name="usuario" (change)="GuardarUsername($event)">
+            <option *ngFor="let usuario of usuariosSeguridad" [value]="usuario.id_usuario">
+              {{ usuario.username }}
+            </option>
+          </select>
         </div>
       </div>
     </form>
-    <button type="submit" class="btn btn-primary">Guardar</button>
+    <button type="submit" class="btn btn-primary" (click)="guardar()">Guardar</button>
     <a href="lector-qr" class="btn btn-info">Leer QR</a>
   </div>
 </div>
