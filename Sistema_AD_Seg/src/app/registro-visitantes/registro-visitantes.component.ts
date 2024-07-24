@@ -1,4 +1,5 @@
 import { Component, ElementRef, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -49,6 +50,10 @@ export class RegistroVisitantesComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
+    if (isPlatformBrowser(this.platformId)) {
+      this.username = localStorage.getItem('username') || 'Invitado';
+      console.log('Username desde localStorage:', this.username); // Verifica el valor aquí
+    } 
     this.cdr.detectChanges();
       console.log('qrcElement después de detectChanges:', this.qrcElement);
     }

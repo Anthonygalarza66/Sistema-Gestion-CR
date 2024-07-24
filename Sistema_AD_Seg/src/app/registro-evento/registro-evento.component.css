@@ -238,7 +238,21 @@ input[disabled] {
 
 
 .disabled {
-  pointer-events: none; /* Deshabilita las interacciones con el campo */
-  background-color: #f0f0f0; /* Cambia el color de fondo para indicar deshabilitación */
-  color: #a0a0a0; /* Cambia el color del texto */
+  pointer-events: none; 
+  background-color: #f0f0f0; 
+  color: #a0a0a0; 
+}
+.navbar-center {
+  flex-grow: 1; 
+  display: flex;
+  justify-content: center; 
+}
+
+h4 {
+  font-style: italic;
+  font-family: 'Times New Roman', Times, serif;
+  color: white; 
+  font-weight: bold; 
+  margin-left: 1%;
+  margin-top: 1%;
 }
