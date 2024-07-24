@@ -57,11 +57,12 @@
 <!-- Campo de búsqueda -->
 <input class="form-control" type="search" placeholder="Buscar.." [(ngModel)]="filtro">
 <!-- Botón para exportar a Excel -->
-<button class="btn-excel" (click)="exportarExcel()">
-<img src="./assets/excel.png" width="40" height="45" alt="Exportar a Excel">
-</button>
+<button *ngIf="'Excel' | role: 'Administracion'" class="btn-excel" (click)="exportarExcel()">
+  <img src="./assets/excel.png" width="40" height="45" alt="Exportar a Excel"></button>
 <!-- Enlace para crear un nuevo usuario -->
-<a href="registro-evento" class="btn-add">Agregar</a>
+<a [class.disabled]="isRole('Seguridad')" [attr.disabled]="isRole('Seguridad') ? true : null" href="registro-evento" class="btn-add">
+  Agregar
+</a>
 <div class="contenido">
    <!-- Tabla para mostrar los usuarios -->
    <div class="table-container">
@@ -82,7 +83,7 @@
             <th>Duración Evento</th>
             <th>Observaciones</th>
             <th>Invitados</th>
-            <th>Acciones</th>
+            <th *ngIf="'Acciones' | role: 'Administracion'">Acciones</th>
           </tr>
         </thead>
         <tbody id="listado">
@@ -107,9 +108,9 @@
                 No disponible
               </span>
             </td>
-            <td>
+            <td *ngIf="'Acciones' | role: 'Administracion'">
              <!-- Botones para editar y eliminar -->
-            <button class="btn-edit" (click)="editEventos(row.id_evento)">
+            <button class="btn-edit" (click)="editEventos(row.id_evento) ">
             <i class="fas fa-edit"></i>
             </button>
             <button class="btn-trash" (click)="deleteEventos(row.id_evento)">

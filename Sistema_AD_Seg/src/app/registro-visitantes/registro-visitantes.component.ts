@@ -95,14 +95,15 @@ export class RegistroVisitantesComponent implements AfterViewInit {
       }
     }, 500); // Ajusta el tiempo si es necesario
   }
-  
-  
+
 
   logout() {
-    this.loggedIn = false; // Marcar al usuario como no autenticado
-    // Redirige a la página de inicio de sesión
-    this.router.navigate(['/login']);
+    this.loggedIn = false;
+    localStorage.removeItem('username'); // Limpiar nombre de usuario del localStorage
+    localStorage.removeItem('role'); // Limpiar rol del localStorage
+    this.router.navigate(['/login']); // Redirige a la página de inicio de sesión
   }
+  
 
   enviarQR(): void {
 

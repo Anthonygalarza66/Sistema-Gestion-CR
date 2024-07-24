@@ -28,6 +28,8 @@ import { LoginpasswordComponent } from './loginpassword/loginpassword.component'
 import { GestionusuarioComponent } from './gestionusuario/gestionusuario.component';
 import { RegistroUsuarioComponent } from './registro-usuario/registro-usuario.component';
 import { LectorQrComponent } from './lector-qr/lector-qr.component';
+import { AccessDeniedComponent } from './access-denied/access-denied.component';
+import { RolePipe } from './role.pipe';
 
 @NgModule({
   declarations: [
@@ -48,7 +50,9 @@ import { LectorQrComponent } from './lector-qr/lector-qr.component';
     LoginpasswordComponent,
     GestionusuarioComponent,
     RegistroUsuarioComponent,
-    LectorQrComponent
+    LectorQrComponent,
+    AccessDeniedComponent,
+    RolePipe
   ],
   imports: [
     BrowserModule,

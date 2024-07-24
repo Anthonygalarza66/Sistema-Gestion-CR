@@ -58,11 +58,11 @@
     <!-- Campo de búsqueda -->
     <input class="form-control" type="search" placeholder="Buscar.." [(ngModel)]="filtro">
     <!-- Botón para exportar a Excel -->
-    <button class="btn-excel" (click)="exportarExcel()">
+    <button *ngIf="'Acciones' | role: 'Administracion'" class="btn-excel" (click)="exportarExcel()">
     <img src="./assets/excel.png" width="40" height="45" alt="Exportar a Excel">
     </button>
     <!-- Enlace para crear un nuevo residente -->  
-    <a href="formulario-residentes" class="btn-add">Agregar</a>
+    <a href="formulario-residentes" class="btn-add" *ngIf="'Acciones' | role: 'Administracion'">Agregar</a>
      <div class="contenido"> 
       <!-- Tabla para mostrar los usuarios -->
       <table mat-table id="Residentes">
@@ -80,7 +80,7 @@
             <th>Celular</th>
             <th>Dirección</th>
             <th>Observaciones</th>
-            <th>Acciones</th>
+            <th *ngIf="'Acciones' | role: 'Administracion'">Acciones</th>
           </tr>
         </thead>
         <tbody id="listado">
@@ -97,7 +97,7 @@
             <td>{{ row.celular }}</td>
             <td>{{ row.direccion }}</td>
             <td>{{ row.observaciones }}</td>
-            <td>
+            <td *ngIf="'Acciones' | role: 'Administracion'">
               <button class="btn-edit" (click)="editResidentes(row.id_residente)">
                 <i class="fas fa-edit"></i>
               </button>

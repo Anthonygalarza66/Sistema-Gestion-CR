@@ -37,14 +37,14 @@ export class RegistroUsuarioComponent {
   // Actualiza el rol basado en el perfil seleccionado
   updateRol() {
     const perfil = this.nuevoUsuario.perfil;
-    if (perfil === 'residente' || perfil === 'propietario') {
+    if (perfil === 'Residente' || perfil === 'Propietario') {
       this.nuevoUsuario.rol = 'Residente';
-    } else if (perfil === 'administracion') {
+    } else if (perfil === 'Administracion') {
       this.nuevoUsuario.rol = 'Administracion';
     } else if (perfil === 'Seguridad') {
       this.nuevoUsuario.rol = 'Seguridad';
     } else {
-      this.nuevoUsuario.rol = ''; // Opcional, para manejar casos no esperados
+      this.nuevoUsuario.rol = '';  
     }
   }
 
@@ -76,7 +76,9 @@ export class RegistroUsuarioComponent {
   logout() {
     this.loggedIn = false;
     localStorage.removeItem('username'); // Limpiar nombre de usuario del localStorage
+    localStorage.removeItem('role'); // Limpiar rol del localStorage
     this.router.navigate(['/login']); // Redirige a la página de inicio de sesión
   }
+  
 
 }

@@ -19,10 +19,12 @@ export class LectorQrComponent implements AfterViewInit {
 
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object, private router: Router, private apiService: ApiService) {}
+  
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       this.username = localStorage.getItem('username') || 'Invitado';
-    }
+      console.log('Username desde localStorage:', this.username); // Verifica el valor aquí
+    } 
   }
 
   ngAfterViewInit(): void {
@@ -60,11 +62,12 @@ export class LectorQrComponent implements AfterViewInit {
   }
 
   logout() {
-    this.loggedIn = false; // Marcar al usuario como no autenticado
-  
-    // Redirige a la página de inicio de sesión
-    this.router.navigate(['/login']);
+    this.loggedIn = false;
+    localStorage.removeItem('username'); // Limpiar nombre de usuario del localStorage
+    localStorage.removeItem('role'); // Limpiar rol del localStorage
+    this.router.navigate(['/login']); // Redirige a la página de inicio de sesión
   }
+  
 
   guardarDatosEnTabla() {
     if (!this.parsedData.nombre || !this.parsedData.apellido || !this.parsedData.cedula || !this.parsedData.direccion || !this.parsedData.fecha || !this.parsedData.hora || !this.parsedData.placa) {

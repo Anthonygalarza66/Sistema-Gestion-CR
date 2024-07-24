@@ -52,11 +52,12 @@ export class RegistroResidentesComponent implements OnInit {
     );
   }
 
-  logout() {
-    this.loggedIn = false;
-    localStorage.removeItem("username"); // Limpiar nombre de usuario del localStorage
-    this.router.navigate(["/login"]); // Redirige a la página de inicio de sesión
-  }
+logout() {
+  this.loggedIn = false;
+  localStorage.removeItem('username'); // Limpiar nombre de usuario del localStorage
+  localStorage.removeItem('role'); // Limpiar rol del localStorage
+  this.router.navigate(['/login']); // Redirige a la página de inicio de sesión
+}
 
   exportarExcel(): void {
     console.log("Exportando a Excel...");

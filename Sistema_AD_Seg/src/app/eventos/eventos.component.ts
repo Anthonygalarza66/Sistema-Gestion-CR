@@ -4,6 +4,8 @@ import { ApiService } from "../api.service";
 import { PLATFORM_ID, Inject } from "@angular/core";
 import { isPlatformBrowser } from "@angular/common";
 import * as XLSX from "xlsx";
+import { RolePipe } from "../role.pipe";
+
 
 @Component({
   selector: 'app-eventos',
@@ -107,4 +109,9 @@ export class EventosComponent {
     return this.apiService.getFileUrl(filename);
   }
 
+  isRole(role: string): boolean {
+    const userRole = localStorage.getItem('role');
+    return userRole === role;
+  }
+  
 }
