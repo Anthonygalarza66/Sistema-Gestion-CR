@@ -7,6 +7,13 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule, provideHttpClient, withFetch } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { ReactiveFormsModule } from '@angular/forms';
 
 
 import { AppRoutingModule } from './app-routing.module';
@@ -30,6 +37,7 @@ import { RegistroUsuarioComponent } from './registro-usuario/registro-usuario.co
 import { LectorQrComponent } from './lector-qr/lector-qr.component';
 import { AccessDeniedComponent } from './access-denied/access-denied.component';
 import { RolePipe } from './role.pipe';
+import { EditarControlDialogoComponent } from './editar-control-dialogo/editar-control-dialogo.component';
 
 @NgModule({
   declarations: [
@@ -52,7 +60,8 @@ import { RolePipe } from './role.pipe';
     RegistroUsuarioComponent,
     LectorQrComponent,
     AccessDeniedComponent,
-    RolePipe
+    RolePipe,
+    EditarControlDialogoComponent
   ],
   imports: [
     BrowserModule,
@@ -63,9 +72,15 @@ import { RolePipe } from './role.pipe';
     BrowserAnimationsModule,
     CommonModule,
     HttpClientModule,
-    NgxPaginationModule
-    
-    
+    NgxPaginationModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    ReactiveFormsModule,
+  
   ],
   providers: [
     provideClientHydration(),

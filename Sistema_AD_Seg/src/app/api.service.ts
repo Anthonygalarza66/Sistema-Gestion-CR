@@ -287,19 +287,16 @@ export class ApiService {
   }
 
   // Método para actualizar un registro de control de acceso existente
-  updateControlAcceso(id: number, controlAcceso: FormData): Observable<any> {
-    console.log(
-      `Enviando datos para actualizar control de acceso con ID ${id}:`,
-      controlAcceso
-    );
-    return this.http
-      .put<any>(`${this.apiUrl}/${id}`, controlAcceso, {
-        headers: new HttpHeaders({
-          // Aquí puedes agregar otros encabezados si es necesario
-        }),
-      })
-      .pipe(catchError(this.handleError));
+  updateControlAcceso(id: number, controlAcceso: any): Observable<any> {
+    console.log(`Enviando datos para actualizar control de acceso con ID ${id}:`, controlAcceso);
+    return this.http.put<any>(
+      `${this.apiUrl}/control-acceso/${id}`,
+      controlAcceso,
+      { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) }
+    ).pipe(catchError(this.handleError));
   }
+  
+  
 
   // Método para guardar (crear o actualizar) un registro de control de acceso
   guardarControlAcceso(controlAcceso: any): Observable<any> {

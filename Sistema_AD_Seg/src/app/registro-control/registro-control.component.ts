@@ -4,6 +4,9 @@ import { ApiService } from "../api.service";
 import { PLATFORM_ID, Inject } from "@angular/core";
 import { isPlatformBrowser } from "@angular/common";
 import * as XLSX from "xlsx";
+import { MatDialog } from '@angular/material/dialog';
+import { EditarControlDialogoComponent } from "../editar-control-dialogo/editar-control-dialogo.component";
+
 
 @Component({
   selector: 'app-registro-control',
@@ -22,6 +25,7 @@ export class RegistroControlComponent {
 
   constructor(
     private router: Router,
+    private dialog: MatDialog,
     private apiService: ApiService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
@@ -102,9 +106,36 @@ logout() {
   }  
 
   editControl(id: number): void {
-    console.log("Editando control de acceso con ID:", id);
-    this.router.navigate(["/formulario-control", id]);
+    this.apiService.getControlAccesoById(id).subscribe(data => {
+      const dialogRef = this.dialog.open(EditarControlDialogoComponent, {
+        width: '500px',
+        panelClass: 'custom-dialog',
+        data: data
+      });
+  
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          // Verificar y ajustar el formato de los datos si es necesario
+          const updatedData = {
+            ...result,
+            fecha_ingreso: new Date(result.fecha_ingreso).toISOString(),
+            fecha_salida: result.fecha_salida ? new Date(result.fecha_salida).toISOString() : null
+          };
+  
+          this.apiService.updateControlAcceso(id, updatedData).subscribe(
+            response => {
+              console.log('Control de acceso actualizado', response);
+              this.loadControlAcceso(); // Recargar datos
+            },
+            error => {
+              console.error('Error al actualizar control de acceso:', error);
+            }
+          );
+        }
+      });
+    });
   }
+  
 
   deleteControl(id: number): void {
     const confirmDeletion = window.confirm(
