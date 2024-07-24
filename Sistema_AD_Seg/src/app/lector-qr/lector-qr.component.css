@@ -210,3 +210,33 @@ body {
   .guardar-button:hover {
     background-color: #065326;
   }
+  .navbar-center {
+    flex-grow: 1; 
+    display: flex;
+    justify-content: center; 
+  }
+
+  h4 {
+    font-style: italic;
+    font-family: 'Times New Roman', Times, serif;
+    color: white; 
+    font-weight: bold; 
+    margin-left: 1%;
+    margin-top: 1%;
+  }
+  
+  .navbar-center {
+    flex-grow: 1; 
+    display: flex;
+    justify-content: center; 
+  }
+
+  h4 {
+    font-style: italic;
+    font-family: 'Times New Roman', Times, serif;
+    color: white; 
+    font-weight: bold; 
+    margin-left: 1%;
+    margin-top: 1%;
+  }
+  
