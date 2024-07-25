@@ -29,9 +29,8 @@ export class RegistroVisitantesComponent implements AfterViewInit {
   public placas: string='';
   public Observaciones: string='';
 
-  public email: string = 'fremi_20@hotmail.com';
-  public subject: string = 'Asunto del Correo'; // Asunto del correo
-  public text: string = 'Texto del correo'; // Texto del correo
+  public validationErrors: any = {};
+
 
   @ViewChild('qrcElement', { static: false }) qrcElement!: ElementRef;
   @ViewChild('qrContainer') qrContainer!: ElementRef;
@@ -60,7 +59,7 @@ export class RegistroVisitantesComponent implements AfterViewInit {
     
 
   generarQR() {
-    const datosQR = `${this.nombre};${this.apellido};${this.identificacion};${this.direccion};${this.nombreEvento};${this.fecha};${this.hora};${this.placas};${this.Observaciones}`;
+    const datosQR = `${this.nombre};${this.apellido};${this.identificacion};${this.direccion};${this.fecha};${this.hora};${this.placas};${this.Observaciones}`;
     this.qrdata = datosQR;
   }
 
@@ -108,7 +107,49 @@ export class RegistroVisitantesComponent implements AfterViewInit {
     localStorage.removeItem('role'); // Limpiar rol del localStorage
     this.router.navigate(['/login']); // Redirige a la página de inicio de sesión
   }
-  
+
+  validateCedula() {
+    const cedula = this.identificacion;
+
+    if (cedula.length !== 10) {
+      this.validationErrors.cedula = ["La cédula debe tener 10 dígitos."];
+      return;
+    }
+
+    const digitoRegion = parseInt(cedula.substring(0, 2), 10);
+    if (digitoRegion < 1 || digitoRegion > 24) {
+      this.validationErrors.cedula = ["Esta cédula no pertenece a ninguna región."];
+      return;
+    }
+
+    const ultimoDigito = parseInt(cedula.substring(9, 10), 10);
+    const pares = parseInt(cedula.substring(1, 2), 10) + parseInt(cedula.substring(3, 4), 10) +
+                  parseInt(cedula.substring(5, 6), 10) + parseInt(cedula.substring(7, 8), 10);
+
+    const numeroImpar = (num: string) => {
+      let n = parseInt(num, 10) * 2;
+      return n > 9 ? n - 9 : n;
+    };
+
+    const impares = numeroImpar(cedula[0]) + numeroImpar(cedula[2]) + numeroImpar(cedula[4]) +
+                    numeroImpar(cedula[6]) + numeroImpar(cedula[8]);
+
+    const sumaTotal = pares + impares;
+    const primerDigitoSuma = parseInt(sumaTotal.toString().substring(0, 1), 10);
+    const decena = (primerDigitoSuma + 1) * 10;
+    let digitoValidador = decena - sumaTotal;
+
+    if (digitoValidador === 10) {
+      digitoValidador = 0;
+    }
+
+    if (digitoValidador !== ultimoDigito) {
+      this.validationErrors.cedula = ["La cédula es incorrecta."];
+    } else {
+      this.validationErrors.cedula = [];
+      console.log('La cédula es correcta');
+    }
+  }
 
   enviarQR(): void {
 

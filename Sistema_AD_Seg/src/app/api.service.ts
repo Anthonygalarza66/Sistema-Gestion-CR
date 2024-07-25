@@ -296,7 +296,6 @@ export class ApiService {
     ).pipe(catchError(this.handleError));
   }
   
-  
 
   // Método para guardar (crear o actualizar) un registro de control de acceso
   guardarControlAcceso(controlAcceso: any): Observable<any> {
@@ -348,6 +347,36 @@ export class ApiService {
       .pipe(catchError(this.handleError));
   }
 
+  checkCedulaPersonal(cedula: string): Observable<any> {
+    return this.http
+      .get<any>(`${this.apiUrl}/personal/check-cedula-personal/${cedula}`)
+      .pipe(catchError(this.handleError));
+  }
+
+  checkCorreoPersonal(correo: string): Observable<any> {
+    return this.http
+      .get<any>(`${this.apiUrl}/personal/check-correo-personal/${correo}`)
+      .pipe(catchError(this.handleError));
+  }
+  checkCelularPersonal(celular: string): Observable<any> {
+       return this.http
+      .get<any>(`${this.apiUrl}/personal/check-celular/${celular}`)
+      .pipe(catchError(this.handleError));
+  }
+
+  checkCorreoUsuarios(correo: string): Observable<any> {
+    return this.http
+      .get<any>(`${this.apiUrl}/usuarios/check-correo-usuarios/${correo}`)
+      .pipe(catchError(this.handleError));
+  }
+
+  checkCelularR(celular: string): Observable<any> {
+    return this.http
+      .get<any>(`${this.apiUrl}/residentes/check-celularR/${celular}`)
+      .pipe(catchError(this.handleError));
+  }
+
+
   // Método para enviar correos
   sendEmail(emailData: any): Observable<any> {
     console.log("Enviando correo con datos:", emailData);
@@ -355,6 +384,7 @@ export class ApiService {
       .post<any>(`${this.apiUrl}/enviar-correo`, emailData, this.httpOptions)
       .pipe(catchError(this.handleError));
   }
+
 
   // Manejo de errores
   handleError(error: HttpErrorResponse): Observable<never> {
