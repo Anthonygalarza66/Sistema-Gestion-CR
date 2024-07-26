@@ -36,6 +36,10 @@ export class ApiService {
       );
   }
 
+  getUserIdByUsername(username: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/usuarios/username/${username}`);
+  }
+
   // Método para obtener todos los usuarios
   getUsuarios(): Observable<any> {
     console.log("Solicitando usuarios a la API...");
@@ -137,6 +141,11 @@ export class ApiService {
       .get<any>(`${this.apiUrl}/alicuotas/${id}`)
       .pipe(catchError(this.handleError));
   }
+  
+  getAlicuotasByUser(id_usuario: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/alicuotas/user/${id_usuario}`)
+      .pipe(catchError(this.handleError));
+} 
 
   // Método para crear una nueva alícuota
   createAlicuota(alicuota: any): Observable<any> {
@@ -402,4 +411,16 @@ export class ApiService {
   getFileUrl(filename: string): string {
     return `${this.apiUrl}/uploads/${filename}`;
   }
+
+  updateEventoEstado(id: number, nuevoEstado: string): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/eventos/${id}/estado`, { estado: nuevoEstado });
+  }
+
+  getUserIdByEmail(correoElectronico: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/usuarios/getUserIdByEmail`, { correo_electronico: correoElectronico })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
 }

@@ -113,7 +113,16 @@
             <div *ngFor="let error of validationErrors.celular">{{ error }}</div>
           </div>
         </div>    
-        <div class="form-group col-span-2">
+        </div>
+      <div class="row">
+        <div class="form-group col">
+          <label for="correo_electronico">Email<span class="text-danger"> :</span></label>
+          <input type="email" id="correo_electronico" name="correo_electronico" placeholder="ejemplo@email.com" [(ngModel)]="nuevoPersonal.correo_electronico" (blur)="checkCorreoUsuarios()">
+          <div *ngIf="validationErrors.correo_electronico" class="text-danger">
+           <div *ngFor="let error of validationErrors.correo_electronico">{{ error }}</div>
+           </div>
+         </div>  
+        <div class="form-group col">
           <label for="observaciones">Observaciones<span class="text-danger">*</span></label>
           <textarea id="observaciones" name="observaciones" rows="3" [(ngModel)]="nuevoPersonal.observaciones"></textarea>
           <div *ngIf="validationErrors.observaciones" class="text-danger">{{ validationErrors.observaciones[0] }}</div>

@@ -21,6 +21,7 @@ export class EventosComponent {
 
  
   eventos: any[] = [];
+row: any;
 
 
   constructor(
@@ -106,12 +107,27 @@ export class EventosComponent {
   }
 
   getFileUrl(filename: string): string {
-    return this.apiService.getFileUrl(filename);
+    return this.apiService.getFileUrl(filename); 
   }
 
   isRole(role: string): boolean {
     const userRole = localStorage.getItem('role');
     return userRole === role;
+  }
+
+  updateEstado(id: number, nuevoEstado: string): void {
+  this.apiService.updateEventoEstado(id, nuevoEstado).subscribe(
+    (evento) => {
+      // Actualiza el estado en el modelo de datos
+      const index = this.eventos.findIndex(e => e.id_evento === id);
+      if (index !== -1) {
+        this.eventos[index].estado = nuevoEstado;
+      }
+    },
+    (error) => {
+      console.error('Error al actualizar el estado:', error);
+    }
+  );
   }
   
 }

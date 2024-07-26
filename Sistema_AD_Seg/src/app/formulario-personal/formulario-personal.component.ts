@@ -14,6 +14,7 @@ export class FormularioPersonalComponent {
   username: string = ''; // Inicialmente vacío
   private loggedIn = false;
   nuevoPersonal: any = {
+    id_usuario: '', 
     nombre: '',
     apellido: '',
     cedula: '',
@@ -21,8 +22,9 @@ export class FormularioPersonalComponent {
     perfil: '',
     observaciones:'',
     celular:'',
+    correo_electronico: '',
   };
-
+ 
   validationErrors: any = {};
   cedulaExists: boolean = false;
   correoExists: boolean = false;
@@ -37,13 +39,20 @@ export class FormularioPersonalComponent {
     };
   }
 
+    // Verificar la disponibilidad del correo electrónico
+    checkCorreoUsuarios() {
+      if (!this.nuevoPersonal.correo_electronico) {
+        this.validationErrors.correo_electronico = ['El correo electrónico es obligatorio.'];
+        return;
+      }
+    }
+
   // Verificar la disponibilidad del número de celular
   checkCelularPersonal() {
     if (!this.nuevoPersonal.celular) {
       this.validationErrors.celular = ['El número de celular es obligatorio.'];
       return;
     }
-
     // Formatear el número de celular
     let celular = this.nuevoPersonal.celular;
     if (celular.length === 10 && celular.startsWith('0')) {
@@ -51,7 +60,6 @@ export class FormularioPersonalComponent {
     } else if (celular.length === 9) {
       celular = '+593' + celular;
     }
-
     // Guardar el formato formateado en el objeto nuevoPersonal
     this.nuevoPersonal.celular = celular;
 
@@ -162,18 +170,28 @@ export class FormularioPersonalComponent {
 
    // Método para manejar el envío del formulario
    guardar() {
-    this.apiService.createPersonal(this.nuevoPersonal).subscribe(
+    this.apiService.getUserIdByEmail(this.nuevoPersonal.correo_electronico).subscribe(
       (response) => {
-        console.log('Personal creado:', response);
-        this.router.navigate(['/registro-personal']);
+        this.nuevoPersonal.id_usuario = response.id_usuario;
+  
+        this.apiService.createPersonal(this.nuevoPersonal).subscribe(
+          (response) => {
+            console.log('Personal creado:', response);
+            this.router.navigate(['/registro-personal']);
+          },
+          (error) => {
+            console.error('Error al crear Personal:', error);
+            if (error.status === 422) {
+              this.validationErrors = error.error.errors;
+            } else {
+              this.validationErrors = { general: 'Ocurrió un error inesperado. Por favor, inténtelo de nuevo más tarde.' };
+            }
+          }
+        );
       },
       (error) => {
-        console.error('Error al crear Personal:', error);
-        if (error.status === 422) {
-          this.validationErrors = error.error.errors;
-        } else {
-          this.validationErrors = { general: 'Ocurrió un error inesperado. Por favor, inténtelo de nuevo más tarde.' };
-        }
+        console.error('Error al obtener id_usuario:', error);
+        this.validationErrors = { general: 'Error al obtener id_usuario.' };
       }
     );
   }

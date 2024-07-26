@@ -65,7 +65,7 @@
 </button>
 <!-- Enlace para crear un nuevo usuario -->
 <a *ngIf="'Acciones' | role: 'Administracion'" href="registro-alicuotas" class="btn-add">Agregar</a>
-<div class="contenido">
+<div class="contenido"> 
    <!-- Tabla para mostrar los usuarios -->
    <table  mat-table id="alicuota">
       <thead>
@@ -73,7 +73,6 @@
             <th>Solar</th>
             <th>M2</th>
             <th>Nombre</th>
-            <th>Apellido</th>
             <th>Cédula</th>
             <th>Dirección</th>
             <th>Fecha</th>
@@ -87,12 +86,11 @@
       <tbody id="listado">
       <!-- Filtro aplicado para mostrar los datos -->
       <tr *ngFor="let row of (filtrar() | paginate: { itemsPerPage: 5, currentPage: p })">
-               <td>{{ row.residente.solar }}</td>
-               <td>{{ row.residente.m2 }}</td>
-               <td>{{ row.residente.nombre }}</td>
-               <td>{{ row.residente.apellido }}</td>
-               <td>{{ row.residente.cedula }}</td>
-               <td>{{ row.residente.direccion }}</td>
+               <td>{{ row.residente?.solar }}</td>
+               <td>{{ row.residente?.m2 }}</td>
+               <td>{{ row.residente?.nombre }}{{ row.residente?.apellido }} </td>
+               <td>{{ row.residente?.cedula }}</td>
+               <td>{{ row.residente?.direccion }}</td>
                <td>{{ row.fecha | date:'yyyy/MM/dd'}}</td>
                <td>{{ row.mes }}</td>
                <td>{{ row.monto_por_cobrar }}</td>
@@ -101,7 +99,7 @@
                   {{ row.pagado ? 'Pagado' : 'No Pagado' }}
                 </span>
               </td>
-              <td>{{ getTotalAdeudado(row.residente.id_residente) }}</td>
+              <td>{{ getTotalAdeudado(row.residente?.id_residente) }}</td>
             <td *ngIf="'Acciones' | role: 'Administracion'">
           <!-- Boton para pagar deuda mensual -->
              <button class="btn-pagar" *ngIf="!row.pagado" (click)="marcarpago(row.id_alicuota)">
@@ -119,5 +117,5 @@
       </tbody>
    </table>
     <!-- Controles de paginación -->
-    <pagination-controls (pageChange)="p = $event"></pagination-controls>
+    <pagination-controls (pageChange)="p = $event" previousLabel="Anterior" nextLabel="Siguiente"></pagination-controls>
 </div>

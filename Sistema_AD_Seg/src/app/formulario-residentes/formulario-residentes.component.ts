@@ -17,6 +17,7 @@ export class FormularioResidentesComponent {
   filtro: string = "";
 
   nuevoResidente: any = {
+    id_usuario: '', 
     nombre: "",
     apellido: "",
     cedula: "",
@@ -159,7 +160,7 @@ checkCedula() {
     // Guardar el formato formateado en el objeto nuevoPersonal
     this.nuevoResidente.celular = celular;
 
-    this.apiService.checkCelularPersonal(celular).subscribe(
+    this.apiService.checkCelularR(celular).subscribe(
       (response) => {
         this.celularExists = response.exists;
         if (this.celularExists) {
@@ -175,28 +176,43 @@ checkCedula() {
     );
   }
 
-  guardar() {
+  guardar(): void {
     if (this.cedulaExists || this.correoExists) {
       this.validationErrors.general = 'Por favor, corrija los errores antes de enviar el formulario.';
       return;
     }
 
-    this.apiService.createResidente(this.nuevoResidente).subscribe(
+    this.apiService.getUserIdByEmail(this.nuevoResidente.correo_electronico).subscribe(
       (response) => {
-        console.log('Residente creado:', response);
-        this.router.navigate(['/registro-residentes']);
+        if (response.id_usuario) {
+          this.nuevoResidente.id_usuario = response.id_usuario;
+
+          this.apiService.createResidente(this.nuevoResidente).subscribe(
+            (response) => {
+              console.log('Residente creado:', response);
+              this.router.navigate(['/registro-residentes']);
+            },
+            (error) => {
+              console.error('Error al crear Residente:', error);
+              if (error.status === 422) {
+                this.validationErrors = error.error.errors || {};
+              } else {
+                this.validationErrors = { general: 'Ocurrió un error inesperado. Por favor, inténtelo de nuevo más tarde.' };
+              }
+            }
+          );
+        } else {
+          this.validationErrors.general = 'No se pudo obtener el ID de usuario. Verifique el correo electrónico.';
+        }
       },
       (error) => {
-        console.error('Error al crear Residente:', error);
-        if (error.status === 422) {
-          this.validationErrors = error.error.errors || {};
-        } else {
-          this.validationErrors = { general: 'Ocurrió un error inesperado. Por favor, inténtelo de nuevo más tarde.' };
-        }
+        console.error('Error al obtener id_usuario:', error);
+        this.validationErrors.general = 'Error al obtener ID de usuario.';
       }
     );
   }
-
+  
+  
 logout() {
   this.loggedIn = false;
   localStorage.removeItem('username'); // Limpiar nombre de usuario del localStorage
