@@ -40,6 +40,10 @@ export class ApiService {
     return this.http.get<any>(`${this.apiUrl}/usuarios/username/${username}`);
   }
 
+  getAlicuotasByIdResidente(id_residente: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/alicuotas/residente/${id_residente}`);
+  }
+
   // Método para obtener todos los usuarios
   getUsuarios(): Observable<any> {
     console.log("Solicitando usuarios a la API...");
