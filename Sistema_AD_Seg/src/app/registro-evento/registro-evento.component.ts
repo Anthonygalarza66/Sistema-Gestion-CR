@@ -36,6 +36,7 @@ export class RegistroEventoComponent {
     duracion_evento: 0,
     listado_evento: null,
     observaciones: "",
+    estado: "En proceso de aceptación",
   };
 
   validationErrors: any = {};

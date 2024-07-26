@@ -17,6 +17,7 @@ export class FormularioResidentesComponent {
   filtro: string = "";
 
   nuevoResidente: any = {
+    id_usuario: '', 
     nombre: "",
     apellido: "",
     cedula: "",
@@ -38,6 +39,8 @@ export class FormularioResidentesComponent {
   validationErrors: any = {};
   cedulaExists: boolean = false;
   correoExists: boolean = false;
+  celularExists: boolean = false;
+
 
   constructor(
     private router: Router,
@@ -52,27 +55,69 @@ export class FormularioResidentesComponent {
   }
 
   // Verificar la disponibilidad de la cédula
-  checkCedula() {
-    if (!this.nuevoResidente.cedula) {
-      this.validationErrors.cedula = ["Cédula es obligatoria."];
-      return;
-    }
-
-    this.apiService.checkCedula(this.nuevoResidente.cedula).subscribe(
-      (response) => {
-        this.cedulaExists = response.exists;
-        if (this.cedulaExists) {
-          this.validationErrors.cedula = ["La cédula ya está registrada."];
-        } else {
-          this.validationErrors.cedula = [];
-        }
-      },
-      (error) => {
-        console.error("Error al verificar cédula:", error);
-        this.validationErrors.cedula = ["Error al verificar la cédula."];
-      }
-    );
+checkCedula() {
+  if (!this.nuevoResidente.cedula) {
+    this.validationErrors.cedula = ["Cédula es obligatoria."];
+    return;
   }
+
+  // Lógica de validación de cédula ecuatoriana
+  const cedula = this.nuevoResidente.cedula;
+
+  if (cedula.length !== 10) {
+    this.validationErrors.cedula = ["La cédula debe tener 10 dígitos."];
+    return;
+  }
+
+  const digitoRegion = parseInt(cedula.substring(0, 2), 10);
+  if (digitoRegion < 1 || digitoRegion > 24) {
+    this.validationErrors.cedula = ["Esta cédula no pertenece a ninguna región."];
+    return;
+  }
+
+  const ultimoDigito = parseInt(cedula.substring(9, 10), 10);
+  const pares = parseInt(cedula.substring(1, 2), 10) + parseInt(cedula.substring(3, 4), 10) +
+                parseInt(cedula.substring(5, 6), 10) + parseInt(cedula.substring(7, 8), 10);
+
+  const numeroImpar = (num: string) => {
+    let n = parseInt(num, 10) * 2;
+    return n > 9 ? n - 9 : n;
+  };
+
+  const impares = numeroImpar(cedula[0]) + numeroImpar(cedula[2]) + numeroImpar(cedula[4]) +
+                  numeroImpar(cedula[6]) + numeroImpar(cedula[8]);
+
+  const sumaTotal = pares + impares;
+  const primerDigitoSuma = parseInt(sumaTotal.toString().substring(0, 1), 10);
+  const decena = (primerDigitoSuma + 1) * 10;
+  let digitoValidador = decena - sumaTotal;
+
+  if (digitoValidador === 10) {
+    digitoValidador = 0;
+  }
+
+  if (digitoValidador !== ultimoDigito) {
+    this.validationErrors.cedula = ["La cédula es incorrecta."];
+    return;
+  }
+
+  // Si la cédula es válida, verificar si está registrada
+  this.apiService.checkCedula(this.nuevoResidente.cedula).subscribe(
+    (response) => {
+      this.cedulaExists = response.exists;
+      if (this.cedulaExists) {
+        this.validationErrors.cedula = ["La cédula ya está registrada."];
+      } else {
+        this.validationErrors.cedula = [];
+      }
+    },
+    (error) => {
+      console.error("Error al verificar cédula:", error);
+      this.validationErrors.cedula = ["Error al verificar la cédula."];
+    }
+  );
+}
+
 
   // Verificar la disponibilidad del correo electrónico
   checkCorreo() {
@@ -97,28 +142,77 @@ export class FormularioResidentesComponent {
     );
   }
 
-  guardar() {
+  // Verificar la disponibilidad del número de celular
+  checkCelularR() {
+    if (!this.nuevoResidente.celular) {
+      this.validationErrors.celular = ['El número de celular es obligatorio.'];
+      return;
+    }
+
+    // Formatear el número de celular
+    let celular = this.nuevoResidente.celular;
+    if (celular.length === 10 && celular.startsWith('0')) {
+      celular = '+593' + celular.substring(1);
+    } else if (celular.length === 9) {
+      celular = '+593' + celular;
+    }
+
+    // Guardar el formato formateado en el objeto nuevoPersonal
+    this.nuevoResidente.celular = celular;
+
+    this.apiService.checkCelularR(celular).subscribe(
+      (response) => {
+        this.celularExists = response.exists;
+        if (this.celularExists) {
+          this.validationErrors.celular = ['El número de celular ya está registrado.'];
+        } else {
+          this.validationErrors.celular = [];
+        }
+      },
+      (error) => {
+        console.error('Error al verificar el número de celular:', error);
+        this.validationErrors.celular = ['Error al verificar el número de celular.'];
+      }
+    );
+  }
+
+  guardar(): void {
     if (this.cedulaExists || this.correoExists) {
       this.validationErrors.general = 'Por favor, corrija los errores antes de enviar el formulario.';
       return;
     }
 
-    this.apiService.createResidente(this.nuevoResidente).subscribe(
+    this.apiService.getUserIdByEmail(this.nuevoResidente.correo_electronico).subscribe(
       (response) => {
-        console.log('Residente creado:', response);
-        this.router.navigate(['/registro-residentes']);
+        if (response.id_usuario) {
+          this.nuevoResidente.id_usuario = response.id_usuario;
+
+          this.apiService.createResidente(this.nuevoResidente).subscribe(
+            (response) => {
+              console.log('Residente creado:', response);
+              this.router.navigate(['/registro-residentes']);
+            },
+            (error) => {
+              console.error('Error al crear Residente:', error);
+              if (error.status === 422) {
+                this.validationErrors = error.error.errors || {};
+              } else {
+                this.validationErrors = { general: 'Ocurrió un error inesperado. Por favor, inténtelo de nuevo más tarde.' };
+              }
+            }
+          );
+        } else {
+          this.validationErrors.general = 'No se pudo obtener el ID de usuario. Verifique el correo electrónico.';
+        }
       },
       (error) => {
-        console.error('Error al crear Residente:', error);
-        if (error.status === 422) {
-          this.validationErrors = error.error.errors || {};
-        } else {
-          this.validationErrors = { general: 'Ocurrió un error inesperado. Por favor, inténtelo de nuevo más tarde.' };
-        }
+        console.error('Error al obtener id_usuario:', error);
+        this.validationErrors.general = 'Error al obtener ID de usuario.';
       }
     );
   }
-
+  
+  
 logout() {
   this.loggedIn = false;
   localStorage.removeItem('username'); // Limpiar nombre de usuario del localStorage

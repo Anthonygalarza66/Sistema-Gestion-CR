@@ -13,7 +13,7 @@ export class RegistroUsuarioComponent {
 
   username: string = ''; // Inicialmente vacío
   private loggedIn = false;
-  nuevoUsuario: any = {
+    nuevoUsuario: any = {
     correo_electronico: '',
     contrasena: '',
     nombre: '',
@@ -24,7 +24,7 @@ export class RegistroUsuarioComponent {
   };
 
   validationErrors: any = {};
-
+  correoExists: boolean = false;
 
   constructor(private router: Router, private apiService: ApiService ,@Inject(PLATFORM_ID) private platformId: Object) {}
 
@@ -32,6 +32,29 @@ export class RegistroUsuarioComponent {
     if (isPlatformBrowser(this.platformId)) {
       this.username = localStorage.getItem('username') || 'Invitado';
     };
+  }
+
+  // Verificar la disponibilidad del correo electrónico
+  checkCorreoUsuarios() {
+    if (!this.nuevoUsuario.correo_electronico) {
+      this.validationErrors.correo_electronico = ['El correo electrónico es obligatorio.'];
+      return;
+    }
+
+    this.apiService.checkCorreoUsuarios(this.nuevoUsuario.correo_electronico).subscribe(
+      (response) => {
+        this.correoExists = response.exists;
+        if (this.correoExists) {
+          this.validationErrors.correo_electronico = ['El correo electrónico ya está registrado.'];
+        } else {
+          this.validationErrors.correo_electronico = [];
+        }
+      },
+      (error) => {
+        console.error('Error al verificar correo electrónico:', error);
+        this.validationErrors.correo_electronico = ['Error al verificar el correo electrónico.'];
+      }
+    );
   }
 
   // Actualiza el rol basado en el perfil seleccionado

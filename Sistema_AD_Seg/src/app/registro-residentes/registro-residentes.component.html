@@ -78,7 +78,6 @@
             <th>M2</th>
             <th>Perfil</th>
             <th>Nombre</th>
-            <th>Apellido</th>
             <th>Sexo</th>
             <th>Cédula</th>
             <th>Celular</th>
@@ -94,8 +93,7 @@
             <td>{{ row.solar }}</td>
             <td>{{ row.m2 }}</td>
             <td>{{ row.perfil }}</td>
-            <td>{{ row.nombre }}</td>
-            <td>{{ row.apellido }}</td>
+            <td>{{ row.nombre }} {{ row.apellido }}</td>
             <td>{{ row.sexo }}</td>
             <td>{{ row.cedula }}</td>
             <td>{{ row.celular }}</td>
@@ -113,8 +111,8 @@
         </tbody>
       </table>      
        <!-- Controles de paginación -->
-      <pagination-controls (pageChange)="p = $event"></pagination-controls>
-     </div>    
+       <pagination-controls (pageChange)="p = $event" previousLabel="Anterior" nextLabel="Siguiente"></pagination-controls>
+      </div>    
      
     
 

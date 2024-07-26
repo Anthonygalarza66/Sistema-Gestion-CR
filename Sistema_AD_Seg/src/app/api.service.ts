@@ -36,6 +36,10 @@ export class ApiService {
       );
   }
 
+  getUserIdByUsername(username: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/usuarios/username/${username}`);
+  }
+
   // Método para obtener todos los usuarios
   getUsuarios(): Observable<any> {
     console.log("Solicitando usuarios a la API...");
@@ -137,6 +141,11 @@ export class ApiService {
       .get<any>(`${this.apiUrl}/alicuotas/${id}`)
       .pipe(catchError(this.handleError));
   }
+  
+  getAlicuotasByUser(id_usuario: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/alicuotas/user/${id_usuario}`)
+      .pipe(catchError(this.handleError));
+} 
 
   // Método para crear una nueva alícuota
   createAlicuota(alicuota: any): Observable<any> {
@@ -296,7 +305,6 @@ export class ApiService {
     ).pipe(catchError(this.handleError));
   }
   
-  
 
   // Método para guardar (crear o actualizar) un registro de control de acceso
   guardarControlAcceso(controlAcceso: any): Observable<any> {
@@ -348,6 +356,36 @@ export class ApiService {
       .pipe(catchError(this.handleError));
   }
 
+  checkCedulaPersonal(cedula: string): Observable<any> {
+    return this.http
+      .get<any>(`${this.apiUrl}/personal/check-cedula-personal/${cedula}`)
+      .pipe(catchError(this.handleError));
+  }
+
+  checkCorreoPersonal(correo: string): Observable<any> {
+    return this.http
+      .get<any>(`${this.apiUrl}/personal/check-correo-personal/${correo}`)
+      .pipe(catchError(this.handleError));
+  }
+  checkCelularPersonal(celular: string): Observable<any> {
+       return this.http
+      .get<any>(`${this.apiUrl}/personal/check-celular/${celular}`)
+      .pipe(catchError(this.handleError));
+  }
+
+  checkCorreoUsuarios(correo: string): Observable<any> {
+    return this.http
+      .get<any>(`${this.apiUrl}/usuarios/check-correo-usuarios/${correo}`)
+      .pipe(catchError(this.handleError));
+  }
+
+  checkCelularR(celular: string): Observable<any> {
+    return this.http
+      .get<any>(`${this.apiUrl}/residentes/check-celularR/${celular}`)
+      .pipe(catchError(this.handleError));
+  }
+
+
   // Método para enviar correos
   sendEmail(emailData: any): Observable<any> {
     console.log("Enviando correo con datos:", emailData);
@@ -355,6 +393,7 @@ export class ApiService {
       .post<any>(`${this.apiUrl}/enviar-correo`, emailData, this.httpOptions)
       .pipe(catchError(this.handleError));
   }
+
 
   // Manejo de errores
   handleError(error: HttpErrorResponse): Observable<never> {
@@ -372,4 +411,16 @@ export class ApiService {
   getFileUrl(filename: string): string {
     return `${this.apiUrl}/uploads/${filename}`;
   }
+
+  updateEventoEstado(id: number, nuevoEstado: string): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/eventos/${id}/estado`, { estado: nuevoEstado });
+  }
+
+  getUserIdByEmail(correoElectronico: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/usuarios/getUserIdByEmail`, { correo_electronico: correoElectronico })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
 }

@@ -165,9 +165,9 @@ ul {
   }
   
   .contenedor {
-    width: 90%;
+    width: 70%;
     margin: 0 auto;
-    padding: 15px;
+    padding: 5px;
   }
   
   form {
@@ -194,7 +194,7 @@ ul {
   }
   
   .form-group label {
-    margin-bottom: 5px;
+    margin-bottom: 2px;
   }
   
   .form-group input,
@@ -212,7 +212,7 @@ ul {
   }
   
   .observaciones-row {
-    margin-top: 5px;
+    margin-top: 3px;
   }
   
   .btn {

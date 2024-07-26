@@ -20,7 +20,8 @@ export class AlicuotasComponent {
   alicuota: any[] = [];
 
   totalAdeudadoGeneral: number = 0; // Total adeudado
-
+  idUsuario: number | null = null;
+  role: string | null = null;
 
   constructor(
     private router: Router,
@@ -31,23 +32,58 @@ export class AlicuotasComponent {
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       this.username = localStorage.getItem("username") || "Invitado";
-      this.loadAlicuota(); // Llamada a cargar datos
+      this.role = localStorage.getItem("role"); // Obtener el rol del localStorage
+      if (this.role === "Residente") {
+        this.loadUserId(); // Solo cargar el ID si el rol es "Residente"
+      } else {
+        // Manejo para cuando el rol no es "Residente"
+        this.idUsuario = null;
+        this.loadAlicuota();
+      }
+    }
+  }
+
+  loadUserId(): void {
+    if (this.username !== "Invitado") {
+      this.apiService.getUserIdByUsername(this.username).subscribe(
+        (data: any) => {
+          this.idUsuario = data.id_usuario;
+          console.log("ID de Usuario en loadUserId:", this.idUsuario); // Verifica si se está estableciendo correctamente
+          this.loadAlicuota(); // Llamada a cargar datos después de obtener el id_usuario
+        },
+        (error) => {
+          console.error("Error al obtener ID de Usuario:", error);
+        }
+      );
+    } else {
+      // Manejo para cuando el usuario es "Invitado" o no tiene ID
+      this.idUsuario = null;
+      this.loadAlicuota();
     }
   }
 
   loadAlicuota(): void {
     console.log("Cargando alicuota...");
+    console.log("ID de Usuario:", this.idUsuario); // Asegúrate de que el ID es correcto
     this.apiService.getAlicuotas().subscribe(
       (data: any[]) => {
         console.log("Datos recibidos:", data);
-        this.alicuota = data;
+        if (this.idUsuario !== null) {
+          this.alicuota = data.filter(row => {
+            console.log("Residente ID:", row.residente?.id_usuario); // Verifica el ID del residente
+            return row.residente && row.residente.id_usuario === this.idUsuario;
+          });
+        } else {
+          this.alicuota = data;
+        }
+        this.calcularTotalAdeudadoGeneral(); // Recalcular total después de cargar alícuotas
       },
       (error) => {
         console.error("Error al obtener alicuota:", error);
       }
     );
   }
-  
+
 
 logout() {
   this.loggedIn = false;
@@ -88,14 +124,16 @@ logout() {
   filtrar() {
     const filtroLowerCase = this.filtro.toLowerCase();
     return this.alicuota.filter(row =>
-      (row.residente.nombre && row.residente.nombre.toLowerCase().includes(filtroLowerCase)) ||
-      (row.residente.apellido && row.residente.apellido.toLowerCase().includes(filtroLowerCase)) ||
-      (row.residente.solar && row.residente.solar.toLowerCase().includes(filtroLowerCase)) ||
-      (row.residente.cedula && row.residente.cedula.toLowerCase().includes(filtroLowerCase)) ||
-      (row.fecha && row.fecha.toLowerCase().includes(filtroLowerCase)) ||
-      (row.mes && row.mes.toLowerCase().includes(filtroLowerCase)) ||
-      (row.total && row.total.toString().toLowerCase().includes(filtroLowerCase)) ||
-      (row.residente.direccion && row.residente.direccion.toLowerCase().includes(filtroLowerCase))
+      row.residente && (
+        (row.residente.nombre && row.residente.nombre.toLowerCase().includes(filtroLowerCase)) ||
+        (row.residente.apellido && row.residente.apellido.toLowerCase().includes(filtroLowerCase)) ||
+        (row.residente.solar && row.residente.solar.toLowerCase().includes(filtroLowerCase)) ||
+        (row.residente.cedula && row.residente.cedula.toLowerCase().includes(filtroLowerCase)) ||
+        (row.fecha && row.fecha.toLowerCase().includes(filtroLowerCase)) ||
+        (row.mes && row.mes.toLowerCase().includes(filtroLowerCase)) ||
+        (row.total && row.total.toString().toLowerCase().includes(filtroLowerCase)) ||
+        (row.residente.direccion && row.residente.direccion.toLowerCase().includes(filtroLowerCase))
+      )
     );
   }  
 
@@ -105,9 +143,13 @@ logout() {
       .reduce((sum, row) => sum + row.monto_por_cobrar, 0);
   }
 
-  getTotalAdeudado(id_residente: number): number {
+  getTotalAdeudado(id_residente: number | null): number {
+    if (id_residente === null) {
+      return 0;
+    }
+    
     return this.alicuota
-      .filter(row => row.residente.id_residente === id_residente && !row.pagado)
+      .filter(row => row.residente?.id_residente === id_residente && !row.pagado)
       .reduce((sum, row) => sum + row.monto_por_cobrar, 0);
   }
 

@@ -34,6 +34,13 @@
   .dropdown:hover .dropdown-content-lg {
     display: block;
   }
+
+  .contenido {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 4px;
+  }
   
 .btn-danger {
   background-color: rgb(236, 34, 34);
@@ -42,8 +49,8 @@
   font-size: 16px; 
   margin-top: 5px; 
   margin-bottom: 4px;
-  margin-left: 25px;
-  margin-right: 5px;
+  margin-left: 30px;
+  margin-right: 3px;
   padding: 0.5rem 1rem; 
   border: none;
   border-radius: 8px; 
@@ -165,7 +172,7 @@ ul {
     width: 780px;
   }
 
-  .btn-edit, .btn-trash ,.btn-pagar{
+  .btn-edit, .btn-trash ,.btn-accept, .btn-reject{
     background-color: rgb(168, 168, 168); 
     border: none;
     color: white;
@@ -180,7 +187,7 @@ ul {
     transition-duration: 0.4s;
   }
   
-  .btn-edit:hover, .btn-trash:hover , .btn-pagar:hover{
+  .btn-edit:hover, .btn-trash:hover , .btn-accept:hover , .btn-reject:hover{
     background-color: #8f8d8d;
   }
   
@@ -298,4 +305,24 @@ ul {
     margin-left: 1%;
     margin-top: 1%;
   }
+
+  .estado-aceptado {
+    color: green;
+    font-weight: bold;
+    font-size: 14px;
+    font-family: 'Times New Roman', Times, serif;
+  }
   
+  .estado-denegado {
+    color: red;
+    font-weight: bold;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 14px;
+  }
+  
+  .estado-proceso {
+    color: #6c757d; 
+    font-weight: bold;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 14px;
+  }

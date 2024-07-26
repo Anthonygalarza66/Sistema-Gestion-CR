@@ -122,9 +122,12 @@
       <div class="row">
         <div class="form-group col">
           <label for="celular">Celular<span class="text-danger"> :</span></label>
-          <input type="text" id="celular" name="celular" placeholder="+593" required [(ngModel)]="nuevoResidente.celular" #celular="ngModel"/>
+          <input type="text" id="celular" name="celular" placeholder="+593" required [(ngModel)]="nuevoResidente.celular" (blur)="checkCelularR()" #celular="ngModel">
           <div *ngIf="celular.invalid && (celular.dirty || celular.touched)" class="text-danger">
             <div *ngIf="celular.errors?.['required']">Celular es obligatorio</div>
+          </div>
+          <div *ngIf="validationErrors.celular" class="text-danger">
+            <div *ngFor="let error of validationErrors.celular">{{ error }}</div>
           </div>
         </div>
         <div class="form-group col">
@@ -132,7 +135,7 @@
           <input type="email" id="correo_electronico" name="correo_electronico" placeholder="ejemplo@email.com" [(ngModel)]="nuevoResidente.correo_electronico" (blur)="checkCorreo()">
           <div *ngIf="validationErrors.correo_electronico" class="text-danger">
             <div *ngFor="let error of validationErrors.correo_electronico">{{ error }}</div>
-          </div>
+          </div> 
         </div>        
       </div>
       <div class="row">

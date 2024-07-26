@@ -64,7 +64,7 @@
 <button *ngIf="'Excel' | role: 'Administracion'" class="btn-excel" (click)="exportarExcel()">
   <img src="./assets/excel.png" width="40" height="45" alt="Exportar a Excel"></button>
 <!-- Enlace para crear un nuevo usuario -->
-<a [class.disabled]="isRole('Seguridad')" [attr.disabled]="isRole('Seguridad') ? true : null" href="registro-evento" class="btn-add">
+<a *ngIf="!isRole('Seguridad')" href="registro-evento" class="btn-add">
   Agregar
 </a>
 <div class="contenido">
@@ -75,9 +75,8 @@
         <thead>
           <tr>
             <th>Nombre</th>
-            <th>Apellidos</th>
-            <th>Celular</th>
-            <th>Cédula</th>
+            <th *ngIf="!isRole('Residente')">Celular</th>
+            <th *ngIf="!isRole('Residente')">Cédula</th>
             <th>Evento</th>
             <th>Dirección Evento</th>
             <th>Vehículos</th>
@@ -86,33 +85,47 @@
             <th>Fecha/Hora</th>
             <th>Duración Evento</th>
             <th>Observaciones</th>
-            <th>Invitados</th>
+            <th *ngIf="!isRole('Residente')">Invitados</th>
+            <th>Estado</th>
             <th *ngIf="'Acciones' | role: 'Administracion'">Acciones</th>
           </tr>
         </thead>
         <tbody id="listado">
           <tr *ngFor="let row of (filtrar() | paginate: { itemsPerPage: 5, currentPage: p })">
-            <td>{{ row.nombre }}</td>
-            <td>{{ row.apellidos }}</td>
-            <td>{{ row.celular }}</td>
-            <td>{{ row.cedula }}</td>
-            <td>{{ row.nombre_evento }}</td>
-            <td>{{ row.direccion_evento }}</td>
-            <td>{{ row.cantidad_vehiculos }}</td>
-            <td>{{ row.cantidad_personas }}</td>
-            <td>{{ row.tipo_evento }}</td>
-            <td>{{ row.fecha_hora | date: 'yyyy-MM-dd HH:mm' }}</td>
-            <td>{{ row.duracion_evento }}</td>
-            <td>{{ row.observaciones }}</td>
-            <td class="file-cell">
+            <td *ngIf="!(isRole('Residente') && row.tipo_evento === 'Hogar')">{{ row.nombre }}, {{ row.apellidos }}</td>
+            <td  *ngIf="!isRole('Residente' )">{{ row.celular }}</td>
+            <td *ngIf="!isRole('Residente')">{{ row.cedula }}</td>
+            <td *ngIf="!(isRole('Residente') && row.tipo_evento === 'Hogar')">{{ row.nombre_evento }}</td>
+            <td *ngIf="!(isRole('Residente') && row.tipo_evento === 'Hogar')">{{ row.direccion_evento }}</td>
+            <td *ngIf="!(isRole('Residente') && row.tipo_evento === 'Hogar')">{{ row.cantidad_vehiculos }}</td>
+            <td *ngIf="!(isRole('Residente') && row.tipo_evento === 'Hogar')">{{ row.cantidad_personas }}</td>
+            <td *ngIf="!(isRole('Residente') && row.tipo_evento === 'Hogar')">{{ row.tipo_evento }}</td>
+            <td *ngIf="!(isRole('Residente') && row.tipo_evento === 'Hogar')">{{ row.fecha_hora | date: 'yyyy-MM-dd HH:mm' }}</td>
+            <td *ngIf="!(isRole('Residente') && row.tipo_evento === 'Hogar')">{{ row.duracion_evento }}</td>
+            <td *ngIf="!(isRole('Residente') && row.tipo_evento === 'Hogar')">{{ row.observaciones }}</td>
+            <td *ngIf="!isRole('Residente')" class="file-cell">
               <a *ngIf="row.listado_evento" [href]="getFileUrl(row.listado_evento)" download="{{ row.listado_evento }}" class="download-link">
-                {{ row.listado_evento }}
+                Descargar
               </a>
               <span *ngIf="!row.listado_evento" class="no-available">
                 No disponible
               </span>
             </td>
+            <td *ngIf="!(isRole('Residente') && row.tipo_evento === 'Hogar')" [ngClass]="{
+              'estado-aceptado': row.estado === 'Aceptado',
+              'estado-denegado': row.estado === 'Denegado',
+              'estado-proceso': row.estado === 'En proceso de aceptación'
+             }">
+            {{ row.estado }}
+          </td>
             <td *ngIf="'Acciones' | role: 'Administracion'">
+            <!-- Botones para cambiar el estado -->
+            <button *ngIf="row.estado !== 'Aceptado'" class="btn-accept" (click)="updateEstado(row.id_evento, 'Aceptado')" title="Aceptar evento">
+            <i class="fas fa-check"></i>
+            </button>
+            <button *ngIf="row.estado !== 'Denegado'" class="btn-reject" (click)="updateEstado(row.id_evento, 'Denegado')" title="Rechazar evento">
+              <i class="fas fa-times"></i>
+            </button>
              <!-- Botones para editar y eliminar -->
             <button class="btn-edit" (click)="editEventos(row.id_evento) ">
             <i class="fas fa-edit"></i>
@@ -124,7 +137,8 @@
           </tr>
         </tbody>
       </table>
-      <pagination-controls (pageChange)="p = $event"></pagination-controls>
-    </div>
-  </div>  
+       </div>
+    </div>  
+       <!-- Controles de paginación -->
+       <pagination-controls (pageChange)="p = $event" previousLabel="Anterior" nextLabel="Siguiente"></pagination-controls>
 </div>
