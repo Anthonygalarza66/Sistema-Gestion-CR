@@ -92,7 +92,7 @@
         </thead>
         <tbody id="listado">
           <tr *ngFor="let row of (filtrar() | paginate: { itemsPerPage: 5, currentPage: p })">
-            <td *ngIf="!(isRole('Residente') && row.tipo_evento === 'Hogar')">{{ row.nombre }}, {{ row.apellidos }}</td>
+            <td *ngIf="!(isRole('Residente') && row.tipo_evento === 'Hogar')">{{ row.nombre }} {{ row.apellidos }}</td>
             <td  *ngIf="!isRole('Residente' )">{{ row.celular }}</td>
             <td *ngIf="!isRole('Residente')">{{ row.cedula }}</td>
             <td *ngIf="!(isRole('Residente') && row.tipo_evento === 'Hogar')">{{ row.nombre_evento }}</td>

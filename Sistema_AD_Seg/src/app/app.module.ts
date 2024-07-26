@@ -14,6 +14,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+
 
 
 import { AppRoutingModule } from './app-routing.module';
@@ -80,6 +82,7 @@ import { EditarControlDialogoComponent } from './editar-control-dialogo/editar-c
     MatDatepickerModule,
     MatNativeDateModule,
     ReactiveFormsModule,
+    BsDatepickerModule.forRoot()
   
   ],
   providers: [
