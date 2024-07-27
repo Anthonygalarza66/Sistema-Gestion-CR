@@ -480,21 +480,24 @@ export class RegistroEventoComponent implements OnInit {
     }
   }
 
-  guardar() {
+  guardar(): void {
     const formData = new FormData();
-
+  
     Object.keys(this.nuevoEvento).forEach((key) => {
       if (this.nuevoEvento[key] !== null) {
         formData.append(key, this.nuevoEvento[key]);
       }
     });
-
+  
     console.log("Datos del evento a guardar:", this.nuevoEvento);
-
+  
     this.apiService.createEvento(formData).subscribe(
       (response) => {
         console.log("Evento creado:", response);
         this.router.navigate(["/eventos"]);
+        
+        // Generar los códigos QR después de guardar el evento
+        this.generateQRCodes(this.nuevoEvento);
       },
       (error) => {
         console.error("Error al crear evento:", error);
@@ -615,34 +618,52 @@ generatePDFs(): void {
 
   this.qrContainers.forEach((container, index) => {
     setTimeout(() => {
+      // Hacer visible el contenedor temporalmente
+      container.nativeElement.style.opacity = '1';
+      container.nativeElement.style.pointerEvents = 'auto';
+      console.log(`Contenedor ${index} hecho visible`);
+
       html2canvas(container.nativeElement).then(canvas => {
+        // Volver a ocultar el contenedor
+        container.nativeElement.style.opacity = '0';
+        container.nativeElement.style.pointerEvents = 'none';
+        console.log(`Contenedor ${index} oculto de nuevo`);
+
         const imgData = canvas.toDataURL('image/png');
         const pdf = new jsPDF('p', 'mm', 'a4');
-        const imgWidth = 190;
+        const pdfWidth = pdf.internal.pageSize.getWidth();  
+        const pdfHeight = pdf.internal.pageSize.getHeight();  
+
+        const imgWidth = 190;  // Ancho fijo en mm
         const imgHeight = canvas.height * imgWidth / canvas.width;
 
-        let heightLeft = imgHeight;
-        let position = 10;
+        // Calcular la posición para centrar la imagen horizontalmente
+        const xOffset = (pdfWidth - imgWidth) / 2;  // Centrar horizontalmente
+        let position = 20;  // Espacio para el texto y márgenes
 
         // Agregar texto con el nombre y apellido del invitado
         const invitado = this.qrCodes[index];
         const nombreApellido = `Nombre: ${invitado.nombre}\nApellidos: ${invitado.apellido}`;
         pdf.setFontSize(12);
-        pdf.text(nombreApellido, 10, 10); // Posición del texto en la página
-        
-        pdf.addImage(imgData, 'PNG', 10, position + 10, imgWidth, imgHeight); // Ajustar posición para el QR
-        heightLeft -= pdf.internal.pageSize.height - 20;
+        pdf.text(nombreApellido, 10, position); // Posición del texto en la página
+        position += 20; // Ajustar la posición del texto para que no se sobreponga con la imagen
 
-        while (heightLeft > 0) {
+        // Agregar la imagen al PDF
+        pdf.addImage(imgData, 'PNG', xOffset, position, imgWidth, imgHeight);
+
+        // Verificar si es necesario agregar más páginas
+        const heightLeft = imgHeight - (pdfHeight - position - 20);
+        if (heightLeft > 0) {
+          // Agregar más páginas si es necesario
           pdf.addPage();
           pdf.text(nombreApellido, 10, 10); // Agregar texto en nuevas páginas
-          pdf.addImage(imgData, 'PNG', 10, position - heightLeft + 10, imgWidth, imgHeight); // Ajustar posición para el QR
-          heightLeft -= pdf.internal.pageSize.height - 20;
+          pdf.addImage(imgData, 'PNG', xOffset, 20, imgWidth, imgHeight); // Ajustar posición para el QR en nuevas páginas
         }
 
         // Crear el nombre del archivo PDF usando nombre y apellido del invitado
         const nombreArchivo = `qr_${invitado.nombre}_${invitado.apellido}.pdf`.replace(/\s+/g, '_');
         pdf.save(nombreArchivo); // Guarda cada QR en un PDF separado con el nombre del invitado
+        console.log(`PDF guardado como ${nombreArchivo}`);
       }).catch(error => {
         console.error('Error al generar el PDF:', error);
       });

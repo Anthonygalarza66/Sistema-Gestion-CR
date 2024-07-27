@@ -397,6 +397,11 @@ export class ApiService {
       .pipe(catchError(this.handleError));
   }
 
+  requestPasswordReset(correo: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/usuarios/request-password-reset`, { correo });
+  }
+  
+
 
   // Manejo de errores
   handleError(error: HttpErrorResponse): Observable<never> {
