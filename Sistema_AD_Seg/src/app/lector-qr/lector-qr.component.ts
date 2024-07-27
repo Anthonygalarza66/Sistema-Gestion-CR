@@ -41,25 +41,37 @@ export class LectorQrComponent implements AfterViewInit {
   }
 
   parseQRData(): void {
-    const dataParts = this.qrData.split(';').filter(Boolean); 
-    console.log('Data Parts:', dataParts); 
-    if (dataParts.length === 9) { 
+    let dataParts: string[];
+  
+    // Intentar dividir los datos por saltos de línea
+    dataParts = this.qrData.split('\n').filter(Boolean);
+    
+    // Si no hay 8 partes, intentar dividir por `;`
+    if (dataParts.length !== 8) {
+      dataParts = this.qrData.split(';').filter(Boolean);
+    }
+  
+    console.log('Data Parts:', dataParts);
+  
+    if (dataParts.length === 8) { 
       this.parsedData = {
         nombre: dataParts[0] ? dataParts[0].trim() : '',
         apellido: dataParts[1] ? dataParts[1].trim() : '',
         cedula: dataParts[2] ? dataParts[2].trim() : '',
         direccion: dataParts[3] ? dataParts[3].trim() : '',
-        evento: dataParts[4] ? dataParts[4].trim() : '',
-        fecha: dataParts[5] ? dataParts[5].trim() : '',
-        hora: dataParts[6] ? dataParts[6].trim() : '',
-        placa: dataParts[7] ? dataParts[7].trim() : '',
-        observaciones: dataParts[8] ? dataParts[8].trim() : ''
+        fecha: dataParts[4] ? dataParts[4].trim() : '',
+        hora: dataParts[5] ? dataParts[5].trim() : '',
+        placa: dataParts[6] ? dataParts[6].trim() : '',
+        observaciones: dataParts[7] ? dataParts[7].trim() : ''
       };
       console.log('Parsed Data:', this.parsedData); 
     } else {
       console.error('Error: El número de partes no es el esperado.');
     }
   }
+  
+  
+  
 
   logout() {
     this.loggedIn = false;
