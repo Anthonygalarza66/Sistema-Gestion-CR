@@ -40,6 +40,10 @@ export class ApiService {
     return this.http.get<any>(`${this.apiUrl}/usuarios/username/${username}`);
   }
 
+  getAlicuotasByIdResidente(id_residente: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/alicuotas/residente/${id_residente}`);
+  }
+
   // Método para obtener todos los usuarios
   getUsuarios(): Observable<any> {
     console.log("Solicitando usuarios a la API...");
@@ -230,13 +234,12 @@ export class ApiService {
       .pipe(catchError(this.handleError));
   }
 
-  // Método para obtener un residente por ID
-  getResidente(id: number): Observable<any> {
-    console.log(`Solicitando residente con ID ${id} a la API...`);
-    return this.http
-      .get<any>(`${this.apiUrl}/residentes/${id}`)
-      .pipe(catchError(this.handleError));
-  }
+  getResidente(idUsuario: number): Observable<any> {
+    console.log(`Solicitando residente con ID de usuario ${idUsuario} a la API...`);
+    return this.http.get<any>(`${this.apiUrl}/eventos/residente/${idUsuario}`)
+        .pipe(catchError(this.handleError));
+   }
+
 
   // Método para guardar (crear o actualizar) un residente
   guardarResidente(residente: any): Observable<any> {

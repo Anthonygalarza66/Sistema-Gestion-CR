@@ -21,7 +21,7 @@ export class EventosComponent {
 
  
   eventos: any[] = [];
-row: any;
+  row: any;
 
 
   constructor(

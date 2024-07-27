@@ -3,7 +3,8 @@ import { Router } from "@angular/router";
 import { ApiService } from "../api.service";
 import { PLATFORM_ID, Inject } from "@angular/core";
 import { isPlatformBrowser } from "@angular/common";
-import { format, parseISO } from "date-fns";
+import flatpickr from "flatpickr";
+import "flatpickr/dist/flatpickr.min.css";
 
 @Component({
   selector: "app-registro-evento",
@@ -13,6 +14,7 @@ import { format, parseISO } from "date-fns";
 export class RegistroEventoComponent {
   username: string = ""; // Inicialmente vacío
   private loggedIn = false;
+  rol: string | null = null;
   filtro: string = "";
   eventos: any[] = [];
   diasDeshabilitados: Set<string> = new Set();
@@ -23,6 +25,8 @@ export class RegistroEventoComponent {
   horaSeleccionada: string = "";
 
   nuevoEvento: any = {
+    id_usuario: "",
+    id_residente: "",
     nombre: "",
     apellidos: "",
     celular: "",
@@ -40,6 +44,8 @@ export class RegistroEventoComponent {
   };
 
   validationErrors: any = {};
+  private flatpickrInstance: any = null;
+  public tienePagosPendientes: boolean = false;
 
   constructor(
     private router: Router,
@@ -47,17 +53,98 @@ export class RegistroEventoComponent {
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
+  ngAfterViewInit(): void {
+    this.initializeFlatpickr();
+  }
+
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       this.username = localStorage.getItem("username") || "Invitado";
-      this.apiService.getEventos().subscribe((response) => {
-        this.eventos = response;
-        this.calcularMinMaxFecha();
+      console.log("Username desde localStorage:", this.username); // Verificar en la consola
+      this.rol = localStorage.getItem("role");
 
-        console.log("Tipo de evento actual:", this.nuevoEvento.tipo_evento);
-        this.deshabilitarDias();
-      });
+      if (this.rol === "Residente") {
+        this.cargarDatosResidente();
+      }
     }
+  }
+
+  cargarDatosResidente() {
+    this.apiService.getUserIdByUsername(this.username).subscribe((user) => {
+      const idUsuario = user.id_usuario;
+      console.log("ID de usuario:", idUsuario);
+
+      this.apiService.getResidente(idUsuario).subscribe((residente) => {
+        console.log("Datos del residente:", residente);
+        this.nuevoEvento = {
+          ...this.nuevoEvento,
+          id_usuario: idUsuario,
+          id_residente: residente.id_residente,
+          nombre: residente.nombre,
+          apellidos: residente.apellido,
+          celular: residente.celular,
+          cedula: residente.cedula,
+        };
+
+        // Obtener el estado de pago del residente desde la tabla alicuotas
+        this.apiService
+          .getAlicuotasByIdResidente(residente.id_residente)
+          .subscribe((alicuotas) => {
+            console.log("Alícuotas del residente:", alicuotas); // Verifica que se están obteniendo las alícuotas correctamente
+
+            // Verificar si hay alícuotas pendientes
+            this.tienePagosPendientes = alicuotas.some((alicuota: any) => {
+              console.log("Alícuota pagada (valor):", alicuota.pagado); // Verifica el valor de 'pagado'
+              console.log("Monto por cobrar:", alicuota.monto_por_cobrar); // Verifica el monto por cobrar
+              return alicuota.pagado === 0; // Compara con el valor numérico 0
+            });
+
+            console.log(
+              "Estado de pagos pendientes:",
+              this.tienePagosPendientes
+            );
+            this.cargarEventos();
+          });
+      });
+    });
+  }
+
+  validarAccesoEstancias() {
+    // Mensaje de advertencia
+    alert(
+      "Lo sentimos, por falta de pagos, no puede ocupar estancias de la urbanización."
+    );
+
+    // Deshabilitar opciones específicas en el select
+    const selectElement = document.getElementById(
+      "tipoEvento"
+    ) as HTMLSelectElement;
+    if (selectElement) {
+      const opciones = selectElement.options;
+      for (let i = 0; i < opciones.length; i++) {
+        const option = opciones[i];
+        if (
+          [
+            "Evento social",
+            "Cancha de futbol",
+            "Parque comunitario",
+            "Club Acuatico",
+            "Club Residencial",
+          ].includes(option.value)
+        ) {
+          option.disabled = true;
+        }
+      }
+    }
+  }
+
+  cargarEventos() {
+    this.apiService.getEventos().subscribe((eventos) => {
+      this.eventos = eventos;
+      console.log("Eventos cargados:", this.eventos);
+      // Inicializa flatpickr aquí pero no configura días deshabilitados todavía
+      this.initializeFlatpickr();
+    });
   }
 
   bloquearHoras() {
@@ -65,25 +152,20 @@ export class RegistroEventoComponent {
       this.horasDisponibles = [];
       return;
     }
-    // Si el tipo de evento es 'hogar', todas las horas del día están disponibles
-    if (this.nuevoEvento.tipo_evento === "Hogar") {
-      this.horasDisponibles = [];
-      for (let hora = 0; hora < 24; hora++) {
-        for (let minuto = 0; minuto < 60; minuto += 30) {
-          const horaStr = `${hora.toString().padStart(2, "0")}:${minuto
-            .toString()
-            .padStart(2, "0")}`;
-          this.horasDisponibles.push(horaStr);
-        }
-      }
-      return;
-    }
-    // Para otros tipos de eventos, bloquea las horas ocupadas
-    const fechaSeleccionada = new Date(this.fechaSeleccionada);
+
+    // Asegúrate de que la fecha seleccionada sea una instancia de Date y ajuste correctamente
+    const fechaSeleccionada = new Date(this.fechaSeleccionada + "T00:00:00"); // Asegúrate de que esté en formato local
+    fechaSeleccionada.setHours(0, 0, 0, 0); // Asegúrate de que la hora esté en 00:00:00
+
+    // Filtra eventos para el día seleccionado
     const ocupados = this.eventos
       .filter((evento) => {
         const eventoFecha = new Date(evento.fecha_hora);
-        return eventoFecha.toDateString() === fechaSeleccionada.toDateString();
+        eventoFecha.setHours(0, 0, 0, 0); // Asegúrate de que la hora esté en 00:00:00
+        return (
+          eventoFecha.getTime() === fechaSeleccionada.getTime() &&
+          evento.tipo_evento !== "Hogar"
+        );
       })
       .map((evento) => ({
         start: new Date(evento.fecha_hora),
@@ -95,14 +177,12 @@ export class RegistroEventoComponent {
 
     console.log("Horas ocupadas:", ocupados);
 
-    const horasDisponibles = this.generarHorasDisponibles(
+    this.horasDisponibles = this.generarHorasDisponibles(
       fechaSeleccionada,
       ocupados
     );
 
-    console.log("Horas disponibles:", horasDisponibles);
-
-    this.horasDisponibles = horasDisponibles;
+    console.log("Horas disponibles:", this.horasDisponibles);
   }
 
   generarHorasDisponibles(
@@ -110,11 +190,25 @@ export class RegistroEventoComponent {
     ocupados: { start: Date; end: Date }[]
   ): string[] {
     const horasDisponibles: string[] = [];
+
+    // Verifica que fechaSeleccionada sea una instancia de Date
+    if (!(fechaSeleccionada instanceof Date)) {
+      console.error(
+        "La fecha seleccionada no es una instancia de Date:",
+        fechaSeleccionada
+      );
+      return horasDisponibles;
+    }
+
+    // Asegúrate de que fechaSeleccionada esté en el formato correcto
     const fecha = new Date(fechaSeleccionada);
-    fecha.setHours(0, 0, 0, 0); // Empezar desde medianoche del día seleccionado
+    fecha.setHours(7, 0, 0, 0); // Empezar desde las 07:00 del día seleccionado
 
     const finDia = new Date(fechaSeleccionada);
-    finDia.setHours(23, 59, 59, 999); // Fin del día seleccionado
+    finDia.setHours(22, 0, 0, 0); // Fin del día seleccionado a las 22:00
+
+    console.log("Fecha seleccionada en generarHorasDisponibles:", fecha);
+    console.log("Horas ocupadas:", ocupados);
 
     while (fecha <= finDia) {
       const esOcupado = ocupados.some(
@@ -122,7 +216,9 @@ export class RegistroEventoComponent {
       );
 
       if (!esOcupado) {
-        horasDisponibles.push(fecha.toTimeString().slice(0, 5)); // Formato HH:MM
+        // Asegúrate de que la hora esté en formato HH:MM
+        const horaFormateada = fecha.toTimeString().slice(0, 5);
+        horasDisponibles.push(horaFormateada);
       }
 
       fecha.setMinutes(fecha.getMinutes() + 30); // Incrementar por 30 minutos
@@ -136,13 +232,11 @@ export class RegistroEventoComponent {
 
     console.log("Tipo de evento en verificarHorasDisponibles:", tipoEvento);
 
-    // No hacer nada si el tipo de evento es 'hogar'
     if (tipoEvento === "Hogar") {
       console.log("No se aplican validaciones para tipo de evento: hogar");
       return;
     }
 
-    // Verifica que `fecha_hora` esté bien definida antes de convertirla a Date
     if (!this.nuevoEvento.fecha_hora) {
       console.error("Fecha y hora seleccionada no está definida.");
       return;
@@ -171,26 +265,129 @@ export class RegistroEventoComponent {
     }
   }
 
+  onTipoEventoChange() {
+    console.log("Tipo de evento seleccionado:", this.nuevoEvento.tipo_evento);
+
+    // Verifica el estado de pago del residente
+    if (this.tienePagosPendientes) {
+      // Si el residente no ha pagado, restringe las opciones de eventos
+      if (
+        [
+          "Evento social",
+          "Cancha de futbol",
+          "Parque comunitario",
+          "Club Acuatico",
+          "Club Residencial",
+        ].includes(this.nuevoEvento.tipo_evento)
+      ) {
+        alert(
+          "Lo sentimos, por falta de pagos, no puede ocupar estancias de la urbanización."
+        );
+        this.nuevoEvento.tipo_evento = ""; // Limpiar selección si no es válida
+
+        // Deshabilitar opciones específicas en el select
+        const selectElement = document.getElementById(
+          "tipoEvento"
+        ) as HTMLSelectElement;
+        if (selectElement) {
+          const opciones = selectElement.options;
+          for (let i = 0; i < opciones.length; i++) {
+            const option = opciones[i];
+            if (
+              [
+                "Evento social",
+                "Cancha de futbol",
+                "Parque comunitario",
+                "Club Acuatico",
+                "Club Residencial",
+              ].includes(option.value)
+            ) {
+              option.disabled = true;
+            }
+          }
+        }
+        return; // Salir de la función
+      }
+    }
+
+    // Actualizar días deshabilitados solo si el tipo de evento no es 'Hogar'
+    if (this.nuevoEvento.tipo_evento !== "Hogar") {
+      this.deshabilitarDias(); // Recalcular días deshabilitados basado en el nuevo tipo de evento
+    } else {
+      // Si es 'Hogar', asegurarse de que no haya días deshabilitados
+      this.diasDeshabilitados.clear();
+    }
+
+    // Inicializar flatpickr o actualizar la configuración si ya está inicializado
+    this.initializeFlatpickr(); // Asegúrate de inicializar o actualizar flatpickr
+  }
+
   deshabilitarDias() {
-    const eventosPorDia: Map<string, number> = new Map();
+    const ahora = new Date();
+    const ahoraKey = `${ahora.getFullYear()}-${(ahora.getMonth() + 1)
+      .toString()
+      .padStart(2, "0")}-${ahora.getDate().toString().padStart(2, "0")}`;
+
+    // Reiniciar días deshabilitados
+    this.diasDeshabilitados = new Set();
+
+    // Bloquear días anteriores a hoy para todos los eventos
+    this.diasDeshabilitados.add(ahoraKey);
 
     this.eventos.forEach((evento) => {
-      const fecha = new Date(evento.fecha_hora);
-      const fechaKey = `${fecha.getFullYear()}-${(fecha.getMonth() + 1)
-        .toString()
-        .padStart(2, "0")}-${fecha.getDate().toString().padStart(2, "0")}`;
+      if (evento.tipo_evento !== "Hogar") {
+        const fecha = new Date(evento.fecha_hora);
+        const fechaKey = `${fecha.getFullYear()}-${(fecha.getMonth() + 1)
+          .toString()
+          .padStart(2, "0")}-${fecha.getDate().toString().padStart(2, "0")}`;
 
-      const cantidad = eventosPorDia.get(fechaKey) || 0;
-      eventosPorDia.set(fechaKey, cantidad + 1);
-    });
-
-    eventosPorDia.forEach((cantidad, fechaKey) => {
-      if (cantidad >= 2) {
-        this.diasDeshabilitados.add(fechaKey);
+        if (fechaKey < ahoraKey) {
+          this.diasDeshabilitados.add(fechaKey);
+        }
       }
     });
 
-    console.log("Días deshabilitados:", this.diasDeshabilitados);
+    console.log("Días deshabilitados:", Array.from(this.diasDeshabilitados));
+    // Actualiza flatpickr solo después de recalcular días deshabilitados
+    this.actualizarFlatpickrConDiasDeshabilitados();
+  }
+
+  actualizarFlatpickrConDiasDeshabilitados(): void {
+    if (this.flatpickrInstance) {
+      this.flatpickrInstance.set(
+        "disable",
+        Array.from(this.diasDeshabilitados)
+      );
+    }
+  }
+
+  initializeFlatpickr(): void {
+    if (!this.flatpickrInstance) {
+      // Solo inicializar si no está ya inicializado
+      this.flatpickrInstance = flatpickr("#fecha", {
+        minDate: this.minFecha,
+        maxDate: this.maxFecha,
+        disable: Array.from(this.diasDeshabilitados), // Esto se actualizará después
+        onChange: (selectedDates) => {
+          this.fechaSeleccionada = selectedDates[0]
+            ? selectedDates[0].toISOString().slice(0, 10)
+            : "";
+          console.log(
+            "Fecha seleccionada en flatpickr:",
+            this.fechaSeleccionada
+          ); // Verifica aquí
+          this.onFechaChange();
+        },
+      });
+    } else {
+      // Actualizar los días deshabilitados si la instancia ya está inicializada
+      this.actualizarFlatpickrConDiasDeshabilitados();
+    }
+  }
+
+  onTipoEventoSelect(event: any) {
+    this.nuevoEvento.tipo_evento = event.target.value;
+    this.onTipoEventoChange();
   }
 
   isHoraDeshabilitada(fechaHora: string): boolean {
@@ -212,9 +409,8 @@ export class RegistroEventoComponent {
   }
 
   isFechaDeshabilitada(fecha: string): boolean {
-    const fechaKey = `${fecha.substring(0, 10)}`;
-    const deshabilitada = this.diasDeshabilitados.has(fechaKey);
-    return deshabilitada;
+    const fechaKey = `${fecha.split("-").join("-")}`;
+    return this.diasDeshabilitados.has(fechaKey);
   }
 
   calcularMinMaxFecha() {
@@ -230,12 +426,7 @@ export class RegistroEventoComponent {
   }
 
   onFechaChange() {
-    console.log("Fecha seleccionada:", this.fechaSeleccionada);
-    console.log(
-      "Tipo de evento en onFechaChange:",
-      this.nuevoEvento.tipo_evento
-    );
-
+    console.log("Fecha seleccionada en onFechaChange:", this.fechaSeleccionada);
     if (this.nuevoEvento.tipo_evento !== "Hogar") {
       console.log("Llamando a bloquearHoras...");
       this.bloquearHoras(); // Recalcular horas disponibles solo para el día seleccionado
@@ -254,15 +445,18 @@ export class RegistroEventoComponent {
   actualizarFechaHora() {
     if (this.fechaSeleccionada && this.horaSeleccionada) {
       // Asegúrate de que la hora esté en formato HH:MM
-      const horaFormateada = this.horaSeleccionada.padStart(5, '0');
-  
+      const horaFormateada = this.horaSeleccionada.padStart(5, "0");
+
       // Combina fecha y hora en el formato YYYY-MM-DD HH:MM:SS
       const fechaHoraLocal = `${this.fechaSeleccionada} ${horaFormateada}:00`;
-  
+
       // Asigna el formato local al evento
       this.nuevoEvento.fecha_hora = fechaHoraLocal;
-  
-      console.log('Fecha y hora actualizada para el backend:', this.nuevoEvento.fecha_hora);
+
+      console.log(
+        "Fecha y hora actualizada para el backend:",
+        this.nuevoEvento.fecha_hora
+      );
     }
   }
 
@@ -303,10 +497,10 @@ export class RegistroEventoComponent {
     }
   }
 
-logout() {
-  this.loggedIn = false;
-  localStorage.removeItem('username'); // Limpiar nombre de usuario del localStorage
-  localStorage.removeItem('role'); // Limpiar rol del localStorage
-  this.router.navigate(['/login']); // Redirige a la página de inicio de sesión
-}
+  logout() {
+    this.loggedIn = false;
+    localStorage.removeItem("username"); // Limpiar nombre de usuario del localStorage
+    localStorage.removeItem("role"); // Limpiar rol del localStorage
+    this.router.navigate(["/login"]); // Redirige a la página de inicio de sesión
+  }
 }
