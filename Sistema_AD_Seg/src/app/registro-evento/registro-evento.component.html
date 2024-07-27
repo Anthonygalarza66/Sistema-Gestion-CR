@@ -135,7 +135,10 @@
             <div class="form-group col">
                <label for="listado_evento">Adjuntar listado: <span class="text-danger"> :</span></label>
                <input type="file" id="listado_evento" name="listado_evento" (change)="subirdoc($event)" class="small-input">
-            </div>
+             </div>        
+             <div *ngFor="let code of qrCodes; let i = index" #qrContainer>
+               <qrcode [qrdata]="code.qrData"></qrcode>
+             </div>            
          </div>
          <div class="row">
             <div class="form-group col">

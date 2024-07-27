@@ -257,4 +257,13 @@ h4 {
   margin-top: 1%;
 }
 
+.hidden {
+  position: absolute; /* Oculta el contenido sin afectar el diseño */
+  visibility: hidden; /* Oculta el contenido visualmente pero mantiene el espacio en el DOM */
+  left: -9999px; /* Mueve los elementos fuera de la vista */
+  top: -9999px;
+}
+
+
+
 
