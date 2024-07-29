@@ -46,14 +46,57 @@
     <img src="./assets/logo_caminoreal.png" width="50" height="50">
     <h4>Camino Real Urbanizacion</h4>
   </div>
-  <div class="navbar-right" >
+  <div class="navbar-right">
     <div class="dropdown">
       <button class="dropbtn"><img src="./assets/users.png" width="35" height="40"></button>
       <span>Hola , {{ username }}</span>
       <div class="dropdown-content-lg"><br>
-        <button class="btn btn-danger" (click)="logout()" ><i class="fa fa-sign-out"></i>Cerrar Sesión</button>
+        <button class="btn btn-danger" (click)="logout()"><i class="fa fa-sign-out"></i>Cerrar Sesión</button>
       </div>
     </div>
   </div>
 </nav>
-<h2><b>Notificaciones:</b></h2>
+<h2><b>Notificaciones:</b></h2> 
+
+<div class="message-form">
+  <h2>Enviar Mensaje</h2>
+  <form>
+    <label for="residente">Seleccionar Residente:</label>
+    <select id="residente" [(ngModel)]="residenteseleccionado" name="residente" required>
+     <option *ngFor="let residente of residentes" [ngValue]="residente">
+       {{ residente.nombre }} {{ residente.apellido }} / {{ residente.celular }}
+   </option>
+   </select>
+    <label for="motivo">Motivo:</label>
+    <select id="motivo" [(ngModel)]="seleccionarmotivo" name="motivo" (change)="onMotivoChange($event)" required>
+      <option value="Recordatorio">Recordatorio</option>
+      <option value="Alerta">Alerta</option>
+      <option value="Información">Información</option>
+      <option value="Acceso Permitido">Acceso Permitido</option>
+      <option value="Acceso Denegado">Acceso Denegado</option>
+      <option value="Emergencia">Emergencia</option>
+      <option value="Mantenimiento Programado">Mantenimiento Programado</option>
+      <option value="Actualización de Seguridad">Actualización de Seguridad</option>
+      <option value="Recordatorio de Visita">Recordatorio de Visita</option>
+      <option value="Aviso de Pérdida">Aviso de Pérdida</option>
+      <option value="Cambio de Horario">Cambio de Horario</option>
+      <option value="Reglas y Normas">Reglas y Normas</option>
+      <option value="Pago de Alicuotas">Pago de Alicuotas</option>
+      <option value="Delivery en Garita">Delivery en Garita</option>
+      <option value="Evento">Evento</option>
+      <option value="Falta de Pago">Falta de Pago</option>
+    </select>
+
+    <label for="message">Mensaje:</label>
+    <textarea id="message" [(ngModel)]="messageText" name="message" rows="4" required></textarea>
+
+
+    <button type="button" class="btn-whatsapp" (click)="enviarWhatsApp()">
+      <i class="fab fa-whatsapp"></i> Enviar por WhatsApp
+    </button>
+    <button type="button" class="btn-sms" (click)="enviarSMS()">
+      <i class="fas fa-sms"></i> Enviar por SMS
+    </button>
+  </form>
+</div>
+

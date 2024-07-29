@@ -10,7 +10,7 @@
     justify-content: flex-end; 
     padding: 10px 20px; 
   }
-  
+   
   .navbar-right {
     color: white;
   }
@@ -154,3 +154,61 @@ ul {
     margin-right: 7%;
     margin-top: 2%;
   }
+  .navbar-center {
+    flex-grow: 1; 
+    display: flex;
+    justify-content: center; 
+  }
+  
+  h4 {
+    font-style: italic;
+    font-family: 'Times New Roman', Times, serif;
+    color: white; 
+    font-weight: bold; 
+    margin-left: 1%;
+    margin-top: 1%;
+  }
+  
+
+  .message-form {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: #f9f9f9;
+}
+
+.message-form select, .message-form textarea ,.message-form input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.message-form button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.message-form .btn-whatsapp {
+    background-color: #25D366;
+    color: #fff;
+}
+
+.message-form .btn-whatsapp:hover {
+    background-color: #1DA851;
+}
+
+.message-form .btn-sms {
+    background-color: #007BFF;
+    color: #fff;
+}
+
+.message-form .btn-sms:hover {
+    background-color: #0056b3;
+}

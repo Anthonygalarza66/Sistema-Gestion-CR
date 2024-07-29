@@ -407,6 +407,15 @@ export class ApiService {
       .get<any>(`${this.apiUrl}/residentes/check-celularR/${celular}`)
       .pipe(catchError(this.handleError));
   }
+  
+  // Método para enviar SMS
+  sendSms(to: string, message: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/send-sms`, { to, message });
+  }
+
+  sendWhatsAppMessage(to: string, message: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/send-whatsapp`, { to, message });
+  }  
 
   // Método para enviar correos
   sendEmail(emailData: any): Observable<any> {

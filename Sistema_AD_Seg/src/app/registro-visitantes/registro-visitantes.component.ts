@@ -150,9 +150,4 @@ export class RegistroVisitantesComponent implements AfterViewInit {
       console.log('La cédula es correcta');
     }
   }
-
-  enviarQR(): void {
-
-  }
-
 }
