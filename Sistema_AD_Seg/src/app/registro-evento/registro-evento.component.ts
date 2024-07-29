@@ -1,4 +1,11 @@
-import { Component, OnInit, ViewChildren, QueryList, ElementRef, ChangeDetectorRef } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ViewChildren,
+  QueryList,
+  ElementRef,
+  ChangeDetectorRef,
+} from "@angular/core";
 import { Router } from "@angular/router";
 import { ApiService } from "../api.service";
 import { PLATFORM_ID, Inject } from "@angular/core";
@@ -7,8 +14,8 @@ import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 import * as mammoth from "mammoth";
 import { jsPDF } from "jspdf";
-import { QRCodeModule } from 'angularx-qrcode';
-import html2canvas from 'html2canvas';
+import { QRCodeModule } from "angularx-qrcode";
+import html2canvas from "html2canvas";
 
 @Component({
   selector: "app-registro-evento",
@@ -16,7 +23,6 @@ import html2canvas from 'html2canvas';
   styleUrl: "./registro-evento.component.css",
 })
 export class RegistroEventoComponent implements OnInit {
-
   username: string = ""; // Inicialmente vacío
   private loggedIn = false;
   rol: string | null = null;
@@ -56,15 +62,14 @@ export class RegistroEventoComponent implements OnInit {
     fechaEvento: "",
     horaEvento: "",
     direccionEvento: "",
-    invitados: []
+    invitados: [],
   };
 
   validationErrors: any = {};
   private flatpickrInstance: any = null;
   public tienePagosPendientes: boolean = false;
 
-  @ViewChildren('qrContainer') qrContainers!: QueryList<ElementRef>;
-
+  @ViewChildren("qrContainer") qrContainers!: QueryList<ElementRef>;
 
   constructor(
     private router: Router,
@@ -480,7 +485,215 @@ export class RegistroEventoComponent implements OnInit {
     }
   }
 
-  guardar() {
+  // Método para manejar la carga del archivo DOCX
+  subirdoc(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.nuevoEvento.listado_evento = file;
+      console.log("Archivo DOCX cargado:", file.name); // Log para el archivo cargado
+      this.parseDocument(file);
+    } else {
+      console.error("No se seleccionó ningún archivo.");
+    }
+  }
+
+  // Método para procesar el documento DOCX
+  parseDocument(file: File) {
+    const reader = new FileReader();
+    reader.onload = async (event: any) => {
+      const arrayBuffer = event.target.result;
+
+      try {
+        const result = await mammoth.convertToHtml({ arrayBuffer });
+        const html = result.value;
+        // Extraer datos del HTML convertido
+        const variables = this.extractDataFromHtml(html);
+        this.generateQRCodes(variables);
+      } catch (error) {
+        console.error("Error al procesar el documento:", error);
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  // Método para extraer datos del HTML convertido
+  extractDataFromHtml(html: string) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, "text/html");
+
+    // Extraer datos del HTML
+    const nombreEvento =
+      doc
+        .querySelector("table tr:nth-child(2) td:nth-child(2)")
+        ?.textContent?.trim() || "";
+    const nombreEncargado =
+      doc
+        .querySelector("table tr:nth-child(3) td:nth-child(2)")
+        ?.textContent?.trim() || "";
+    const celular =
+      doc
+        .querySelector("table tr:nth-child(3) td:nth-child(4)")
+        ?.textContent?.trim() || "";
+    const fechaEvento =
+      doc
+        .querySelector("table tr:nth-child(4) td:nth-child(2)")
+        ?.textContent?.trim() || "";
+    const horaEvento =
+      doc
+        .querySelector("table tr:nth-child(4) td:nth-child(4)")
+        ?.textContent?.trim() || "";
+    const direccionEvento =
+      doc
+        .querySelector("table tr:nth-child(5) td:nth-child(2)")
+        ?.textContent?.trim() || "";
+
+    // Extraer los datos de los invitados
+    const invitados: any[] = [];
+    const rows = doc.querySelectorAll("table tr");
+    let isReadingInvitados = false;
+
+    rows.forEach((row) => {
+      const cells = row.querySelectorAll("td");
+
+      if (cells.length === 5 && cells[0]?.textContent?.trim() === "Nombres") {
+        isReadingInvitados = true; // Comienza a leer los datos de los invitados
+        return; // Salta la fila de encabezado
+      }
+
+      if (isReadingInvitados && cells.length === 5) {
+        // Solo agrega filas si tienen contenido en las celdas esperadas
+        if (cells[0]?.textContent?.trim() && cells[1]?.textContent?.trim()) {
+          invitados.push({
+            nombres: cells[0]?.textContent?.trim() || "",
+            apellidos: cells[1]?.textContent?.trim() || "",
+            cedula: cells[2]?.textContent?.trim() || "",
+            placa: cells[3]?.textContent?.trim() || "",
+            observaciones: cells[4]?.textContent?.trim() || "",
+          });
+        }
+      }
+    });
+
+    console.log("Invitados:", invitados);
+
+    return {
+      nombreEvento,
+      nombreEncargado,
+      celular,
+      fechaEvento,
+      horaEvento,
+      direccionEvento,
+      invitados,
+    };
+  }
+
+  generateQRCodes(data: any) {
+    const {
+      nombreEvento,
+      nombreEncargado,
+      fechaEvento,
+      horaEvento,
+      direccionEvento,
+      invitados,
+    } = data;
+    this.qrCodes = invitados.map((invitado: any) => ({
+      qrData: `${invitado.nombres}\n${invitado.apellidos}\n${invitado.cedula}\n${direccionEvento}\n${fechaEvento}\n${horaEvento}\n${invitado.placa}\n${nombreEvento}`,
+      nombre: invitado.nombres,
+      apellido: invitado.apellidos,
+    }));
+    this.cdr.detectChanges();
+    this.generatePDFs();
+  }
+
+  generatePDFs(): Promise<{ pdf: jsPDF; nombreArchivo: string }[]> {
+    return new Promise((resolve, reject) => {
+      if (this.qrContainers.length === 0) {
+        console.error("Contenedores QR no encontrados");
+        reject("Contenedores QR no encontrados");
+        return;
+      }
+
+      const pdfs: { pdf: jsPDF; nombreArchivo: string }[] = []; // Declarar tipo explícito
+      let completed = 0;
+      const total = this.qrContainers.length;
+
+      this.qrContainers.forEach((container, index) => {
+        setTimeout(() => {
+          // Hacer visible el contenedor temporalmente
+          container.nativeElement.style.opacity = "1";
+          container.nativeElement.style.pointerEvents = "auto";
+          console.log(`Contenedor ${index} hecho visible`);
+
+          html2canvas(container.nativeElement)
+            .then((canvas) => {
+              // Volver a ocultar el contenedor
+              container.nativeElement.style.opacity = "0";
+              container.nativeElement.style.pointerEvents = "none";
+              console.log(`Contenedor ${index} oculto de nuevo`);
+
+              const imgData = canvas.toDataURL("image/png");
+              const pdf = new jsPDF("p", "mm", "a4");
+              const pdfWidth = pdf.internal.pageSize.getWidth();
+              const pdfHeight = pdf.internal.pageSize.getHeight();
+
+              const imgWidth = 190; // Ancho fijo en mm
+              const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+              // Calcular la posición para centrar la imagen horizontalmente
+              const xOffset = (pdfWidth - imgWidth) / 2; // Centrar horizontalmente
+              let position = 20; // Espacio para el texto y márgenes
+
+              // Agregar texto con el nombre y apellido del invitado
+              const invitado = this.qrCodes[index];
+              const nombreApellido = `Nombre: ${invitado.nombre}\nApellidos: ${invitado.apellido}`;
+              pdf.setFontSize(12);
+              pdf.text(nombreApellido, 10, position); // Posición del texto en la página
+              position += 20; // Ajustar la posición del texto para que no se sobreponga con la imagen
+
+              // Agregar la imagen al PDF
+              pdf.addImage(
+                imgData,
+                "PNG",
+                xOffset,
+                position,
+                imgWidth,
+                imgHeight
+              );
+
+              // Verificar si es necesario agregar más páginas
+              const heightLeft = imgHeight - (pdfHeight - position - 20);
+              if (heightLeft > 0) {
+                // Agregar más páginas si es necesario
+                pdf.addPage();
+                pdf.text(nombreApellido, 10, 10); // Agregar texto en nuevas páginas
+                pdf.addImage(imgData, "PNG", xOffset, 20, imgWidth, imgHeight); // Ajustar posición para el QR en nuevas páginas
+              }
+
+              // Crear el nombre del archivo PDF usando nombre y apellido del invitado
+              const nombreArchivo =
+                `qr_${invitado.nombre}_${invitado.apellido}.pdf`.replace(
+                  /\s+/g,
+                  "_"
+                );
+              pdfs.push({ pdf, nombreArchivo }); // Agregar al array de PDFs
+
+              // Incrementar el contador de PDFs completados
+              completed++;
+              if (completed === total) {
+                // Resolver la promesa con los PDFs generados
+                resolve(pdfs);
+              }
+            })
+            .catch((error) => {
+              console.error("Error al generar el PDF:", error);
+              reject(error);
+            });
+        }, 500); // Ajusta el tiempo si es necesario
+      });
+    });
+  }
+
+  guardar(): void {
     const formData = new FormData();
 
     Object.keys(this.nuevoEvento).forEach((key) => {
@@ -494,7 +707,22 @@ export class RegistroEventoComponent implements OnInit {
     this.apiService.createEvento(formData).subscribe(
       (response) => {
         console.log("Evento creado:", response);
-        this.router.navigate(["/eventos"]);
+
+        // Generar los códigos QR después de guardar el evento
+        this.generatePDFs()
+          .then((pdfs) => {
+            // Descargar los PDFs después de generarlos
+            pdfs.forEach(({ pdf, nombreArchivo }) => {
+              pdf.save(nombreArchivo);
+              console.log(`PDF guardado como ${nombreArchivo}`);
+            });
+
+            // Redirigir a /eventos después de generar y descargar los PDFs
+            this.router.navigate(["/eventos"]);
+          })
+          .catch((error) => {
+            console.error("Error al generar los PDFs:", error);
+          });
       },
       (error) => {
         console.error("Error al crear evento:", error);
@@ -509,147 +737,6 @@ export class RegistroEventoComponent implements OnInit {
       }
     );
   }
-
-  // Método para manejar la carga del archivo DOCX
-subirdoc(event: any) {
-  const file = event.target.files[0];
-  if (file) {
-    this.nuevoEvento.listado_evento = file;
-    console.log('Archivo DOCX cargado:', file.name); // Log para el archivo cargado
-    this.parseDocument(file);
-  } else {
-    console.error('No se seleccionó ningún archivo.');
-  }
-}
-
-// Método para procesar el documento DOCX
-parseDocument(file: File) {
-  const reader = new FileReader();
-  reader.onload = async (event: any) => {
-    const arrayBuffer = event.target.result;
-
-    try {
-      const result = await mammoth.convertToHtml({ arrayBuffer });
-      const html = result.value;
-      // Extraer datos del HTML convertido
-      const variables = this.extractDataFromHtml(html);
-      this.generateQRCodes(variables);
-    } catch (error) {
-      console.error("Error al procesar el documento:", error);
-    }
-  };
-  reader.readAsArrayBuffer(file);
-}
-
-// Método para extraer datos del HTML convertido
-extractDataFromHtml(html: string) {
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(html, 'text/html');
-
-  // Extraer datos del HTML
-  const nombreEvento = doc.querySelector('table tr:nth-child(2) td:nth-child(2)')?.textContent?.trim() || '';
-  const nombreEncargado = doc.querySelector('table tr:nth-child(3) td:nth-child(2)')?.textContent?.trim() || '';
-  const celular = doc.querySelector('table tr:nth-child(3) td:nth-child(4)')?.textContent?.trim() || '';
-  const fechaEvento = doc.querySelector('table tr:nth-child(4) td:nth-child(2)')?.textContent?.trim() || '';
-  const horaEvento = doc.querySelector('table tr:nth-child(4) td:nth-child(4)')?.textContent?.trim() || '';
-  const direccionEvento = doc.querySelector('table tr:nth-child(5) td:nth-child(2)')?.textContent?.trim() || '';
-
-  // Extraer los datos de los invitados
-  const invitados: any[] = [];
-  const rows = doc.querySelectorAll('table tr');
-  let isReadingInvitados = false;
-
-  rows.forEach((row) => {
-    const cells = row.querySelectorAll('td');
-
-    if (cells.length === 5 && cells[0]?.textContent?.trim() === 'Nombres') {
-      isReadingInvitados = true; // Comienza a leer los datos de los invitados
-      return; // Salta la fila de encabezado
-    }
-
-    if (isReadingInvitados && cells.length === 5) {
-      // Solo agrega filas si tienen contenido en las celdas esperadas
-      if (cells[0]?.textContent?.trim() && cells[1]?.textContent?.trim()) {
-        invitados.push({
-          nombres: cells[0]?.textContent?.trim() || '',
-          apellidos: cells[1]?.textContent?.trim() || '',
-          cedula: cells[2]?.textContent?.trim() || '',
-          placa: cells[3]?.textContent?.trim() || '',
-          observaciones: cells[4]?.textContent?.trim() || '',
-        });
-      }
-    }
-  });
-
-  console.log('Invitados:', invitados);
-
-  return {
-    nombreEvento,
-    nombreEncargado,
-    celular,
-    fechaEvento,
-    horaEvento,
-    direccionEvento,
-    invitados
-  };
-}
-
-
-generateQRCodes(data: any) {
-  const { nombreEvento, nombreEncargado, fechaEvento, horaEvento, direccionEvento, invitados } = data;
-  this.qrCodes = invitados.map((invitado: any) => ({
-    qrData: `${invitado.nombres}\n${invitado.apellidos}\n${invitado.cedula}\n${direccionEvento}\n${fechaEvento}\n${horaEvento}\n${invitado.placa}\n${nombreEvento}`,
-    nombre: invitado.nombres,
-    apellido: invitado.apellidos
-  }));
-  this.cdr.detectChanges();
-  this.generatePDFs();
-}
-
-
-generatePDFs(): void {
-  if (this.qrContainers.length === 0) {
-    console.error('Contenedores QR no encontrados');
-    return;
-  }
-
-  this.qrContainers.forEach((container, index) => {
-    setTimeout(() => {
-      html2canvas(container.nativeElement).then(canvas => {
-        const imgData = canvas.toDataURL('image/png');
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        const imgWidth = 190;
-        const imgHeight = canvas.height * imgWidth / canvas.width;
-
-        let heightLeft = imgHeight;
-        let position = 10;
-
-        // Agregar texto con el nombre y apellido del invitado
-        const invitado = this.qrCodes[index];
-        const nombreApellido = `Nombre: ${invitado.nombre}\nApellidos: ${invitado.apellido}`;
-        pdf.setFontSize(12);
-        pdf.text(nombreApellido, 10, 10); // Posición del texto en la página
-        
-        pdf.addImage(imgData, 'PNG', 10, position + 10, imgWidth, imgHeight); // Ajustar posición para el QR
-        heightLeft -= pdf.internal.pageSize.height - 20;
-
-        while (heightLeft > 0) {
-          pdf.addPage();
-          pdf.text(nombreApellido, 10, 10); // Agregar texto en nuevas páginas
-          pdf.addImage(imgData, 'PNG', 10, position - heightLeft + 10, imgWidth, imgHeight); // Ajustar posición para el QR
-          heightLeft -= pdf.internal.pageSize.height - 20;
-        }
-
-        // Crear el nombre del archivo PDF usando nombre y apellido del invitado
-        const nombreArchivo = `qr_${invitado.nombre}_${invitado.apellido}.pdf`.replace(/\s+/g, '_');
-        pdf.save(nombreArchivo); // Guarda cada QR en un PDF separado con el nombre del invitado
-      }).catch(error => {
-        console.error('Error al generar el PDF:', error);
-      });
-    }, 500); // Ajusta el tiempo si es necesario
-  });
-}
-
 
   logout() {
     this.loggedIn = false;

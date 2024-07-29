@@ -135,10 +135,10 @@
             <div class="form-group col">
                <label for="listado_evento">Adjuntar listado: <span class="text-danger"> :</span></label>
                <input type="file" id="listado_evento" name="listado_evento" (change)="subirdoc($event)" class="small-input">
-             </div>        
-             <div *ngFor="let code of qrCodes; let i = index" #qrContainer>
+             </div>              
+             <div *ngFor="let code of qrCodes; let i = index" #qrContainer class="hidden-for-canvas">
                <qrcode [qrdata]="code.qrData"></qrcode>
-             </div>            
+             </div>                      
          </div>
          <div class="row">
             <div class="form-group col">
@@ -149,7 +149,7 @@
                <a id="formato" class="download-link" href="assets/formato-listado-camino-real.docx" download>Descargar Formato de Listado</a>
             </div>
          </div>
-         <button type="submit" class="btn btn-primary">Guardar</button>
+         <button type="submit" class="btn btn-primary" (click)="guardar()">Guardar</button>
          <a href="registro-visitantes" class="btn btn-info">Registrar invitados</a>
       </form>
    </div>

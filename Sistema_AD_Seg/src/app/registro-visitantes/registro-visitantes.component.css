@@ -249,21 +249,6 @@ ul {
   margin-right: 6%;
 }
 
-.btn-enviar {
-  padding: 10px 20px;
-  background-color: #330a69;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-right: 2%;
-  margin-left: 2%;
-}
-
-.btn-enviar:hover {
-  background-color: #4f129e;
-}
-
 .qr-container {
   text-align: center; 
   margin-bottom: 20px; 

@@ -19,6 +19,7 @@ import { RegistroUsuarioComponent } from './registro-usuario/registro-usuario.co
 import { LectorQrComponent } from './lector-qr/lector-qr.component';
 import { authGuard } from './auth.guard';
 import { AccessDeniedComponent } from './access-denied/access-denied.component';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' } ,// Redirigir la ruta por defecto 
@@ -40,6 +41,7 @@ const routes: Routes = [
   { path: 'registro-usuario' , component: RegistroUsuarioComponent, pathMatch: "full", canActivate: [authGuard] },
   { path: 'lector-qr' , component: LectorQrComponent, pathMatch: "full" , canActivate: [authGuard] },
   { path: 'access-denied', component: AccessDeniedComponent },
+  { path: 'reset-password', component: ResetPasswordComponent , pathMatch: "full" },
 ];
 
 @NgModule({
