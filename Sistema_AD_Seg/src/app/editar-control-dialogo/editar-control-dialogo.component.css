@@ -1,4 +1,43 @@
-.custom-dialog .mat-dialog-container {
-  border: 1px solid #ccc; /* Borde del modal */
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2); /* Sombra del modal */
+.modal-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.modal-body {
+  padding: 1.5rem; /* Ajusta el padding para un mejor espaciado */
+}
+
+.modal-footer {
+  background-color: #f8f9fa;
+  border-top: 1px solid #dee2e6;
+}
+
+.form-group label {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.form-control {
+  border-radius: 0.25rem;
+  box-shadow: none;
+}
+
+textarea.form-control {
+  resize: vertical; /* Permite redimensionar verticalmente el textarea */
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  border: none;
+  color: #fff;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  border: none;
+  color: #fff;
+}
+
+.d-none {
+  display: none;
 }

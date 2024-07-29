@@ -1,43 +1,50 @@
-import { Component, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { Component, OnInit, Inject } from '@angular/core';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-editar-control-dialogo',
   templateUrl: './editar-control-dialogo.component.html',
-  styleUrls: ['./editar-control-dialogo.component.css'] // Corregido: debe ser 'styleUrls' en lugar de 'styleUrl'
+  styleUrls: ['./editar-control-dialogo.component.css']
 })
-export class EditarControlDialogoComponent {
-  form: FormGroup;
+export class EditarControlDialogoComponent implements OnInit {
+  form!: FormGroup; 
+  data: any;  // Propiedad para recibir datos
 
   constructor(
-    public dialogRef: MatDialogRef<EditarControlDialogoComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    public modalRef: NgbActiveModal,
     private fb: FormBuilder
-  ) {
-    // Inicializa el formulario con los datos proporcionados
+  ) { }
+
+  ngOnInit(): void {
+    // Asegúrate de que 'data' esté inicializada antes de usarla
     this.form = this.fb.group({
-      placas: [data.placas || ''],
-      fecha_ingreso: [data.fecha_ingreso || ''],
-      fecha_salida: [data.fecha_salida || ''],
-      nombre: [data.nombre || ''],
-      apellidos: [data.apellidos || ''],
-      sexo: [data.sexo || ''],
-      cedula: [data.cedula || ''],
-      ingresante: [data.ingresante || ''],
-      direccion: [data.direccion || ''],
-      username: [data.username || ''],
-      observaciones: [data.observaciones || ''],
+      id_usuario: [this.data.id_usuario, Validators.required],
+      placas: [this.data.placas, Validators.required],
+      fecha_ingreso: [this.data.fecha_ingreso, Validators.required],
+      fecha_salida: [this.data.fecha_salida],
+      nombre: [this.data.nombre, Validators.required],
+      apellidos: [this.data.apellidos, Validators.required],
+      sexo: [this.data.sexo, Validators.required],
+      cedula: [this.data.cedula, Validators.required],
+      ingresante: [this.data.ingresante, Validators.required],
+      direccion: [this.data.direccion, Validators.required],
+      username: [this.data.username],
+      observaciones: [this.data.observaciones]
     });
   }
 
-  onNoClick(): void {
-    // Cierra el diálogo sin hacer cambios
-    this.dialogRef.close();
-  }
-
   save(): void {
-    console.log('Datos del formulario antes de guardar:', this.form.value);
-    this.dialogRef.close(this.form.value);
+    const formData = { ...this.form.value };
+    formData.fecha_ingreso = this.formatDate(formData.fecha_ingreso);
+    formData.fecha_salida = formData.fecha_salida ? this.formatDate(formData.fecha_salida) : null;
+    
+    console.log('Datos del formulario antes de guardar:', formData);
+    this.modalRef.close(formData);
+  }
+  
+  private formatDate(date: any): string {
+    const d = new Date(date);
+    return `${d.getFullYear()}-${('0' + (d.getMonth() + 1)).slice(-2)}-${('0' + d.getDate()).slice(-2)} ${('0' + d.getHours()).slice(-2)}:${('0' + d.getMinutes()).slice(-2)}:${('0' + d.getSeconds()).slice(-2)}`;
   }
 }

@@ -8,13 +8,13 @@ import { HttpClientModule, provideHttpClient, withFetch } from '@angular/common/
 import { CommonModule } from '@angular/common';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { MatDialogModule } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { NgbModule, NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap'; 
 
 
 import { AppRoutingModule } from './app-routing.module';
@@ -77,18 +77,20 @@ import { EditarControlDialogoComponent } from './editar-control-dialogo/editar-c
     HttpClientModule,
     NgxPaginationModule,
     MatDialogModule,
-    MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
     MatDatepickerModule,
     MatNativeDateModule,
     ReactiveFormsModule,
+    NgbModule,
+    NgbDatepickerModule,
     BsDatepickerModule.forRoot()
   
   ],
   providers: [
     provideClientHydration(),
-    provideHttpClient(withFetch())
+    provideHttpClient(withFetch()),
+  
   ],
   bootstrap: [AppComponent]
 })
