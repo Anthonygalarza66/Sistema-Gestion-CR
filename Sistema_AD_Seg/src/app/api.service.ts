@@ -5,7 +5,7 @@ import {
   HttpErrorResponse,
 } from "@angular/common/http";
 import { Observable, catchError, throwError } from "rxjs";
-import { tap } from 'rxjs/operators'; 
+import { tap } from "rxjs/operators";
 
 @Injectable({
   providedIn: "root",
@@ -23,14 +23,15 @@ export class ApiService {
 
   // Método para iniciar sesión
   login(login: string, password: string): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/login`, { login, contrasena: password })
+    return this.http
+      .post<any>(`${this.apiUrl}/login`, { login, contrasena: password })
       .pipe(
         catchError(this.handleError),
-        tap(response => {
+        tap((response) => {
           if (response.success && response.username) {
             // Guarda el nombre de usuario y rol en localStorage
-            localStorage.setItem('username', response.username);
-            localStorage.setItem('role', response.role);
+            localStorage.setItem("username", response.username);
+            localStorage.setItem("role", response.role);
           }
         })
       );
@@ -41,7 +42,9 @@ export class ApiService {
   }
 
   getAlicuotasByIdResidente(id_residente: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/alicuotas/residente/${id_residente}`);
+    return this.http.get<any>(
+      `${this.apiUrl}/alicuotas/residente/${id_residente}`
+    );
   }
 
   // Método para obtener todos los usuarios
@@ -145,11 +148,12 @@ export class ApiService {
       .get<any>(`${this.apiUrl}/alicuotas/${id}`)
       .pipe(catchError(this.handleError));
   }
-  
+
   getAlicuotasByUser(id_usuario: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/alicuotas/user/${id_usuario}`)
+    return this.http
+      .get<any[]>(`${this.apiUrl}/alicuotas/user/${id_usuario}`)
       .pipe(catchError(this.handleError));
-} 
+  }
 
   // Método para crear una nueva alícuota
   createAlicuota(alicuota: any): Observable<any> {
@@ -235,11 +239,13 @@ export class ApiService {
   }
 
   getResidente(idUsuario: number): Observable<any> {
-    console.log(`Solicitando residente con ID de usuario ${idUsuario} a la API...`);
-    return this.http.get<any>(`${this.apiUrl}/eventos/residente/${idUsuario}`)
-        .pipe(catchError(this.handleError));
-   }
-
+    console.log(
+      `Solicitando residente con ID de usuario ${idUsuario} a la API...`
+    );
+    return this.http
+      .get<any>(`${this.apiUrl}/eventos/residente/${idUsuario}`)
+      .pipe(catchError(this.handleError));
+  }
 
   // Método para guardar (crear o actualizar) un residente
   guardarResidente(residente: any): Observable<any> {
@@ -300,14 +306,16 @@ export class ApiService {
 
   // Método para actualizar un registro de control de acceso existente
   updateControlAcceso(id: number, controlAcceso: any): Observable<any> {
-    console.log(`Enviando datos para actualizar control de acceso con ID ${id}:`, controlAcceso);
-    return this.http.put<any>(
-      `${this.apiUrl}/control-acceso/${id}`,
-      controlAcceso,
-      { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) }
-    ).pipe(catchError(this.handleError));
+    console.log(
+      `Enviando datos para actualizar control de acceso con ID ${id}:`,
+      controlAcceso
+    );
+    return this.http
+      .put<any>(`${this.apiUrl}/control-acceso/${id}`, controlAcceso, {
+        headers: new HttpHeaders({ "Content-Type": "application/json" }),
+      })
+      .pipe(catchError(this.handleError));
   }
-  
 
   // Método para guardar (crear o actualizar) un registro de control de acceso
   guardarControlAcceso(controlAcceso: any): Observable<any> {
@@ -371,7 +379,7 @@ export class ApiService {
       .pipe(catchError(this.handleError));
   }
   checkCelularPersonal(celular: string): Observable<any> {
-       return this.http
+    return this.http
       .get<any>(`${this.apiUrl}/personal/check-celular/${celular}`)
       .pipe(catchError(this.handleError));
   }
@@ -382,12 +390,23 @@ export class ApiService {
       .pipe(catchError(this.handleError));
   }
 
+  requestPasswordReset(correo: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/usuarios/solicitar-restablecimiento`, { correo });
+  }
+
+  resetPassword(token: string, newPassword: string, confirmPassword: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/usuarios/restablecer-contrasena`, {
+      token: token,
+      new_password: newPassword,
+      new_password_confirmation: confirmPassword
+    });
+  }
+  
   checkCelularR(celular: string): Observable<any> {
     return this.http
       .get<any>(`${this.apiUrl}/residentes/check-celularR/${celular}`)
       .pipe(catchError(this.handleError));
   }
-
 
   // Método para enviar correos
   sendEmail(emailData: any): Observable<any> {
@@ -396,12 +415,6 @@ export class ApiService {
       .post<any>(`${this.apiUrl}/enviar-correo`, emailData, this.httpOptions)
       .pipe(catchError(this.handleError));
   }
-
-  requestPasswordReset(correo: string): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/usuarios/request-password-reset`, { correo });
-  }
-  
-
 
   // Manejo de errores
   handleError(error: HttpErrorResponse): Observable<never> {
@@ -421,14 +434,16 @@ export class ApiService {
   }
 
   updateEventoEstado(id: number, nuevoEstado: string): Observable<any> {
-    return this.http.patch(`${this.apiUrl}/eventos/${id}/estado`, { estado: nuevoEstado });
+    return this.http.patch(`${this.apiUrl}/eventos/${id}/estado`, {
+      estado: nuevoEstado,
+    });
   }
 
   getUserIdByEmail(correoElectronico: string): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/usuarios/getUserIdByEmail`, { correo_electronico: correoElectronico })
-      .pipe(
-        catchError(this.handleError)
-      );
+    return this.http
+      .post<any>(`${this.apiUrl}/usuarios/getUserIdByEmail`, {
+        correo_electronico: correoElectronico,
+      })
+      .pipe(catchError(this.handleError));
   }
-
 }

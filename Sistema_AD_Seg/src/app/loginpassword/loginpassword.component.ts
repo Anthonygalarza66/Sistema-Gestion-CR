@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ApiService } from "../api.service";
-import { Router } from "@angular/router";
+import { Router , ActivatedRoute } from "@angular/router";
 import { PLATFORM_ID, Inject } from "@angular/core";
 import { isPlatformBrowser } from "@angular/common";
 
@@ -11,6 +11,7 @@ import { isPlatformBrowser } from "@angular/common";
   styleUrl: './loginpassword.component.css'
 })
 export class LoginpasswordComponent {
+
   usernameOrEmail: string = '';
   message: string = '';
   loading: boolean = false;
@@ -36,6 +37,8 @@ export class LoginpasswordComponent {
             () => {
               this.message = 'Se ha enviado un enlace para restablecer la contraseña a tu correo electrónico.';
               this.loading = false;
+              // Redirigir al usuario a la página de inicio de sesión
+              this.router.navigate(['/login']);
             },
             (error) => {
               console.error('Error al solicitar el restablecimiento de contraseña:', error);
@@ -59,5 +62,7 @@ export class LoginpasswordComponent {
   isValidEmail(email: string): boolean {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailPattern.test(email);
+    
   }
+  
 }

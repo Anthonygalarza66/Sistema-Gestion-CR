@@ -17,7 +17,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 
 
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
@@ -38,6 +37,7 @@ import { GestionusuarioComponent } from './gestionusuario/gestionusuario.compone
 import { RegistroUsuarioComponent } from './registro-usuario/registro-usuario.component';
 import { LectorQrComponent } from './lector-qr/lector-qr.component';
 import { AccessDeniedComponent } from './access-denied/access-denied.component';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
 import { RolePipe } from './role.pipe';
 import { EditarControlDialogoComponent } from './editar-control-dialogo/editar-control-dialogo.component';
 
@@ -63,7 +63,8 @@ import { EditarControlDialogoComponent } from './editar-control-dialogo/editar-c
     LectorQrComponent,
     AccessDeniedComponent,
     RolePipe,
-    EditarControlDialogoComponent
+    EditarControlDialogoComponent,
+    ResetPasswordComponent
   ],
   imports: [
     BrowserModule,
