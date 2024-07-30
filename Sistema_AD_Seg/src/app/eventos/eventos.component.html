@@ -126,10 +126,7 @@
             <button *ngIf="row.estado !== 'Denegado'" class="btn-reject" (click)="updateEstado(row.id_evento, 'Denegado')" title="Rechazar evento">
               <i class="fas fa-times"></i>
             </button>
-             <!-- Botones para editar y eliminar -->
-            <button class="btn-edit" (click)="editEventos(row.id_evento) ">
-            <i class="fas fa-edit"></i>
-            </button>
+             <!-- Boton para eliminar -->
             <button class="btn-trash" (click)="deleteEventos(row.id_evento)">
             <i class="fas fa-trash"></i> 
             </button>

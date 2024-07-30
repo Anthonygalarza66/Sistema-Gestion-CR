@@ -235,15 +235,13 @@ export class ApiService {
       .pipe(catchError(this.handleError));
   }
 
-  getResidente(idUsuario: number): Observable<any> {
-    console.log(
-      `Solicitando residente con ID de usuario ${idUsuario} a la API...`
-    );
+  getResidente(id_residente: number): Observable<any> {
+    console.log(`Solicitando residente con ID ${id_residente} a la API...`);
     return this.http
-      .get<any>(`${this.apiUrl}/eventos/residente/${idUsuario}`)
+      .get<any>(`${this.apiUrl}/residentes/${id_residente}`)
       .pipe(catchError(this.handleError));
   }
-
+  
   // Método para guardar (crear o actualizar) un residente
   guardarResidente(residente: any): Observable<any> {
     if (residente.id) {
@@ -266,6 +264,13 @@ export class ApiService {
       .post<any>(`${this.apiUrl}/residentes`, residente, this.httpOptions)
       .pipe(catchError(this.handleError));
   }
+
+  updateResidente(id: number, residente: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/residentes/${id}`, residente, {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+    }).pipe(catchError(this.handleError));
+  }
+  
 
   // Método para eliminar un residente
   deleteResidente(id: number): Observable<any> {

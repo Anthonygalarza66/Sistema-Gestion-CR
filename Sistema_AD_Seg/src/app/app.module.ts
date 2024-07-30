@@ -43,6 +43,7 @@ import { EditarControlDialogoComponent } from './editar-control-dialogo/editar-c
 import { EditarUsuariosDialogoComponent } from './editar-usuarios-dialogo/editar-usuarios-dialogo.component';
 import { EditarAlicuotasDialogoComponent } from './editar-alicuotas-dialogo/editar-alicuotas-dialogo.component';
 import { EditarPersonalDialogoComponent } from './editar-personal-dialogo/editar-personal-dialogo.component';
+import { EditarResidenteDialogoComponent } from './editar-residente-dialogo/editar-residente-dialogo.component';
 
 @NgModule({
   declarations: [
@@ -70,7 +71,8 @@ import { EditarPersonalDialogoComponent } from './editar-personal-dialogo/editar
     ResetPasswordComponent,
     EditarUsuariosDialogoComponent,
     EditarAlicuotasDialogoComponent,
-    EditarPersonalDialogoComponent
+    EditarPersonalDialogoComponent,
+    EditarResidenteDialogoComponent
   ],
   imports: [
     BrowserModule,
