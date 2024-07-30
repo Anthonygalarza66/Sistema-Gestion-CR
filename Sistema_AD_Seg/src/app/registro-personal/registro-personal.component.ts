@@ -4,6 +4,8 @@ import { ApiService } from "../api.service";
 import { PLATFORM_ID, Inject } from "@angular/core";
 import { isPlatformBrowser } from "@angular/common";
 import * as XLSX from "xlsx";
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import {EditarPersonalDialogoComponent} from '../editar-personal-dialogo/editar-personal-dialogo.component';
 
 @Component({
   selector: "app-registro-personal",
@@ -20,6 +22,7 @@ export class RegistroPersonalComponent implements OnInit {
 
   constructor(
     private router: Router,
+    private modalService: NgbModal,
     private apiService: ApiService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
@@ -78,9 +81,34 @@ logout() {
 
   // Métodos para editar personal
   editPersonal(id: number): void {
-    console.log("Editando personal con ID:", id);
-    this.router.navigate(["/formulario-personal", id]);
+    this.apiService.getPersonal(id).subscribe(data => {
+      console.log('Datos recibidos:', data);
+      const modalRef = this.modalService.open(EditarPersonalDialogoComponent, {
+        size: 'md',
+        backdrop: 'static',
+        centered: true
+      });
+      modalRef.componentInstance.personal = data;
+      
+      modalRef.result.then(result => {
+        if (result) {
+          console.log('Datos del modal:', result);
+          this.apiService.updatePersonal(id, result).subscribe(
+            response => {
+              console.log('Personal actualizado', response);
+              this.loadPersonal(); // Recargar la lista de personales
+            },
+            error => {
+              console.error('Error al actualizar personal:', error);
+            }
+          );
+        }
+      }, (reason) => {
+        console.log('Modal cerrado con rechazo:', reason);
+      });
+    });
   }
+  
 
   deletePersonal(id: number): void {
     const confirmDeletion = window.confirm(

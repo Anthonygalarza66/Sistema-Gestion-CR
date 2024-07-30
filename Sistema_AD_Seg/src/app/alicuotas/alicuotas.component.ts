@@ -4,6 +4,9 @@ import { ApiService } from "../api.service";
 import { PLATFORM_ID, Inject } from "@angular/core";
 import { isPlatformBrowser } from "@angular/common";
 import * as XLSX from "xlsx";
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { EditarAlicuotasDialogoComponent } from '../editar-alicuotas-dialogo/editar-alicuotas-dialogo.component';
+
 
 @Component({
   selector: 'app-alicuotas',
@@ -25,6 +28,7 @@ export class AlicuotasComponent {
 
   constructor(
     private router: Router,
+    private modalService: NgbModal,
     private apiService: ApiService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
@@ -169,9 +173,39 @@ logout() {
 
    // Métodos para editar personal
    editAlicuota(id: number): void {
-    console.log("Editando personal con ID:", id);
-    this.router.navigate(["/registro-alicuotas", id]);
+    this.apiService.getAlicuota(id).subscribe(data => {
+      const modalRef = this.modalService.open(EditarAlicuotasDialogoComponent, {
+        size: 'md',
+        backdrop: 'static',
+        centered: true
+      });
+  
+      modalRef.componentInstance.data = data;
+  
+      modalRef.result.then(result => {
+        if (result) {
+          this.apiService.updateAlicuota(id, result).subscribe(
+            response => {
+              console.log('Alícuota actualizada', response);
+              this.loadAlicuota(); // Recargar la lista de alícuotas
+            },
+            error => {
+              console.error('Error al actualizar alícuota:', error);
+            }
+          );
+        }
+      }, (reason) => {
+        // Opcional: manejar el rechazo del modal
+      });
+    });
   }
+  
+
+  private formatDate(date: any): string {
+    const d = new Date(date);
+    return `${d.getFullYear()}-${('0' + (d.getMonth() + 1)).slice(-2)}-${('0' + d.getDate()).slice(-2)}`;
+  }
+
 
   deleteAlicuota(id: number): void {
     const confirmDeletion = window.confirm(

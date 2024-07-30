@@ -70,12 +70,12 @@
    <table  mat-table id="Personal">
       <thead>
          <tr>
-            <th>Nombre</th>
-            <th>Apellido</th>
+            <th>Nombres</th>
             <th>Sexo</th>
             <th>Cédula</th>
             <th>Perfil</th>
             <th>Celular</th>
+            <th>Correo</th>
             <th>Observaciones</th>
             <th>Acciones</th>
          </tr>
@@ -83,12 +83,12 @@
       <!-- Filtro aplicado para mostrar los datos -->
       <tbody id="Personal">
          <tr *ngFor="let row of (filtrar() | paginate: { itemsPerPage: 5, currentPage: p })">
-            <td>{{row.nombre}}</td>
-            <td>{{row.apellido}}</td>
+            <td>{{row.nombre}} {{row.apellido}}</td>
             <td>{{row.sexo}}</td>
-            <td>{{row.identificacion}}</td>
+            <td>{{row.cedula}}</td>
             <td>{{row.perfil}}</td>
             <td>{{row.celular}}</td>
+            <td>{{row.correo_electronico}}</td>
             <td>{{row.observaciones}}</td>
             <td>
                <!-- Botones para editar y eliminar -->

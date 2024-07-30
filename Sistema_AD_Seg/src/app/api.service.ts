@@ -73,14 +73,11 @@ export class ApiService {
 
   // Método para actualizar un usuario existente
   updateUsuario(id: number, usuario: any): Observable<any> {
-    console.log(
-      `Enviando datos para actualizar usuario con ID ${id}:`,
-      usuario
-    );
+    console.log(`Enviando datos para actualizar usuario con ID ${id}:`, usuario);
     return this.http
       .put<any>(`${this.apiUrl}/usuarios/${id}`, usuario, this.httpOptions)
       .pipe(catchError(this.handleError));
-  }
+  }  
 
   // Método para eliminar un usuario
   deleteUsuario(id: number): Observable<any> {

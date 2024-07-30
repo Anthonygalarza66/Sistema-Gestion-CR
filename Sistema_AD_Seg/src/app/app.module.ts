@@ -40,6 +40,9 @@ import { AccessDeniedComponent } from './access-denied/access-denied.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
 import { RolePipe } from './role.pipe';
 import { EditarControlDialogoComponent } from './editar-control-dialogo/editar-control-dialogo.component';
+import { EditarUsuariosDialogoComponent } from './editar-usuarios-dialogo/editar-usuarios-dialogo.component';
+import { EditarAlicuotasDialogoComponent } from './editar-alicuotas-dialogo/editar-alicuotas-dialogo.component';
+import { EditarPersonalDialogoComponent } from './editar-personal-dialogo/editar-personal-dialogo.component';
 
 @NgModule({
   declarations: [
@@ -64,7 +67,10 @@ import { EditarControlDialogoComponent } from './editar-control-dialogo/editar-c
     AccessDeniedComponent,
     RolePipe,
     EditarControlDialogoComponent,
-    ResetPasswordComponent
+    ResetPasswordComponent,
+    EditarUsuariosDialogoComponent,
+    EditarAlicuotasDialogoComponent,
+    EditarPersonalDialogoComponent
   ],
   imports: [
     BrowserModule,
