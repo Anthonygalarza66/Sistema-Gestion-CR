@@ -1,6 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import Swal from 'sweetalert2';
+
 
 @Component({
   selector: 'app-editar-residente-dialogo',
@@ -48,9 +50,25 @@ export class EditarResidenteDialogoComponent implements OnInit {
       console.error('El formulario es inválido.');
       return;
     }
-
-    const residenteData = { ...this.form.value, id_usuario: this.residente.id_usuario, id_residente: this.residente.id_residente };
+  
+    // Prepara los datos del residente
+    const residenteData = { 
+      ...this.form.value, 
+      id_usuario: this.residente.id_usuario, 
+      id_residente: this.residente.id_residente 
+    };
+    
     console.log(residenteData); // Verificar los datos del formulario
-    this.modalRef.close(residenteData);
+    
+    // Muestra un mensaje de éxito
+    Swal.fire({
+      title: 'Guardado con éxito',
+      text: 'Los datos del residente se han guardado correctamente.',
+      icon: 'success',
+      confirmButtonText: 'Aceptar'
+    }).then(() => {
+      // Cierra el modal después de mostrar el mensaje de éxito
+      this.modalRef.close(residenteData);
+    });
   }
 }

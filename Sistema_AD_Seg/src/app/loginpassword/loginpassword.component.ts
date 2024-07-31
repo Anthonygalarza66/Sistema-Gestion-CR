@@ -3,6 +3,8 @@ import { ApiService } from "../api.service";
 import { Router , ActivatedRoute } from "@angular/router";
 import { PLATFORM_ID, Inject } from "@angular/core";
 import { isPlatformBrowser } from "@angular/common";
+import Swal from 'sweetalert2';
+
 
 
 @Component({
@@ -24,40 +26,67 @@ export class LoginpasswordComponent {
 
   onSubmit() {
     if (!this.isValidEmail(this.usernameOrEmail)) {
-      this.message = 'Por favor, ingresa un correo electrónico válido.';
-      return;
+        Swal.fire({
+            title: 'Error',
+            text: 'Por favor, ingresa un correo electrónico válido.',
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+        });
+        return;
     }
 
     this.loading = true;
 
     this.apiService.checkCorreoUsuarios(this.usernameOrEmail).subscribe(
-      (response: any) => {
-        if (response.exists) {
-          this.apiService.requestPasswordReset(this.usernameOrEmail).subscribe(
-            () => {
-              this.message = 'Se ha enviado un enlace para restablecer la contraseña a tu correo electrónico.';
-              this.loading = false;
-              // Redirigir al usuario a la página de inicio de sesión
-              this.router.navigate(['/login']);
-            },
-            (error) => {
-              console.error('Error al solicitar el restablecimiento de contraseña:', error);
-              this.message = 'Error al solicitar el restablecimiento de contraseña.';
-              this.loading = false;
+        (response: any) => {
+            if (response.exists) {
+                this.apiService.requestPasswordReset(this.usernameOrEmail).subscribe(
+                    () => {
+                        Swal.fire({
+                            title: 'Éxito',
+                            text: 'Se ha enviado un enlace para restablecer la contraseña a tu correo electrónico.',
+                            icon: 'success',
+                            confirmButtonText: 'Aceptar'
+                        }).then(() => {
+                            // Redirigir al usuario a la página de inicio de sesión después de cerrar el mensaje
+                            this.router.navigate(['/login']);
+                        });
+                        this.loading = false;
+                    },
+                    (error) => {
+                        console.error('Error al solicitar el restablecimiento de contraseña:', error);
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'Error al solicitar el restablecimiento de contraseña.',
+                            icon: 'error',
+                            confirmButtonText: 'Aceptar'
+                        });
+                        this.loading = false;
+                    }
+                );
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Correo electrónico no encontrado.',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+                this.loading = false;
             }
-          );
-        } else {
-          this.message = 'Correo electrónico no encontrado.';
-          this.loading = false;
+        },
+        (error) => {
+            console.error('Error al verificar el correo electrónico:', error);
+            Swal.fire({
+                title: 'Error',
+                text: 'Error al verificar el correo electrónico.',
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            });
+            this.loading = false;
         }
-      },
-      (error) => {
-        console.error('Error al verificar el correo electrónico:', error);
-        this.message = 'Error al verificar el correo electrónico.';
-        this.loading = false;
-      }
     );
-  }
+}
+
 
   isValidEmail(email: string): boolean {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

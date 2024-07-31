@@ -5,6 +5,7 @@ import { PLATFORM_ID, Inject } from "@angular/core";
 import { isPlatformBrowser } from "@angular/common";
 import * as XLSX from "xlsx";
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import Swal from 'sweetalert2';
 import { EditarResidenteDialogoComponent } from '../editar-residente-dialogo/editar-residente-dialogo.component';
 import { ChangeDetectorRef } from '@angular/core';
  
@@ -144,23 +145,30 @@ logout() {
   }
   
   deleteResidentes(id: number): void {
-    const confirmDeletion = window.confirm(
-      "¿Está seguro de eliminar este Residente?"
-    );
-
-    if (confirmDeletion) {
-      console.log("Eliminando Residentes con ID:", id);
-      this.apiService.deleteResidente(id).subscribe(
-        () => {
-          console.log("Residente eliminado con éxito");
-          this.loadResidentes(); // Volver a cargar la lista de Residente después de la eliminación
-        },
-        (error) => {
-          console.error("Error al eliminar Residente:", error);
-        }
-      );
-    } else {
-      console.log("Eliminación cancelada");
-    }
+    Swal.fire({
+      title: '¿Está seguro?',
+      text: "¡Esta acción eliminará el registro de residente de forma permanente!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        console.log("Eliminando Residente con ID:", id);
+        this.apiService.deleteResidente(id).subscribe(
+          () => {
+            console.log("Residente eliminado con éxito");
+            this.loadResidentes(); // Volver a cargar la lista de residentes después de la eliminación
+          },
+          (error) => {
+            console.error("Error al eliminar Residente:", error);
+          }
+        );
+      } else {
+        console.log("Eliminación cancelada");
+      }
+    });
   }
 }

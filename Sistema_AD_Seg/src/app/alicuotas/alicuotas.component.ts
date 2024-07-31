@@ -5,6 +5,7 @@ import { PLATFORM_ID, Inject } from "@angular/core";
 import { isPlatformBrowser } from "@angular/common";
 import * as XLSX from "xlsx";
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import Swal from 'sweetalert2';
 import { EditarAlicuotasDialogoComponent } from '../editar-alicuotas-dialogo/editar-alicuotas-dialogo.component';
 
 
@@ -206,26 +207,32 @@ logout() {
     return `${d.getFullYear()}-${('0' + (d.getMonth() + 1)).slice(-2)}-${('0' + d.getDate()).slice(-2)}`;
   }
 
-
   deleteAlicuota(id: number): void {
-    const confirmDeletion = window.confirm(
-      "¿Está seguro de eliminar esta alicuota?"
-    );
-
-    if (confirmDeletion) {
-      console.log("Eliminando alicuota con ID:", id);
-      this.apiService.deleteAlicuota(id).subscribe(
-        () => {
-          console.log("Alicuota eliminada con éxito");
-          this.loadAlicuota(); // Volver a cargar la lista de personal después de la eliminación
-        },
-        (error) => {
-          console.error("Error al eliminar Alicuota:", error);
-        }
-      );
-    } else {
-      console.log("Eliminación cancelada");
-    }
+    Swal.fire({
+      title: '¿Está seguro de eliminar esta alicuota?',
+      text: "¿Está seguro de eliminar esta alicuota?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        console.log("Eliminando alícuota con ID:", id);
+        this.apiService.deleteAlicuota(id).subscribe(
+          () => {
+            console.log("Alícuota eliminada con éxito");
+            this.loadAlicuota(); // Volver a cargar la lista de alícuotas después de la eliminación
+          },
+          (error) => {
+            console.error("Error al eliminar alícuota:", error);
+          }
+        );
+      } else {
+        console.log("Eliminación cancelada");
+      }
+    });
   }
 
 }

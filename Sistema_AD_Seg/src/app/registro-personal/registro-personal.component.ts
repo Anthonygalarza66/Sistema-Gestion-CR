@@ -4,6 +4,7 @@ import { ApiService } from "../api.service";
 import { PLATFORM_ID, Inject } from "@angular/core";
 import { isPlatformBrowser } from "@angular/common";
 import * as XLSX from "xlsx";
+import Swal from 'sweetalert2';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {EditarPersonalDialogoComponent} from '../editar-personal-dialogo/editar-personal-dialogo.component';
 
@@ -111,23 +112,31 @@ logout() {
   
 
   deletePersonal(id: number): void {
-    const confirmDeletion = window.confirm(
-      "¿Está seguro de eliminar este personal?"
-    );
-
-    if (confirmDeletion) {
-      console.log("Eliminando personal con ID:", id);
-      this.apiService.deletePersonal(id).subscribe(
-        () => {
-          console.log("Personal eliminado con éxito");
-          this.loadPersonal(); // Volver a cargar la lista de personal después de la eliminación
-        },
-        (error) => {
-          console.error("Error al eliminar personal:", error);
-        }
-      );
-    } else {
-      console.log("Eliminación cancelada");
-    }
+    // Usar SweetAlert2 para mostrar un cuadro de confirmación
+    Swal.fire({
+      title: '¿Está seguro?',
+      text: "¡Esta acción eliminará el registro de personal de forma permanente!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        console.log("Eliminando personal con ID:", id);
+        this.apiService.deletePersonal(id).subscribe(
+          () => {
+            console.log("Personal eliminado con éxito");
+            this.loadPersonal(); // Volver a cargar la lista de personal después de la eliminación
+          },
+          (error) => {
+            console.error("Error al eliminar personal:", error);
+          }
+        );
+      } else {
+        console.log("Eliminación cancelada");
+      }
+    });
   }
 }

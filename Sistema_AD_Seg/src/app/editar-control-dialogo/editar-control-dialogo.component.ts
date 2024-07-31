@@ -2,6 +2,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApiService } from '../api.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-editar-control-dialogo',
@@ -87,8 +88,25 @@ export class EditarControlDialogoComponent implements OnInit {
     formData.fecha_salida = formData.fecha_salida ? this.formatDate(formData.fecha_salida) : null;
     
     console.log('Datos del formulario antes de guardar:', formData);
-    this.modalRef.close(formData);
-  }
+
+    // Mostrar alerta de éxito antes de cerrar el modal
+    Swal.fire({
+        title: 'Éxito',
+        text: 'Datos guardados correctamente.',
+        icon: 'success',
+        confirmButtonText: 'Aceptar'
+    }).then(() => {
+        this.modalRef.close(formData);
+    }).catch((error) => {
+        console.error('Error al mostrar alerta:', error);
+        Swal.fire({
+            title: 'Error',
+            text: 'Ocurrió un error al guardar los datos. Por favor, inténtelo de nuevo más tarde.',
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+        });
+    });
+}
   
   private formatDate(date: any): string {
     const d = new Date(date);

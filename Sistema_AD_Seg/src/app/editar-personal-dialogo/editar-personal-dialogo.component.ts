@@ -1,6 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import Swal from 'sweetalert2';
+
 
 @Component({
   selector: 'app-editar-personal-dialogo',
@@ -32,19 +34,28 @@ export class EditarPersonalDialogoComponent implements OnInit {
     });
 } 
   
-  guardar(): void {
+guardar(): void {
   if (this.form.invalid) {
-      console.error('El formulario es inválido.');
-      return;
+    console.error('El formulario es inválido.');
+    return;
   }
 
   // Asegúrate de que los campos id_usuario e id_personal estén presentes
   const personalData = { ...this.form.value, id_usuario: this.personal.id_usuario, id_personal: this.personal.id_personal };
 
   console.log(personalData); // Verificar los datos del formulario
-  this.modalRef.close(personalData);
-  }
-
+  
+  // Muestra un mensaje de éxito
+  Swal.fire({
+    title: 'Guardado con éxito',
+    text: 'Los datos se han guardado correctamente.',
+    icon: 'success',
+    confirmButtonText: 'Aceptar'
+  }).then(() => {
+    // Cierra el modal después de mostrar el mensaje de éxito
+    this.modalRef.close(personalData);
+  });
+}
 
   
 }

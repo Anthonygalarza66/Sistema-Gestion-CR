@@ -5,6 +5,7 @@ import { PLATFORM_ID, Inject } from "@angular/core";
 import { isPlatformBrowser } from "@angular/common";
 import * as XLSX from "xlsx";
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import Swal from 'sweetalert2';
 import {EditarUsuariosDialogoComponent} from '../editar-usuarios-dialogo/editar-usuarios-dialogo.component';
 
 
@@ -103,24 +104,32 @@ logout() {
   
 
   deleteUsuario(id: number): void {
-    const confirmDeletion = window.confirm(
-      "¿Está seguro de eliminar este usuario?"
-    );
-
-    if (confirmDeletion) {
-      console.log("Eliminando usuario con ID:", id);
-      this.apiService.deleteUsuario(id).subscribe(
-        () => {
-          console.log("Usuario eliminado con éxito");
-          this.loadUsuarios(); // Volver a cargar la lista de usuarios después de la eliminación
-        },
-        (error) => {
-          console.error("Error al eliminar usuario:", error);
-        }
-      );
-    } else {
-      console.log("Eliminación cancelada");
-    }
+    // Usar SweetAlert2 para mostrar un cuadro de confirmación
+    Swal.fire({
+      title: '¿Está seguro?',
+      text: "¡Esta acción eliminará el usuario de forma permanente!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        console.log("Eliminando usuario con ID:", id);
+        this.apiService.deleteUsuario(id).subscribe(
+          () => {
+            console.log("Usuario eliminado con éxito");
+            this.loadUsuarios(); // Volver a cargar la lista de usuarios después de la eliminación
+          },
+          (error) => {
+            console.error("Error al eliminar usuario:", error);
+          }
+        );
+      } else {
+        console.log("Eliminación cancelada");
+      }
+    });
   }
 
   filtrar() {

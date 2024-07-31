@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApiService } from '../api.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-editar-alicuotas-dialogo',
@@ -31,6 +32,12 @@ export class EditarAlicuotasDialogoComponent implements OnInit {
 
   save(): void {
     if (this.form.invalid) {
+        Swal.fire({
+            title: 'Formulario Inválido',
+            text: 'Por favor, corrija los errores en el formulario antes de guardar.',
+            icon: 'warning',
+            confirmButtonText: 'Aceptar'
+        });
         console.error('El formulario es inválido.');
         return;
     }
@@ -42,17 +49,29 @@ export class EditarAlicuotasDialogoComponent implements OnInit {
     };
 
     console.log('Datos del formulario antes de guardar:', formData);
+    
     this.apiService.updateAlicuota(this.data.id_alicuota, formData).subscribe(
         (response) => {
             console.log('Alícuota actualizada:', response);
-            this.modalRef.close(response);
+            Swal.fire({
+                title: 'Éxito',
+                text: 'La alícuota ha sido actualizada con éxito.',
+                icon: 'success',
+                confirmButtonText: 'Aceptar'
+            }).then(() => {
+                this.modalRef.close(response);
+            });
         },
         (error) => {
             console.error('Error al actualizar la alícuota:', error);
+            Swal.fire({
+                title: 'Error',
+                text: 'Ocurrió un error al actualizar la alícuota. Por favor, inténtelo de nuevo más tarde.',
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            });
         }
     );
 }
 
-  
-  
 }

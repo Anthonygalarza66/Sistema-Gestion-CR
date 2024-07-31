@@ -5,6 +5,7 @@ import { PLATFORM_ID, Inject } from "@angular/core";
 import { isPlatformBrowser } from "@angular/common";
 import * as XLSX from "xlsx";
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import Swal from 'sweetalert2';
 import { EditarControlDialogoComponent } from "../editar-control-dialogo/editar-control-dialogo.component";
 
 
@@ -150,23 +151,31 @@ logout() {
 
 
   deleteControl(id: number): void {
-    const confirmDeletion = window.confirm(
-      "¿Está seguro de eliminar este registro de control de acceso?"
-    );
-
-    if (confirmDeletion) {
-      console.log("Eliminando control de acceso con ID:", id);
-      this.apiService.deleteControlAcceso(id).subscribe(
-        () => {
-          console.log("Control de acceso eliminado con éxito");
-          this.loadControlAcceso(); // Volver a cargar la lista de control de acceso después de la eliminación
-        },
-        (error) => {
-          console.error("Error al eliminar control de acceso:", error);
-        }
-      );
-    } else {
-      console.log("Eliminación cancelada");
-    }
+    // Usar SweetAlert2 para mostrar un cuadro de confirmación
+    Swal.fire({
+      title: '¿Está seguro?',
+      text: "¡Esta acción eliminará el registro de control de acceso de forma permanente!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        console.log("Eliminando control de acceso con ID:", id);
+        this.apiService.deleteControlAcceso(id).subscribe(
+          () => {
+            console.log("Control de acceso eliminado con éxito");
+            this.loadControlAcceso(); // Volver a cargar la lista de control de acceso después de la eliminación
+          },
+          (error) => {
+            console.error("Error al eliminar control de acceso:", error);
+          }
+        );
+      } else {
+        console.log("Eliminación cancelada");
+      }
+    });
   }
 }
