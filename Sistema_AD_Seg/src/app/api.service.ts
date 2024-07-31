@@ -241,6 +241,11 @@ export class ApiService {
       .get<any>(`${this.apiUrl}/residentes/${id_residente}`)
       .pipe(catchError(this.handleError));
   }
+
+  getResidentePorPlaca(placa: string) {
+    return this.http
+    .get<any>(`${this.apiUrl}/residentes/placa/${placa}`);
+  }
   
   // Método para guardar (crear o actualizar) un residente
   guardarResidente(residente: any): Observable<any> {

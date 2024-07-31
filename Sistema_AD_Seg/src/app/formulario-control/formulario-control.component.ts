@@ -91,6 +91,37 @@ export class FormularioControlComponent implements OnInit {
     }
   }
 
+  onPlacaChange(event: any): void {
+    const placaSeleccionada = event.target.value;
+  
+    // Buscar el residente asociado a la placa
+    this.apiService.getResidentePorPlaca(placaSeleccionada).subscribe(
+      (residente: any) => {
+        if (residente) {
+          this.nuevoControl.nombre = residente.nombre;
+          this.nuevoControl.apellidos = residente.apellido;
+          this.nuevoControl.cedula = residente.cedula;
+          this.nuevoControl.sexo = residente.sexo;
+        } else {
+          // Limpiar los campos si no se encuentra el residente
+          this.nuevoControl.nombre = '';
+          this.nuevoControl.apellidos = '';
+          this.nuevoControl.cedula = '';
+          this.nuevoControl.sexo = '';
+        }
+      },
+      (error) => {
+        console.error('Error al obtener residente por placa:', error);
+        // Limpiar los campos si ocurre un error
+        this.nuevoControl.nombre = '';
+        this.nuevoControl.apellidos = '';
+        this.nuevoControl.cedula = '';
+        this.nuevoControl.sexo = '';
+      }
+    );
+  }
+  
+
   guardar(): void {
     // Asegúrate de que el username esté configurado correctamente
     console.log('Enviando datos para crear control de acceso:', this.nuevoControl);

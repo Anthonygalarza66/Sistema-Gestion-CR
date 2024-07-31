@@ -73,7 +73,7 @@
       <div class="row">
         <div class="form-group col">
           <label for="fechalicuota">Fecha<span class="text-danger"> :</span></label>
-          <input type="date" id="fechalicuota" name="fecha" [(ngModel)]="nuevoAlicuota.fecha" required>
+          <input type="date" id="fechalicuota" name="fecha" [(ngModel)]="nuevoAlicuota.fecha" (change)="onDateChange($event)" required>
         </div>
       </div>
       <div class="row">

@@ -80,6 +80,16 @@ export class RegistroAlicuotasComponent {
         }
     );
 }
+onDateChange(event: any): void {
+  const selectedDate = new Date(event.target.value);
+  const monthNames = [
+    'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 
+    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+  ];
+  const monthIndex = selectedDate.getMonth(); // Obtén el índice del mes
+  this.nuevoAlicuota.mes = monthNames[monthIndex]; // Asigna el nombre del mes al campo correspondiente
+}
+
 
   logout() {
     this.loggedIn = false;
