@@ -73,14 +73,11 @@ export class ApiService {
 
   // Método para actualizar un usuario existente
   updateUsuario(id: number, usuario: any): Observable<any> {
-    console.log(
-      `Enviando datos para actualizar usuario con ID ${id}:`,
-      usuario
-    );
+    console.log(`Enviando datos para actualizar usuario con ID ${id}:`, usuario);
     return this.http
       .put<any>(`${this.apiUrl}/usuarios/${id}`, usuario, this.httpOptions)
       .pipe(catchError(this.handleError));
-  }
+  }  
 
   // Método para eliminar un usuario
   deleteUsuario(id: number): Observable<any> {
@@ -238,15 +235,13 @@ export class ApiService {
       .pipe(catchError(this.handleError));
   }
 
-  getResidente(idUsuario: number): Observable<any> {
-    console.log(
-      `Solicitando residente con ID de usuario ${idUsuario} a la API...`
-    );
+  getResidente(id_residente: number): Observable<any> {
+    console.log(`Solicitando residente con ID ${id_residente} a la API...`);
     return this.http
-      .get<any>(`${this.apiUrl}/eventos/residente/${idUsuario}`)
+      .get<any>(`${this.apiUrl}/residentes/${id_residente}`)
       .pipe(catchError(this.handleError));
   }
-
+  
   // Método para guardar (crear o actualizar) un residente
   guardarResidente(residente: any): Observable<any> {
     if (residente.id) {
@@ -269,6 +264,13 @@ export class ApiService {
       .post<any>(`${this.apiUrl}/residentes`, residente, this.httpOptions)
       .pipe(catchError(this.handleError));
   }
+
+  updateResidente(id: number, residente: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/residentes/${id}`, residente, {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+    }).pipe(catchError(this.handleError));
+  }
+  
 
   // Método para eliminar un residente
   deleteResidente(id: number): Observable<any> {
@@ -306,17 +308,11 @@ export class ApiService {
 
   // Método para actualizar un registro de control de acceso existente
   updateControlAcceso(id: number, controlAcceso: any): Observable<any> {
-    console.log(
-      `Enviando datos para actualizar control de acceso con ID ${id}:`,
-      controlAcceso
-    );
-    return this.http
-      .put<any>(`${this.apiUrl}/control-acceso/${id}`, controlAcceso, {
-        headers: new HttpHeaders({ "Content-Type": "application/json" }),
-      })
-      .pipe(catchError(this.handleError));
+    return this.http.put<any>(`${this.apiUrl}/control-acceso/${id}`, controlAcceso, {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+    }).pipe(catchError(this.handleError));
   }
-
+  
   // Método para guardar (crear o actualizar) un registro de control de acceso
   guardarControlAcceso(controlAcceso: any): Observable<any> {
     if (controlAcceso.id_acceso) {

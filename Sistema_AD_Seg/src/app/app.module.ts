@@ -8,13 +8,13 @@ import { HttpClientModule, provideHttpClient, withFetch } from '@angular/common/
 import { CommonModule } from '@angular/common';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { MatDialogModule } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { NgbModule, NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap'; 
 
 
 import { AppRoutingModule } from './app-routing.module';
@@ -40,6 +40,10 @@ import { AccessDeniedComponent } from './access-denied/access-denied.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
 import { RolePipe } from './role.pipe';
 import { EditarControlDialogoComponent } from './editar-control-dialogo/editar-control-dialogo.component';
+import { EditarUsuariosDialogoComponent } from './editar-usuarios-dialogo/editar-usuarios-dialogo.component';
+import { EditarAlicuotasDialogoComponent } from './editar-alicuotas-dialogo/editar-alicuotas-dialogo.component';
+import { EditarPersonalDialogoComponent } from './editar-personal-dialogo/editar-personal-dialogo.component';
+import { EditarResidenteDialogoComponent } from './editar-residente-dialogo/editar-residente-dialogo.component';
 
 @NgModule({
   declarations: [
@@ -64,7 +68,11 @@ import { EditarControlDialogoComponent } from './editar-control-dialogo/editar-c
     AccessDeniedComponent,
     RolePipe,
     EditarControlDialogoComponent,
-    ResetPasswordComponent
+    ResetPasswordComponent,
+    EditarUsuariosDialogoComponent,
+    EditarAlicuotasDialogoComponent,
+    EditarPersonalDialogoComponent,
+    EditarResidenteDialogoComponent
   ],
   imports: [
     BrowserModule,
@@ -77,18 +85,20 @@ import { EditarControlDialogoComponent } from './editar-control-dialogo/editar-c
     HttpClientModule,
     NgxPaginationModule,
     MatDialogModule,
-    MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
     MatDatepickerModule,
     MatNativeDateModule,
     ReactiveFormsModule,
+    NgbModule,
+    NgbDatepickerModule,
     BsDatepickerModule.forRoot()
   
   ],
   providers: [
     provideClientHydration(),
-    provideHttpClient(withFetch())
+    provideHttpClient(withFetch()),
+  
   ],
   bootstrap: [AppComponent]
 })

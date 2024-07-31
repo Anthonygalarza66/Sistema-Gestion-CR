@@ -1,43 +1,115 @@
-import { Component, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { Component, OnInit, Inject } from '@angular/core';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ApiService } from '../api.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-editar-control-dialogo',
   templateUrl: './editar-control-dialogo.component.html',
-  styleUrls: ['./editar-control-dialogo.component.css'] // Corregido: debe ser 'styleUrls' en lugar de 'styleUrl'
+  styleUrls: ['./editar-control-dialogo.component.css']
 })
-export class EditarControlDialogoComponent {
-  form: FormGroup;
+export class EditarControlDialogoComponent implements OnInit {
+  form!: FormGroup; 
+  data: any;  // Propiedad para recibir datos
+
+  usuariosSeguridad: any[] = [];
+  usuarios: any[] = [];
 
   constructor(
-    public dialogRef: MatDialogRef<EditarControlDialogoComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
-    private fb: FormBuilder
-  ) {
-    // Inicializa el formulario con los datos proporcionados
+    public modalRef: NgbActiveModal,
+    private fb: FormBuilder, 
+    private apiService: ApiService
+  ) { }
+
+  ngOnInit(): void {
+    // Inicializar el formulario
     this.form = this.fb.group({
-      placas: [data.placas || ''],
-      fecha_ingreso: [data.fecha_ingreso || ''],
-      fecha_salida: [data.fecha_salida || ''],
-      nombre: [data.nombre || ''],
-      apellidos: [data.apellidos || ''],
-      sexo: [data.sexo || ''],
-      cedula: [data.cedula || ''],
-      ingresante: [data.ingresante || ''],
-      direccion: [data.direccion || ''],
-      username: [data.username || ''],
-      observaciones: [data.observaciones || ''],
+      id_usuario: [this.data.id_usuario, Validators.required],
+      placas: [this.data.placas, Validators.required],
+      fecha_ingreso: [this.data.fecha_ingreso, Validators.required],
+      fecha_salida: [this.data.fecha_salida],
+      nombre: [this.data.nombre, Validators.required],
+      apellidos: [this.data.apellidos, Validators.required],
+      sexo: [this.data.sexo, Validators.required],
+      cedula: [this.data.cedula, Validators.required],
+      ingresante: [this.data.ingresante, Validators.required],
+      direccion: [this.data.direccion, Validators.required],
+      username: [this.data.username],
+      observaciones: [this.data.observaciones]
     });
+
+    // Cargar los usuarios al inicializar el componente
+    this.cargarUsuarios();
   }
 
-  onNoClick(): void {
-    // Cierra el diálogo sin hacer cambios
-    this.dialogRef.close();
+  cargarUsuarios(): void {
+    console.log('Solicitando usuarios a la API...');
+    this.apiService.getUsuarios().subscribe(
+      (response) => {
+        console.log('Usuarios obtenidos:', response);
+        this.usuarios = response; // Asume que la respuesta es un array de usuarios
+        this.filtrarUsuariosSeguridad();
+      },
+      (error) => {
+        console.error('Error al obtener usuarios:', error);
+      }
+    );
+  }
+
+  filtrarUsuariosSeguridad(): void {
+    console.log('Filtrando usuarios de seguridad');
+    this.usuariosSeguridad = this.usuarios.filter(
+      (usuario: any) => usuario.perfil === 'Seguridad' && usuario.rol === 'Seguridad'
+    );
+    console.log('Usuarios de seguridad filtrados:', this.usuariosSeguridad);
+  }
+
+  GuardarUsername(event: any): void {
+    const selectedUsername = event.target.value;
+    console.log('Username seleccionado:', selectedUsername);
+  
+    // Buscar el usuario seleccionado en la lista de usuarios de seguridad
+    const selectedUser = this.usuariosSeguridad.find((usuario: any) => usuario.username === selectedUsername);
+    
+    if (selectedUser) {
+      this.form.patchValue({ username: selectedUser.username });
+      console.log('Usuario encontrado:', selectedUser);
+      console.log('Username asignado:', this.form.get('username')?.value);
+    } else {
+      this.form.patchValue({ username: '' });
+      console.warn('Usuario no encontrado para el username:', selectedUsername);
+    }
   }
 
   save(): void {
-    console.log('Datos del formulario antes de guardar:', this.form.value);
-    this.dialogRef.close(this.form.value);
+    const formData = { ...this.form.value };
+    formData.fecha_ingreso = this.formatDate(formData.fecha_ingreso);
+    formData.fecha_salida = formData.fecha_salida ? this.formatDate(formData.fecha_salida) : null;
+    
+    console.log('Datos del formulario antes de guardar:', formData);
+
+    // Mostrar alerta de éxito antes de cerrar el modal
+    Swal.fire({
+        title: 'Éxito',
+        text: 'Datos guardados correctamente.',
+        icon: 'success',
+        confirmButtonText: 'Aceptar'
+    }).then(() => {
+        this.modalRef.close(formData);
+    }).catch((error) => {
+        console.error('Error al mostrar alerta:', error);
+        Swal.fire({
+            title: 'Error',
+            text: 'Ocurrió un error al guardar los datos. Por favor, inténtelo de nuevo más tarde.',
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+        });
+    });
+}
+  
+  private formatDate(date: any): string {
+    const d = new Date(date);
+    return `${d.getFullYear()}-${('0' + (d.getMonth() + 1)).slice(-2)}-${('0' + d.getDate()).slice(-2)} ${('0' + d.getHours()).slice(-2)}:${('0' + d.getMinutes()).slice(-2)}:${('0' + d.getSeconds()).slice(-2)}`;
   }
 }

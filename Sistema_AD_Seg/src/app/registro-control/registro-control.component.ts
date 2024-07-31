@@ -4,7 +4,8 @@ import { ApiService } from "../api.service";
 import { PLATFORM_ID, Inject } from "@angular/core";
 import { isPlatformBrowser } from "@angular/common";
 import * as XLSX from "xlsx";
-import { MatDialog } from '@angular/material/dialog';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import Swal from 'sweetalert2';
 import { EditarControlDialogoComponent } from "../editar-control-dialogo/editar-control-dialogo.component";
 
 
@@ -25,7 +26,7 @@ export class RegistroControlComponent {
 
   constructor(
     private router: Router,
-    private dialog: MatDialog,
+    private modalService: NgbModal,
     private apiService: ApiService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
@@ -107,20 +108,25 @@ logout() {
 
   editControl(id: number): void {
     this.apiService.getControlAccesoById(id).subscribe(data => {
-      const dialogRef = this.dialog.open(EditarControlDialogoComponent, {
-        width: '500px',
-        panelClass: 'custom-dialog',
-        data: data
+      const modalRef = this.modalService.open(EditarControlDialogoComponent, {
+        size: 'md', // Tamaño del modal
+        backdrop: 'static', // Opcional: evitar que el modal se cierre al hacer clic fuera
+        centered: true, // Opcional: centrar el modal
       });
   
-      dialogRef.afterClosed().subscribe(result => {
+      // Pasar datos al modal
+      modalRef.componentInstance.data = data;
+  
+      modalRef.result.then(result => {
         if (result) {
           // Verificar y ajustar el formato de los datos si es necesario
           const updatedData = {
             ...result,
-            fecha_ingreso: new Date(result.fecha_ingreso).toISOString(),
-            fecha_salida: result.fecha_salida ? new Date(result.fecha_salida).toISOString() : null
+            fecha_ingreso: this.formatDate(result.fecha_ingreso),
+            fecha_salida: result.fecha_salida ? this.formatDate(result.fecha_salida) : null
           };
+  
+          console.log('Datos actualizados antes de enviar al backend:', updatedData);
   
           this.apiService.updateControlAcceso(id, updatedData).subscribe(
             response => {
@@ -132,29 +138,44 @@ logout() {
             }
           );
         }
+      }, (reason) => {
+        // Opcional: manejar el rechazo del modal
       });
     });
   }
-  
+
+  private formatDate(date: any): string {
+    const d = new Date(date);
+    return `${d.getFullYear()}-${('0' + (d.getMonth() + 1)).slice(-2)}-${('0' + d.getDate()).slice(-2)} ${('0' + d.getHours()).slice(-2)}:${('0' + d.getMinutes()).slice(-2)}:${('0' + d.getSeconds()).slice(-2)}`;
+  }
+
 
   deleteControl(id: number): void {
-    const confirmDeletion = window.confirm(
-      "¿Está seguro de eliminar este registro de control de acceso?"
-    );
-
-    if (confirmDeletion) {
-      console.log("Eliminando control de acceso con ID:", id);
-      this.apiService.deleteControlAcceso(id).subscribe(
-        () => {
-          console.log("Control de acceso eliminado con éxito");
-          this.loadControlAcceso(); // Volver a cargar la lista de control de acceso después de la eliminación
-        },
-        (error) => {
-          console.error("Error al eliminar control de acceso:", error);
-        }
-      );
-    } else {
-      console.log("Eliminación cancelada");
-    }
+    // Usar SweetAlert2 para mostrar un cuadro de confirmación
+    Swal.fire({
+      title: '¿Está seguro?',
+      text: "¡Esta acción eliminará el registro de control de acceso de forma permanente!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        console.log("Eliminando control de acceso con ID:", id);
+        this.apiService.deleteControlAcceso(id).subscribe(
+          () => {
+            console.log("Control de acceso eliminado con éxito");
+            this.loadControlAcceso(); // Volver a cargar la lista de control de acceso después de la eliminación
+          },
+          (error) => {
+            console.error("Error al eliminar control de acceso:", error);
+          }
+        );
+      } else {
+        console.log("Eliminación cancelada");
+      }
+    });
   }
 }

@@ -3,6 +3,8 @@ import { Router } from "@angular/router";
 import { ApiService } from "../api.service";
 import { PLATFORM_ID, Inject } from "@angular/core";
 import { isPlatformBrowser } from "@angular/common";
+import Swal from 'sweetalert2';
+
 
 @Component({
   selector: "app-formulario-residentes",
@@ -178,36 +180,72 @@ checkCedula() {
 
   guardar(): void {
     if (this.cedulaExists || this.correoExists) {
-      this.validationErrors.general = 'Por favor, corrija los errores antes de enviar el formulario.';
+      Swal.fire({
+        title: 'Error',
+        text: 'Por favor, corrija los errores antes de enviar el formulario.',
+        icon: 'error',
+        confirmButtonText: 'Aceptar'
+      });
       return;
     }
-
+  
     this.apiService.getUserIdByEmail(this.nuevoResidente.correo_electronico).subscribe(
       (response) => {
         if (response.id_usuario) {
           this.nuevoResidente.id_usuario = response.id_usuario;
-
+  
           this.apiService.createResidente(this.nuevoResidente).subscribe(
             (response) => {
               console.log('Residente creado:', response);
-              this.router.navigate(['/registro-residentes']);
+              Swal.fire({
+                title: 'Guardado con éxito',
+                text: 'El residente ha sido creado correctamente.',
+                icon: 'success',
+                confirmButtonText: 'Aceptar'
+              }).then(() => {
+                this.router.navigate(['/registro-residentes']);
+              });
             },
             (error) => {
               console.error('Error al crear Residente:', error);
               if (error.status === 422) {
                 this.validationErrors = error.error.errors || {};
+                Swal.fire({
+                  title: 'Error de Validación',
+                  text: 'Por favor, revise los errores en el formulario.',
+                  icon: 'warning',
+                  confirmButtonText: 'Aceptar'
+                });
               } else {
                 this.validationErrors = { general: 'Ocurrió un error inesperado. Por favor, inténtelo de nuevo más tarde.' };
+                Swal.fire({
+                  title: 'Error',
+                  text: 'Ocurrió un error inesperado. Por favor, inténtelo de nuevo más tarde.',
+                  icon: 'error',
+                  confirmButtonText: 'Aceptar'
+                });
               }
             }
           );
         } else {
           this.validationErrors.general = 'No se pudo obtener el ID de usuario. Verifique el correo electrónico.';
+          Swal.fire({
+            title: 'Error',
+            text: 'No se pudo obtener el ID de usuario. Verifique el correo electrónico.',
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+          });
         }
       },
       (error) => {
         console.error('Error al obtener id_usuario:', error);
         this.validationErrors.general = 'Error al obtener ID de usuario.';
+        Swal.fire({
+          title: 'Error',
+          text: 'Error al obtener ID de usuario.',
+          icon: 'error',
+          confirmButtonText: 'Aceptar'
+        });
       }
     );
   }

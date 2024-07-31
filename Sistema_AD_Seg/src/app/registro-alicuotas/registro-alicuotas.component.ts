@@ -4,6 +4,7 @@ import { ApiService } from "../api.service";
 import { PLATFORM_ID, Inject } from "@angular/core";
 import { isPlatformBrowser } from "@angular/common";
 import * as XLSX from "xlsx";
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-registro-alicuotas',
@@ -48,22 +49,37 @@ export class RegistroAlicuotasComponent {
   }
 
   // Método para manejar el envío del formulario
-  guardar() {
+  guardar(): void {
     this.apiService.createAlicuota(this.nuevoAlicuota).subscribe(
-      (response) => {
-        console.log('Alicuota creada:', response);
-        this.router.navigate(['alicuotas']);
-      },
-      (error) => {
-        console.error('Error al crear Alicuota:', error);
-        if (error.status === 422) {
-          this.validationErrors = error.error.errors;
-        } else {
-          this.validationErrors = { general: 'Ocurrió un error inesperado. Por favor, inténtelo de nuevo más tarde.' };
+        (response) => {
+            console.log('Alicuota creada:', response);
+            Swal.fire({
+                title: 'Éxito',
+                text: 'La alícuota ha sido creada correctamente.',
+                icon: 'success',
+                confirmButtonText: 'Aceptar'
+            }).then(() => {
+                this.router.navigate(['alicuotas']);
+            });
+        },
+        (error) => {
+            console.error('Error al crear Alicuota:', error);
+            Swal.fire({
+                title: 'Error',
+                text: error.status === 422
+                    ? 'Por favor, corrija los errores en el formulario.'
+                    : 'Ocurrió un error inesperado. Por favor, inténtelo de nuevo más tarde.',
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            });
+            if (error.status === 422) {
+                this.validationErrors = error.error.errors;
+            } else {
+                this.validationErrors = { general: 'Ocurrió un error inesperado. Por favor, inténtelo de nuevo más tarde.' };
+            }
         }
-      }
     );
-  }
+}
 
   logout() {
     this.loggedIn = false;

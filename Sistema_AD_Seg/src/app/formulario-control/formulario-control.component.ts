@@ -2,6 +2,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiService } from '../api.service'; 
 import { PLATFORM_ID } from '@angular/core';
+import Swal from 'sweetalert2';
 import { isPlatformBrowser } from '@angular/common';
 
 @Component({
@@ -93,11 +94,21 @@ export class FormularioControlComponent implements OnInit {
   guardar(): void {
     // Asegúrate de que el username esté configurado correctamente
     console.log('Enviando datos para crear control de acceso:', this.nuevoControl);
-
+  
     this.apiService.createControlAcceso(this.nuevoControl).subscribe(
       (response) => {
-        console.log('Personal creado:', response);
-        this.router.navigate(['/registro-control']);
+        console.log('Control de acceso creado:', response);
+        
+        // Mostrar mensaje de éxito
+        Swal.fire({
+          title: 'Guardado con éxito',
+          text: 'El control de acceso se ha guardado correctamente.',
+          icon: 'success',
+          confirmButtonText: 'Aceptar'
+        }).then(() => {
+          // Redirigir después de cerrar el mensaje de éxito
+          this.router.navigate(['/registro-control']);
+        });
       },
       (error) => {
         console.error('Error al crear Control:', error);

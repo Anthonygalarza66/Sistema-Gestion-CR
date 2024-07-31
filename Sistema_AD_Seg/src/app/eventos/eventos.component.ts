@@ -4,6 +4,7 @@ import { ApiService } from "../api.service";
 import { PLATFORM_ID, Inject } from "@angular/core";
 import { isPlatformBrowser } from "@angular/common";
 import * as XLSX from "xlsx";
+import Swal from 'sweetalert2';
 import { RolePipe } from "../role.pipe";
 
 
@@ -89,21 +90,32 @@ export class EventosComponent {
   }
 
   deleteEventos(id: number): void {
-    const confirmDeletion = window.confirm("¿Está seguro de eliminar este evento?");
-    if (confirmDeletion) {
-      console.log("Eliminando evento con ID:", id);
-      this.apiService.deleteEvento(id).subscribe(
-        () => {
-          console.log("Evento eliminado con éxito");
-          this.loadEventos(); // Volver a cargar la lista de eventos después de la eliminación
-        },
-        (error) => {
-          console.error("Error al eliminar evento:", error);
-        }
-      );
-    } else {
-      console.log("Eliminación cancelada");
-    }
+    // Usar SweetAlert2 para mostrar un cuadro de confirmación
+    Swal.fire({
+      title: '¿Está seguro?',
+      text: "¡Esta acción eliminará el evento de forma permanente!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        console.log("Eliminando evento con ID:", id);
+        this.apiService.deleteEvento(id).subscribe(
+          () => {
+            console.log("Evento eliminado con éxito");
+            this.loadEventos(); // Volver a cargar la lista de eventos después de la eliminación
+          },
+          (error) => {
+            console.error("Error al eliminar evento:", error);
+          }
+        );
+      } else {
+        console.log("Eliminación cancelada");
+      }
+    });
   }
 
   getFileUrl(filename: string): string {

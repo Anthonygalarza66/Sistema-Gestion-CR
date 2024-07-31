@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { ApiService } from '../api.service'; 
 import { PLATFORM_ID, Inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-registro-usuario',
@@ -75,26 +76,51 @@ export class RegistroUsuarioComponent {
   Guardar() {
     // Validar longitud de la contraseña en el frontend
     if (this.nuevoUsuario.contrasena.length < 8) {
-      this.validationErrors.contrasena = ['La contraseña debe tener al menos 8 caracteres.'];
-      return;
+        this.validationErrors.contrasena = ['La contraseña debe tener al menos 8 caracteres.'];
+        Swal.fire({
+            title: 'Error',
+            text: 'La contraseña debe tener al menos 8 caracteres.',
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+        });
+        return;
     }
 
     this.apiService.createUsuario(this.nuevoUsuario).subscribe(
-      (response) => {
-        console.log('Usuario creado:', response);
-        // Redirige a la página de gestión de usuarios o muestra un mensaje de éxito
-        this.router.navigate(['/gestionusuario']);
-      },
-      error => {
-        console.error('Error al crear usuario:', error);
-        if (error.status === 422) {
-          this.validationErrors = error.error.errors;
-        } else {
-          this.validationErrors = { general: 'Ocurrió un error inesperado. Por favor, inténtelo de nuevo más tarde.' };
+        (response) => {
+            console.log('Usuario creado:', response);
+            Swal.fire({
+                title: 'Éxito',
+                text: 'Usuario creado con éxito.',
+                icon: 'success',
+                confirmButtonText: 'Aceptar'
+            }).then(() => {
+                // Redirige a la página de gestión de usuarios después de mostrar el mensaje
+                this.router.navigate(['/gestionusuario']);
+            });
+        },
+        (error) => {
+            console.error('Error al crear usuario:', error);
+            if (error.status === 422) {
+                this.validationErrors = error.error.errors;
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Por favor, corrija los errores en el formulario.',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Ocurrió un error inesperado. Por favor, inténtelo de nuevo más tarde.',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
         }
-      }
     );
-  }
+}
+
 
   logout() {
     this.loggedIn = false;

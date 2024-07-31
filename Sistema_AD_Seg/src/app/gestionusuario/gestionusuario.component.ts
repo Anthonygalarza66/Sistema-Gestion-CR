@@ -4,6 +4,10 @@ import { ApiService } from "../api.service";
 import { PLATFORM_ID, Inject } from "@angular/core";
 import { isPlatformBrowser } from "@angular/common";
 import * as XLSX from "xlsx";
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import Swal from 'sweetalert2';
+import {EditarUsuariosDialogoComponent} from '../editar-usuarios-dialogo/editar-usuarios-dialogo.component';
+
 
 @Component({
   selector: "app-gestionusuario",
@@ -20,6 +24,7 @@ export class GestionusuarioComponent implements OnInit {
 
   constructor(
     private router: Router,
+    private modalService: NgbModal,
     private apiService: ApiService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
@@ -69,31 +74,62 @@ logout() {
 
   // Métodos editar usuario
   editUsuario(id: number): void {
-    console.log("Editando usuario con ID:", id);
-    // Aquí podrías redirigir a una página de edición o mostrar un formulario de edición
-    // Por ejemplo:
-    this.router.navigate(["/formulario-personal", id]);
+    this.apiService.getUsuario(id).subscribe(data => {
+      const modalRef = this.modalService.open(EditarUsuariosDialogoComponent, {
+        size: 'md',
+        backdrop: 'static',
+        centered: true,
+      });
+  
+      modalRef.componentInstance.data = data;
+  
+      modalRef.result.then(result => {
+        if (result) {
+          console.log('Datos actualizados:', result);
+          this.apiService.updateUsuario(id, result).subscribe(
+            response => {
+              console.log('Usuario actualizado', response);
+              this.loadUsuarios(); // Recargar la lista de usuarios
+            },
+            error => {
+              console.error('Error al actualizar el usuario:', error);
+            }
+          );
+        }
+      }, (reason) => {
+        // Manejar el rechazo del modal si es necesario
+      });
+    });
   }
+  
 
   deleteUsuario(id: number): void {
-    const confirmDeletion = window.confirm(
-      "¿Está seguro de eliminar este usuario?"
-    );
-
-    if (confirmDeletion) {
-      console.log("Eliminando usuario con ID:", id);
-      this.apiService.deleteUsuario(id).subscribe(
-        () => {
-          console.log("Usuario eliminado con éxito");
-          this.loadUsuarios(); // Volver a cargar la lista de usuarios después de la eliminación
-        },
-        (error) => {
-          console.error("Error al eliminar usuario:", error);
-        }
-      );
-    } else {
-      console.log("Eliminación cancelada");
-    }
+    // Usar SweetAlert2 para mostrar un cuadro de confirmación
+    Swal.fire({
+      title: '¿Está seguro?',
+      text: "¡Esta acción eliminará el usuario de forma permanente!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        console.log("Eliminando usuario con ID:", id);
+        this.apiService.deleteUsuario(id).subscribe(
+          () => {
+            console.log("Usuario eliminado con éxito");
+            this.loadUsuarios(); // Volver a cargar la lista de usuarios después de la eliminación
+          },
+          (error) => {
+            console.error("Error al eliminar usuario:", error);
+          }
+        );
+      } else {
+        console.log("Eliminación cancelada");
+      }
+    });
   }
 
   filtrar() {

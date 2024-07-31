@@ -1,55 +1,81 @@
-<h1 mat-dialog-title>Editar Control de Acceso</h1>
-<div mat-dialog-content>
+<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css">
+<div class="modal-header">
+  <h4 class="modal-title"><b>Editar Control de Acceso</b></h4>
+  <button type="button" class="close custom-close-button" aria-label="Close" (click)="modalRef.dismiss()">
+    <i class="fas fa-times-circle" aria-hidden="true"></i>
+  </button>
+</div>
+<div class="modal-body">
   <form [formGroup]="form">
-    <mat-form-field appearance="fill">
-      <mat-label>Placas</mat-label>
-      <input matInput formControlName="placas">
-    </mat-form-field>
-    <mat-form-field appearance="fill">
-      <mat-label>Fecha de Ingreso</mat-label>
-      <input matInput [matDatepicker]="picker" formControlName="fecha_ingreso">
-      <mat-datepicker #picker></mat-datepicker>
-    </mat-form-field>
-    <mat-form-field appearance="fill">
-      <mat-label>Fecha de Salida</mat-label>
-      <input matInput [matDatepicker]="picker2" formControlName="fecha_salida">
-      <mat-datepicker #picker2></mat-datepicker>
-    </mat-form-field>
-    <mat-form-field appearance="fill">
-      <mat-label>Nombre</mat-label>
-      <input matInput formControlName="nombre">
-    </mat-form-field>
-    <mat-form-field appearance="fill">
-      <mat-label>Apellidos</mat-label>
-      <input matInput formControlName="apellidos">
-    </mat-form-field>
-    <mat-form-field appearance="fill">
-      <mat-label>Sexo</mat-label>
-      <input matInput formControlName="sexo">
-    </mat-form-field>
-    <mat-form-field appearance="fill">
-      <mat-label>Cédula</mat-label>
-      <input matInput formControlName="cedula">
-    </mat-form-field>
-    <mat-form-field appearance="fill">
-      <mat-label>Ingresante</mat-label>
-      <input matInput formControlName="ingresante">
-    </mat-form-field>
-    <mat-form-field appearance="fill">
-      <mat-label>Dirección</mat-label>
-      <input matInput formControlName="direccion">
-    </mat-form-field>
-    <mat-form-field appearance="fill">
-      <mat-label>Username</mat-label>
-      <input matInput formControlName="username">
-    </mat-form-field>
-    <mat-form-field appearance="fill">
-      <mat-label>Observaciones</mat-label>
-      <input matInput formControlName="observaciones">
-    </mat-form-field>
+    <div class="row">
+      <!-- ID Usuario - Oculto en el modal -->
+      <div class="col-md-6 form-group d-none">
+        <label>ID Usuario</label>
+        <input class="form-control" formControlName="id_usuario" #disabled>
+      </div>
+      <div class="col-md-6 form-group">
+        <label>Placas :</label>
+        <input class="form-control" formControlName="placas">
+      </div>
+      <div class="col-md-6 form-group">
+        <label>Fecha de Ingreso :</label>
+        <input type="datetime-local" class="form-control" formControlName="fecha_ingreso">
+      </div>
+      <div class="col-md-6 form-group">
+        <label>Fecha de Salida :</label>
+        <input type="datetime-local" class="form-control" formControlName="fecha_salida">
+      </div>
+      <div class="col-md-6 form-group">
+        <label>Nombre :</label>
+        <input class="form-control" formControlName="nombre">
+      </div>
+      <div class="col-md-6 form-group">
+        <label>Apellidos :</label>
+        <input class="form-control" formControlName="apellidos">
+      </div>
+      <div class="col-md-6 form-group">
+        <label for="sexo">Sexo<span class="text-danger"> :</span></label>
+        <select id="sexo" class="form-control" formControlName="sexo">
+          <option value="">Seleccione</option>
+          <option value="M">Masculino</option>
+          <option value="F">Femenino</option>
+        </select>
+      </div>      
+      <div class="col-md-6 form-group">
+        <label>Cédula :</label>
+        <input class="form-control" formControlName="cedula">
+      </div>
+      <div class="col-md-6 form-group">
+        <label for="ingresante">Ingresante<span class="text-danger"> :</span></label>
+        <select id="ingresante" class="form-control" formControlName="ingresante">
+          <option value="" disabled>Seleccione</option>
+          <option value="Residente">Residente</option>
+          <option value="Visitante">Visitante</option>
+          <option value="Delivery">Delivery</option>
+        </select>
+      </div>
+      <div class="col-md-6 form-group">
+        <label>Dirección :</label>
+        <input class="form-control" formControlName="direccion">
+      </div>
+      <div class="col-md-6 form-group">
+        <label for="turno">Personal de Turno:<span class="text-danger"> :</span></label>
+        <select id="usuario" class="form-control" formControlName="username" (change)="GuardarUsername($event)">
+          <option value="" disabled>Seleccione</option>
+          <option *ngFor="let usuario of usuariosSeguridad" [value]="usuario.username">
+            {{ usuario.username }}
+          </option>
+        </select>      
+      </div>      
+      <!-- Observaciones - Ocupa toda la fila -->
+      <div class="col-md-12 form-group">
+        <label>Observaciones :</label>
+        <textarea class="form-control" formControlName="observaciones" rows="4"></textarea>
+      </div>
+    </div>
   </form>
 </div>
-<div mat-dialog-actions>
-  <button mat-button (click)="onNoClick()">Cancelar</button>
-  <button mat-button (click)="save()">Guardar</button>
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" (click)="modalRef.dismiss()">Cancelar</button>
+  <button type="button" class="btn btn-primary" (click)="save()">Guardar</button>
 </div>

@@ -1,11 +1,4 @@
-import {
-  Component,
-  OnInit,
-  ViewChildren,
-  QueryList,
-  ElementRef,
-  ChangeDetectorRef,
-} from "@angular/core";
+import { Component,OnInit,ViewChildren,QueryList,ElementRef,ChangeDetectorRef} from "@angular/core";
 import { Router } from "@angular/router";
 import { ApiService } from "../api.service";
 import { PLATFORM_ID, Inject } from "@angular/core";
@@ -15,6 +8,7 @@ import "flatpickr/dist/flatpickr.min.css";
 import * as mammoth from "mammoth";
 import { jsPDF } from "jspdf";
 import { QRCodeModule } from "angularx-qrcode";
+import Swal from 'sweetalert2';
 import html2canvas from "html2canvas";
 
 @Component({
@@ -95,44 +89,58 @@ export class RegistroEventoComponent implements OnInit {
   }
 
   cargarDatosResidente() {
+    // Paso 1: Obtener id_usuario usando el username
     this.apiService.getUserIdByUsername(this.username).subscribe((user) => {
       const idUsuario = user.id_usuario;
       console.log("ID de usuario:", idUsuario);
-
-      this.apiService.getResidente(idUsuario).subscribe((residente) => {
-        console.log("Datos del residente:", residente);
-        this.nuevoEvento = {
-          ...this.nuevoEvento,
-          id_usuario: idUsuario,
-          id_residente: residente.id_residente,
-          nombre: residente.nombre,
-          apellidos: residente.apellido,
-          celular: residente.celular,
-          cedula: residente.cedula,
-        };
-
-        // Obtener el estado de pago del residente desde la tabla alicuotas
-        this.apiService
-          .getAlicuotasByIdResidente(residente.id_residente)
-          .subscribe((alicuotas) => {
-            console.log("Alícuotas del residente:", alicuotas); // Verifica que se están obteniendo las alícuotas correctamente
-
-            // Verificar si hay alícuotas pendientes
-            this.tienePagosPendientes = alicuotas.some((alicuota: any) => {
-              console.log("Alícuota pagada (valor):", alicuota.pagado); // Verifica el valor de 'pagado'
-              console.log("Monto por cobrar:", alicuota.monto_por_cobrar); // Verifica el monto por cobrar
-              return alicuota.pagado === 0; // Compara con el valor numérico 0
+  
+      // Paso 2: Obtener todos los residentes
+      this.apiService.getResidentes().subscribe((residentes) => {
+        // Paso 3: Encontrar el residente con el id_usuario
+        const residente = residentes.find((r: any) => r.id_usuario === idUsuario);
+        if (residente) {
+          const idResidente = residente.id_residente;
+          console.log("ID de residente:", idResidente);
+  
+          // Paso 4: Obtener detalles del residente usando id_residente
+          this.apiService.getResidente(idResidente).subscribe((residenteData) => {
+            console.log("Datos del residente:", residenteData);
+            this.nuevoEvento = { 
+              ...this.nuevoEvento,
+              id_usuario: idUsuario,
+              id_residente: idResidente,
+              nombre: residenteData.nombre,
+              apellidos: residenteData.apellido,
+              celular: residenteData.celular,
+              cedula: residenteData.cedula,
+            };
+  
+            // Paso 5: Obtener el estado de pago del residente desde la tabla alicuotas
+            this.apiService.getAlicuotasByIdResidente(idResidente).subscribe((alicuotas) => {
+              console.log("Alícuotas del residente:", alicuotas); // Verifica que se están obteniendo las alícuotas correctamente
+  
+              // Verificar si hay alícuotas pendientes
+              this.tienePagosPendientes = alicuotas.some((alicuota: any) => {
+                console.log("Alícuota pagada (valor):", alicuota.pagado); // Verifica el valor de 'pagado'
+                console.log("Monto por cobrar:", alicuota.monto_por_cobrar); // Verifica el monto por cobrar
+                return !alicuota.pagado; 
+              });              
+  
+              console.log(
+                "Estado de pagos pendientes:",
+                this.tienePagosPendientes
+              );
+              this.cargarEventos();
             });
-
-            console.log(
-              "Estado de pagos pendientes:",
-              this.tienePagosPendientes
-            );
-            this.cargarEventos();
           });
+        } else {
+          console.error('No se encontró el residente para el id_usuario proporcionado.');
+        }
       });
     });
   }
+  
+  
 
   validarAccesoEstancias() {
     // Mensaje de advertencia
@@ -295,57 +303,70 @@ export class RegistroEventoComponent implements OnInit {
 
     // Verifica el estado de pago del residente
     if (this.tienePagosPendientes) {
-      // Si el residente no ha pagado, restringe las opciones de eventos
-      if (
-        [
-          "Evento social",
-          "Cancha de futbol",
-          "Parque comunitario",
-          "Club Acuatico",
-          "Club Residencial",
-        ].includes(this.nuevoEvento.tipo_evento)
-      ) {
-        alert(
-          "Lo sentimos, por falta de pagos, no puede ocupar estancias de la urbanización."
-        );
-        this.nuevoEvento.tipo_evento = ""; // Limpiar selección si no es válida
-
-        // Deshabilitar opciones específicas en el select
-        const selectElement = document.getElementById(
-          "tipoEvento"
-        ) as HTMLSelectElement;
-        if (selectElement) {
-          const opciones = selectElement.options;
-          for (let i = 0; i < opciones.length; i++) {
-            const option = opciones[i];
-            if (
-              [
+        // Si el residente no ha pagado, restringe las opciones de eventos
+        if (
+            [
                 "Evento social",
                 "Cancha de futbol",
                 "Parque comunitario",
                 "Club Acuatico",
                 "Club Residencial",
-              ].includes(option.value)
-            ) {
-              option.disabled = true;
-            }
-          }
+            ].includes(this.nuevoEvento.tipo_evento)
+        ) {
+            Swal.fire({
+                title: 'Acceso Restringido',
+                text: 'Lo sentimos, por falta de pagos, no puede ocupar estancias de la urbanización.',
+                icon: 'warning',
+                confirmButtonText: 'Aceptar'
+            }).then(() => {
+                this.nuevoEvento.tipo_evento = ""; // Limpiar selección si no es válida
+
+                // Deshabilitar opciones específicas en el select
+                const selectElement = document.getElementById("tipoEvento") as HTMLSelectElement;
+                if (selectElement) {
+                    const opciones = selectElement.options;
+                    for (let i = 0; i < opciones.length; i++) {
+                        const option = opciones[i];
+                        if (
+                            [
+                                "Evento social",
+                                "Cancha de futbol",
+                                "Parque comunitario",
+                                "Club Acuatico",
+                                "Club Residencial",
+                            ].includes(option.value)
+                        ) {
+                            option.disabled = true;
+                        }
+                    }
+                }
+            });
+            return; // Salir de la función
         }
-        return; // Salir de la función
-      }
+    }
+
+    // Si no hay pagos pendientes, asegurarse de que todas las opciones estén habilitadas
+    const selectElement = document.getElementById("tipoEvento") as HTMLSelectElement;
+    if (selectElement) {
+        const opciones = selectElement.options;
+        for (let i = 0; i < opciones.length; i++) {
+            opciones[i].disabled = false; // Habilitar todas las opciones
+        }
     }
 
     // Actualizar días deshabilitados solo si el tipo de evento no es 'Hogar'
     if (this.nuevoEvento.tipo_evento !== "Hogar") {
-      this.deshabilitarDias(); // Recalcular días deshabilitados basado en el nuevo tipo de evento
+        this.deshabilitarDias(); // Recalcular días deshabilitados basado en el nuevo tipo de evento
     } else {
-      // Si es 'Hogar', asegurarse de que no haya días deshabilitados
-      this.diasDeshabilitados.clear();
+        // Si es 'Hogar', asegurarse de que no haya días deshabilitados
+        this.diasDeshabilitados.clear();
     }
 
     // Inicializar flatpickr o actualizar la configuración si ya está inicializado
     this.initializeFlatpickr(); // Asegúrate de inicializar o actualizar flatpickr
-  }
+}
+
+
 
   deshabilitarDias() {
     const ahora = new Date();
@@ -695,19 +716,19 @@ export class RegistroEventoComponent implements OnInit {
 
   guardar(): void {
     const formData = new FormData();
-
+  
     Object.keys(this.nuevoEvento).forEach((key) => {
       if (this.nuevoEvento[key] !== null) {
         formData.append(key, this.nuevoEvento[key]);
       }
     });
-
+  
     console.log("Datos del evento a guardar:", this.nuevoEvento);
-
+  
     this.apiService.createEvento(formData).subscribe(
       (response) => {
         console.log("Evento creado:", response);
-
+  
         // Generar los códigos QR después de guardar el evento
         this.generatePDFs()
           .then((pdfs) => {
@@ -716,23 +737,48 @@ export class RegistroEventoComponent implements OnInit {
               pdf.save(nombreArchivo);
               console.log(`PDF guardado como ${nombreArchivo}`);
             });
-
-            // Redirigir a /eventos después de generar y descargar los PDFs
-            this.router.navigate(["/eventos"]);
+  
+            // Mostrar alerta de éxito y redirigir a /eventos después de generar y descargar los PDFs
+            Swal.fire({
+              title: 'Evento Creado',
+              text: 'El evento ha sido creado exitosamente y los PDFs se han guardado.',
+              icon: 'success',
+              confirmButtonText: 'Aceptar'
+            }).then(() => {
+              this.router.navigate(['/eventos']);
+            });
           })
           .catch((error) => {
             console.error("Error al generar los PDFs:", error);
+            Swal.fire({
+              title: 'Error',
+              text: 'Se produjo un error al generar los PDFs. Por favor, inténtelo de nuevo más tarde.',
+              icon: 'error',
+              confirmButtonText: 'Aceptar'
+            });
           });
       },
       (error) => {
         console.error("Error al crear evento:", error);
         if (error.status === 422) {
           this.validationErrors = error.error.errors;
+          Swal.fire({
+            title: 'Error de Validación',
+            text: 'Por favor, revise los errores en el formulario.',
+            icon: 'warning',
+            confirmButtonText: 'Aceptar'
+          });
         } else {
           this.validationErrors = {
             general:
               "Ocurrió un error inesperado. Por favor, inténtelo de nuevo más tarde.",
           };
+          Swal.fire({
+            title: 'Error',
+            text: 'Ocurrió un error inesperado. Por favor, inténtelo de nuevo más tarde.',
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+          });
         }
       }
     );

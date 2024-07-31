@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { ApiService } from '../api.service'; 
 import { PLATFORM_ID, Inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-formulario-personal',
@@ -169,32 +170,47 @@ export class FormularioPersonalComponent {
   }
 
    // Método para manejar el envío del formulario
-   guardar() {
+   guardar(): void {
     this.apiService.getUserIdByEmail(this.nuevoPersonal.correo_electronico).subscribe(
-      (response) => {
-        this.nuevoPersonal.id_usuario = response.id_usuario;
-  
-        this.apiService.createPersonal(this.nuevoPersonal).subscribe(
-          (response) => {
-            console.log('Personal creado:', response);
-            this.router.navigate(['/registro-personal']);
-          },
-          (error) => {
-            console.error('Error al crear Personal:', error);
-            if (error.status === 422) {
-              this.validationErrors = error.error.errors;
-            } else {
-              this.validationErrors = { general: 'Ocurrió un error inesperado. Por favor, inténtelo de nuevo más tarde.' };
-            }
-          }
-        );
-      },
-      (error) => {
-        console.error('Error al obtener id_usuario:', error);
-        this.validationErrors = { general: 'Error al obtener id_usuario.' };
-      }
+        (response) => {
+            this.nuevoPersonal.id_usuario = response.id_usuario;
+    
+            this.apiService.createPersonal(this.nuevoPersonal).subscribe(
+                (response) => {
+                    console.log('Personal creado:', response);
+                    Swal.fire({
+                        title: 'Éxito',
+                        text: 'Personal creado correctamente.',
+                        icon: 'success',
+                        confirmButtonText: 'Aceptar'
+                    }).then(() => {
+                        this.router.navigate(['/registro-personal']);
+                    });
+                },
+                (error) => {
+                    console.error('Error al crear Personal:', error);
+                    Swal.fire({
+                        title: 'Error',
+                        text: error.status === 422
+                            ? 'Por favor, corrija los errores en el formulario.'
+                            : 'Ocurrió un error inesperado. Por favor, inténtelo de nuevo más tarde.',
+                        icon: 'error',
+                        confirmButtonText: 'Aceptar'
+                    });
+                }
+            );
+        },
+        (error) => {
+            console.error('Error al obtener id_usuario:', error);
+            Swal.fire({
+                title: 'Error',
+                text: 'Error al obtener ID de usuario. Verifique el correo electrónico.',
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            });
+        }
     );
-  }
+}
 
   logout() {
     this.loggedIn = false;
