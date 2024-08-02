@@ -3,6 +3,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 import { ApiService } from "../api.service";
 import { HttpClient } from '@angular/common/http';
+import { map, switchMap } from 'rxjs/operators';
 
 
 
@@ -32,9 +33,26 @@ export class NotificacionesComponent {
     }
   }
 
-   loadResidentes(): void {
-    this.apiService.getResidentes().subscribe(
-      (data) => this.residentes = data,
+  loadResidentes(): void {
+    this.apiService.getResidentes().pipe(
+      switchMap((residentes: any[]) => {
+        // Crear un array de promesas para obtener los usuarios relacionados
+        const promesas = residentes.map(residente => 
+          this.apiService.getUsuario(residente.id_usuario).pipe(
+            map(usuario => ({
+              ...residente,
+              usuario: usuario // Combinar datos de residente y usuario
+            }))
+          ).toPromise()
+        );
+        
+        // Esperar a que todas las promesas se resuelvan
+        return Promise.all(promesas);
+      })
+    ).subscribe(
+      (data) => {
+        this.residentes = data;
+      },
       (error) => console.error('Error al cargar residentes', error)
     );
   }

@@ -63,10 +63,10 @@
   <form>
     <label for="residente">Seleccionar Residente:</label>
     <select id="residente" [(ngModel)]="residenteseleccionado" name="residente" required>
-     <option *ngFor="let residente of residentes" [ngValue]="residente">
-       {{ residente.nombre }} {{ residente.apellido }} / {{ residente.celular }}
-   </option>
-   </select>
+      <option *ngFor="let residente of residentes" [ngValue]="residente">
+        {{ residente.usuario?.nombre }} {{ residente.usuario?.apellido }} / {{ residente.celular }}
+      </option>
+    </select>    
     <label for="motivo">Motivo:</label>
     <select id="motivo" [(ngModel)]="seleccionarmotivo" name="motivo" (change)="onMotivoChange($event)" required>
       <option value="Recordatorio">Recordatorio</option>
