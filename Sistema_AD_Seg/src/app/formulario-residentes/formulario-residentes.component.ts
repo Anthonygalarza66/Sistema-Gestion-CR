@@ -18,8 +18,10 @@ export class FormularioResidentesComponent {
   private loggedIn = false;
   filtro: string = "";
 
+  usuarios: any[] = [];
+  usuariosResidentes: any[] = [];
   nuevoResidente: any = {
-    id_usuario: '', 
+    id_usuario: '',
     nombre: "",
     apellido: "",
     cedula: "",
@@ -54,7 +56,36 @@ export class FormularioResidentesComponent {
     if (isPlatformBrowser(this.platformId)) {
       this.username = localStorage.getItem("username") || "Invitado";
     }
+    this.cargarUsuarios();
   }
+
+  cargarUsuarios(): void {
+    this.apiService.getUsuarios().subscribe(
+      (response) => {
+        // Filtrar usuarios con rol de 'Residente'
+        this.usuarios = response;
+        this.usuariosResidentes = this.usuarios.filter(user => user.rol === 'Residente');
+      },
+      (error) => {
+        console.error('Error al obtener usuarios:', error);
+      }
+    );
+  }
+
+  seleccionarUsuario(event: Event): void {
+    const target = event.target as HTMLSelectElement;
+    const id_usuario = Number(target.value);  // Convertir el id_usuario a número
+  
+    // Encuentra el usuario seleccionado
+    const usuarioSeleccionado = this.usuariosResidentes.find(usuario => usuario.id_usuario === id_usuario);
+    
+    if (usuarioSeleccionado) {
+      this.nuevoResidente.id_usuario = usuarioSeleccionado.id_usuario;
+      this.nuevoResidente.correo_electronico = usuarioSeleccionado.correo_electronico;
+    } else {
+      console.error('Usuario no encontrado');
+    }
+  }  
 
   // Verificar la disponibilidad de la cédula
 checkCedula() {
@@ -188,7 +219,8 @@ checkCedula() {
       });
       return;
     }
-  
+    console.log('Datos antes de enviar:', this.nuevoResidente);
+    
     this.apiService.getUserIdByEmail(this.nuevoResidente.correo_electronico).subscribe(
       (response) => {
         if (response.id_usuario) {

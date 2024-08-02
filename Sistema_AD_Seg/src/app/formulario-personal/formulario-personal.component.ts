@@ -14,10 +14,12 @@ export class FormularioPersonalComponent {
 
   username: string = ''; // Inicialmente vacío
   private loggedIn = false;
+  usuarios: any[] = [];
+  usuariosPersonal: any[] = []; 
   nuevoPersonal: any = {
     id_usuario: '', 
     nombre: '',
-    apellido: '',
+    apellido: '', 
     cedula: '',
     sexo:'',
     perfil: '',
@@ -38,7 +40,39 @@ export class FormularioPersonalComponent {
     if (isPlatformBrowser(this.platformId)) {
       this.username = localStorage.getItem('username') || 'Invitado';
     };
+    this.cargarUsuarios();
   }
+
+  cargarUsuarios(): void {
+    this.apiService.getUsuarios().subscribe(
+      (response) => {
+        // Filtrar usuarios con rol de 'Residente'
+        this.usuarios = response;
+        this.usuariosPersonal = this.usuarios.filter(user => ['Administracion', 'Seguridad'].includes(user.perfil));
+      },
+      (error) => {
+        console.error('Error al obtener usuarios:', error);
+      }
+    );
+  } 
+
+  seleccionarUsuario(event: Event): void {
+    const target = event.target as HTMLSelectElement;
+    const id_usuario = Number(target.value);  // Convertir el id_usuario a número
+  
+    // Encuentra el usuario seleccionado
+    const usuarioSeleccionado = this.usuariosPersonal.find(usuario => usuario.id_usuario === id_usuario);
+  
+    if (usuarioSeleccionado) {
+      this.nuevoPersonal.id_usuario = usuarioSeleccionado.id_usuario;
+      this.nuevoPersonal.nombre = usuarioSeleccionado.nombre;
+      this.nuevoPersonal.apellido = usuarioSeleccionado.apellido;
+      this.nuevoPersonal.correo_electronico = usuarioSeleccionado.correo_electronico;
+    } else {
+      console.error('Usuario no encontrado');
+    }
+  }
+  
 
     // Verificar la disponibilidad del correo electrónico
     checkCorreoUsuarios() {
@@ -171,6 +205,7 @@ export class FormularioPersonalComponent {
 
    // Método para manejar el envío del formulario
    guardar(): void {
+    console.log('Datos del personal:', this.nuevoPersonal);  // Depura aquí
     this.apiService.getUserIdByEmail(this.nuevoPersonal.correo_electronico).subscribe(
         (response) => {
             this.nuevoPersonal.id_usuario = response.id_usuario;

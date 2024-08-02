@@ -5,10 +5,11 @@ import { PLATFORM_ID, Inject } from "@angular/core";
 import { isPlatformBrowser } from "@angular/common";
 import * as XLSX from "xlsx";
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { switchMap, map } from 'rxjs/operators';
 import Swal from 'sweetalert2';
 import { EditarAlicuotasDialogoComponent } from '../editar-alicuotas-dialogo/editar-alicuotas-dialogo.component';
 
-
+ 
 @Component({
   selector: 'app-alicuotas',
   templateUrl: './alicuotas.component.html',
@@ -22,6 +23,8 @@ export class AlicuotasComponent {
   filtro: string = "";
 
   alicuota: any[] = [];
+  residentes: any[] = [];
+  usuarios: any[] = [];
 
   totalAdeudadoGeneral: number = 0; // Total adeudado
   idUsuario: number | null = null;
@@ -54,41 +57,68 @@ export class AlicuotasComponent {
         (data: any) => {
           this.idUsuario = data.id_usuario;
           console.log("ID de Usuario en loadUserId:", this.idUsuario); // Verifica si se está estableciendo correctamente
-          this.loadAlicuota(); // Llamada a cargar datos después de obtener el id_usuario
+          this.loadAlicuota(); // Cargar alícuotas después de obtener el ID
         },
         (error) => {
           console.error("Error al obtener ID de Usuario:", error);
         }
       );
     } else {
-      // Manejo para cuando el usuario es "Invitado" o no tiene ID
+      // Si el usuario es "Invitado", no cargar alícuotas específicas
       this.idUsuario = null;
       this.loadAlicuota();
     }
-  }
+  }  
 
   loadAlicuota(): void {
-    console.log("Cargando alicuota...");
-    console.log("ID de Usuario:", this.idUsuario); // Asegúrate de que el ID es correcto
+    console.log("Cargando alícuotas...");
     this.apiService.getAlicuotas().subscribe(
-      (data: any[]) => {
-        console.log("Datos recibidos:", data);
-        if (this.idUsuario !== null) {
-          this.alicuota = data.filter(row => {
-            console.log("Residente ID:", row.residente?.id_usuario); // Verifica el ID del residente
-            return row.residente && row.residente.id_usuario === this.idUsuario;
-          });
-        } else {
-          this.alicuota = data;
-        }
-        this.calcularTotalAdeudadoGeneral(); // Recalcular total después de cargar alícuotas
+      (alicuotas: any[]) => {
+        console.log("Datos recibidos:", alicuotas);
+        this.alicuota = [];
+    
+        // Crear un array de promesas para obtener los datos relacionados
+        const promesas = alicuotas.map(alicuota => {
+          return this.apiService.getUsuario(alicuota.residente.id_usuario).pipe(
+            switchMap((usuario: any) => 
+              this.apiService.getResidente(alicuota.residente.id_residente).pipe(
+                map((residente: any) => ({
+                  ...alicuota,
+                  usuario: usuario,
+                  residente: residente
+                }))
+              )
+            )
+          ).toPromise();
+        });
+  
+        // Esperar a que todas las promesas se resuelvan
+        Promise.all(promesas).then(resultados => {
+          this.alicuota = resultados;
+  
+          // Filtrar las alícuotas si el rol es "Residente"
+          if (this.idUsuario !== null && this.role === "Residente") {
+            this.alicuota = this.alicuota.filter(alicuota => 
+              alicuota.residente.id_usuario === this.idUsuario
+            );
+          }
+  
+          // Ordenar las alícuotas por fecha (opcional)
+          this.alicuota.sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime());
+  
+          // Recalcular total adeudado
+          this.calcularTotalAdeudadoGeneral();
+        }).catch(error => {
+          console.error("Error al obtener datos relacionados:", error);
+        });
       },
       (error) => {
-        console.error("Error al obtener alicuota:", error);
+        console.error("Error al obtener alícuotas:", error);
       }
     );
   }
-
+  
+  
 
 logout() {
   this.loggedIn = false;
@@ -126,21 +156,25 @@ logout() {
   }
   
    
-  filtrar() {
-    const filtroLowerCase = this.filtro.toLowerCase();
+  filtrar(): any[] {
+    const filtroLower = this.filtro.toLowerCase();
+    
     return this.alicuota.filter(row =>
-      row.residente && (
-        (row.residente.nombre && row.residente.nombre.toLowerCase().includes(filtroLowerCase)) ||
-        (row.residente.apellido && row.residente.apellido.toLowerCase().includes(filtroLowerCase)) ||
-        (row.residente.solar && row.residente.solar.toLowerCase().includes(filtroLowerCase)) ||
-        (row.residente.cedula && row.residente.cedula.toLowerCase().includes(filtroLowerCase)) ||
-        (row.fecha && row.fecha.toLowerCase().includes(filtroLowerCase)) ||
-        (row.mes && row.mes.toLowerCase().includes(filtroLowerCase)) ||
-        (row.total && row.total.toString().toLowerCase().includes(filtroLowerCase)) ||
-        (row.residente.direccion && row.residente.direccion.toLowerCase().includes(filtroLowerCase))
-      )
+      // Filtro basado en datos del objeto 'usuario'
+      (row.usuario?.nombre && row.usuario.nombre.toLowerCase().includes(filtroLower)) ||
+      (row.usuario?.apellido && row.usuario.apellido.toLowerCase().includes(filtroLower)) ||
+      // Filtro basado en datos del objeto 'residente'
+      (row.residente?.cedula && row.residente.cedula.toLowerCase().includes(filtroLower)) ||
+      (row.residente?.celular && row.residente.celular.toLowerCase().includes(filtroLower)) ||
+      (row.residente?.solar && row.residente.solar.toLowerCase().includes(filtroLower)) ||
+      (row.residente?.direccion && row.residente.direccion.toLowerCase().includes(filtroLower)) ||
+      // Filtro basado en datos adicionales de la alícuota
+      (row.fecha && row.fecha.toLowerCase().includes(filtroLower)) ||
+      (row.mes && row.mes.toLowerCase().includes(filtroLower)) ||
+      (row.monto_por_cobrar && row.monto_por_cobrar.toString().toLowerCase().includes(filtroLower))
     );
-  }  
+  }
+  
 
   calcularTotalAdeudadoGeneral(): void {
     this.totalAdeudadoGeneral = this.alicuota

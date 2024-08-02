@@ -21,7 +21,7 @@
         <div *ngIf="form.controls['apellido'].invalid && (form.controls['apellido'].dirty || form.controls['apellido'].touched)" class="text-danger">
           <div *ngIf="form.controls['apellido'].errors?.['required']">Apellido es obligatorio</div>
         </div>
-      </div>
+      </div>       
     </div>
     <div class="row">
       <div class="form-group col">
@@ -67,9 +67,6 @@
       <div class="form-group col">
         <label for="correo_electronico">Email<span class="text-danger"> :</span></label>
         <input type="email" id="correo_electronico" formControlName="correo_electronico" placeholder="ejemplo@email.com" class="form-control">
-        <div *ngIf="form.controls['correo_electronico'].invalid && (form.controls['correo_electronico'].dirty || form.controls['correo_electronico'].touched)" class="text-danger">
-          <div *ngIf="form.controls['correo_electronico'].errors?.['email']">Email inválido</div>
-        </div>
       </div>
       <div class="form-group col">
         <label for="direccion">Dirección<span class="text-danger"> :</span></label>

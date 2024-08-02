@@ -10,13 +10,19 @@
 <div class="modal-body">
   <form [formGroup]="form" (ngSubmit)="guardar()">
     <div class="form-row">
-      <div class="form-group col-md-6">
+      <div class="form-group col">
         <label for="nombre">Nombre<span class="text-danger"> :</span></label>
-        <input type="text" id="nombre" formControlName="nombre" class="form-control" placeholder="Ingrese nombre" required>
+        <input type="text" id="nombre" formControlName="nombre" placeholder="Ingrese nombre" class="form-control">
+        <div *ngIf="form.controls['nombre'].invalid && (form.controls['nombre'].dirty || form.controls['nombre'].touched)" class="text-danger">
+          <div *ngIf="form.controls['nombre'].errors?.['required']">Nombre es obligatorio</div>
+        </div>
       </div>
-      <div class="form-group col-md-6">
+      <div class="form-group col">
         <label for="apellido">Apellidos<span class="text-danger"> :</span></label>
-        <input type="text" id="apellido" formControlName="apellido" class="form-control" placeholder="Ingrese apellidos" required>
+        <input type="text" id="apellido" formControlName="apellido" placeholder="Ingrese apellidos" class="form-control">
+        <div *ngIf="form.controls['apellido'].invalid && (form.controls['apellido'].dirty || form.controls['apellido'].touched)" class="text-danger">
+          <div *ngIf="form.controls['apellido'].errors?.['required']">Apellido es obligatorio</div>
+        </div>
       </div>
     </div>
     <div class="form-row">

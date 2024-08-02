@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
+import { ApiService } from "../api.service";
 
 
 @Component({
@@ -16,20 +17,21 @@ export class EditarResidenteDialogoComponent implements OnInit {
 
   constructor(
     public modalRef: NgbActiveModal,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private apiService: ApiService,
   ) { }
 
   ngOnInit(): void {
     console.log('Datos en el modal:', this.residente);
     this.form = this.fb.group({
-      nombre: [this.residente.nombre, Validators.required],
-      apellido: [this.residente.apellido, Validators.required],
+      nombre: [this.residente.usuario.nombre, Validators.required],
+      apellido: [this.residente.usuario.apellido, Validators.required],
       cedula: [this.residente.cedula, Validators.required],
       perfil: [this.residente.perfil, Validators.required],
       sexo: [this.residente.sexo, Validators.required],
       direccion: [this.residente.direccion],
       celular: [this.residente.celular, Validators.required],
-      correo_electronico: [this.residente.correo_electronico, [Validators.email]],
+      correo_electronico: [this.residente.usuario.correo_electronico, [Validators.email]],
       cantidad_vehiculos: [this.residente.cantidad_vehiculos],
       vehiculo1_placa: [this.residente.vehiculo1_placa],
       vehiculo2_placa: [this.residente.vehiculo2_placa],
@@ -41,16 +43,14 @@ export class EditarResidenteDialogoComponent implements OnInit {
       m2: [this.residente.m2, Validators.required],
       observaciones: [this.residente.observaciones]
     });
-  }
+  }  
   
-  
-
   guardar(): void {
     if (this.form.invalid) {
       console.error('El formulario es inválido.');
       return;
     }
-  
+
     // Prepara los datos del residente
     const residenteData = { 
       ...this.form.value, 

@@ -98,16 +98,54 @@ export class FormularioControlComponent implements OnInit {
     this.apiService.getResidentePorPlaca(placaSeleccionada).subscribe(
       (residente: any) => {
         if (residente) {
-          this.nuevoControl.nombre = residente.nombre;
-          this.nuevoControl.apellidos = residente.apellido;
+          // Buscar el usuario asociado al residente para obtener nombre y apellido
+          this.apiService.getUsuario(residente.id_usuario).subscribe(
+            (usuario: any) => {
+              if (usuario) {
+                this.nuevoControl.nombre = usuario.nombre;
+                this.nuevoControl.apellidos = usuario.apellido;
+              } else {
+                // Limpiar los campos si no se encuentra el usuario
+                this.nuevoControl.nombre = '';
+                this.nuevoControl.apellidos = '';
+              }
+            },
+            (error) => {
+              console.error('Error al obtener usuario por ID:', error);
+              // Limpiar los campos si ocurre un error
+              this.nuevoControl.nombre = '';
+              this.nuevoControl.apellidos = '';
+            }
+          );
+  
+          // Actualizar otros campos del residente
           this.nuevoControl.cedula = residente.cedula;
-          this.nuevoControl.sexo = residente.sexo;
+          this.nuevoControl.sexo = residente.sexo; // Asegúrate de que esto esté siendo asignado correctamente
+          
+          // Verificar el rol del residente y actualizar el campo 'ingresante'
+          this.apiService.getUsuario(residente.id_usuario).subscribe(
+            (usuario: any) => {
+              if (usuario) {
+                if (usuario.rol === 'Residente') {
+                  this.nuevoControl.ingresante = 'Residente';
+                } else {
+                  this.nuevoControl.ingresante = ''; // O cualquier valor por defecto que desees
+                }
+              }
+            },
+            (error) => {
+              console.error('Error al obtener rol del usuario:', error);
+              // Limpiar el campo 'ingresante' si ocurre un error
+              this.nuevoControl.ingresante = '';
+            }
+          );
         } else {
           // Limpiar los campos si no se encuentra el residente
           this.nuevoControl.nombre = '';
           this.nuevoControl.apellidos = '';
           this.nuevoControl.cedula = '';
           this.nuevoControl.sexo = '';
+          this.nuevoControl.ingresante = ''; // Limpiar también 'ingresante'
         }
       },
       (error) => {
@@ -117,11 +155,12 @@ export class FormularioControlComponent implements OnInit {
         this.nuevoControl.apellidos = '';
         this.nuevoControl.cedula = '';
         this.nuevoControl.sexo = '';
+        this.nuevoControl.ingresante = ''; // Limpiar también 'ingresante'
       }
     );
   }
   
-
+  
   guardar(): void {
     // Asegúrate de que el username esté configurado correctamente
     console.log('Enviando datos para crear control de acceso:', this.nuevoControl);

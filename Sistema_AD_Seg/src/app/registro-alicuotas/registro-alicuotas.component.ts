@@ -40,7 +40,11 @@ export class RegistroAlicuotasComponent {
   loadResidentes(): void {
     this.apiService.getResidentes().subscribe(
       (data: any[]) => {
-        this.residentes = data;
+        this.residentes = data.map(residente => ({
+          id_residente: residente.id_residente,
+          nombre: residente.usuario ? residente.usuario.nombre : 'Nombre no disponible',
+          apellido: residente.usuario ? residente.usuario.apellido : 'Apellido no disponible'
+        }));
       },
       (error) => {
         console.error('Error al obtener residentes:', error);

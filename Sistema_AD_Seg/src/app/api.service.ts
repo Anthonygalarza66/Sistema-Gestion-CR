@@ -237,9 +237,14 @@ export class ApiService {
 
   getResidente(id_residente: number): Observable<any> {
     console.log(`Solicitando residente con ID ${id_residente} a la API...`);
-    return this.http
-      .get<any>(`${this.apiUrl}/residentes/${id_residente}`)
-      .pipe(catchError(this.handleError));
+  return this.http.get<any>(`${this.apiUrl}/residentes/${id_residente}`)
+    .pipe(
+      tap(response => {
+        // Verifica la respuesta
+        console.log('Respuesta recibida:', response);
+      }),
+      catchError(this.handleError)
+    );
   }
 
   getResidentePorPlaca(placa: string) {
@@ -269,14 +274,12 @@ export class ApiService {
       .post<any>(`${this.apiUrl}/residentes`, residente, this.httpOptions)
       .pipe(catchError(this.handleError));
   }
-
   updateResidente(id: number, residente: any): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/residentes/${id}`, residente, {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' })
     }).pipe(catchError(this.handleError));
-  }
+  }  
   
-
   // Método para eliminar un residente
   deleteResidente(id: number): Observable<any> {
     console.log(`Eliminando residente con ID ${id}...`);
@@ -388,6 +391,12 @@ export class ApiService {
   checkCorreoUsuarios(correo: string): Observable<any> {
     return this.http
       .get<any>(`${this.apiUrl}/usuarios/check-correo-usuarios/${correo}`)
+      .pipe(catchError(this.handleError));
+  }
+
+  checkUsernameUsuarios(username: string): Observable<any> {
+    return this.http
+      .get<any>(`${this.apiUrl}/usuarios/check-username-usuarios/${username}`)
       .pipe(catchError(this.handleError));
   }
 

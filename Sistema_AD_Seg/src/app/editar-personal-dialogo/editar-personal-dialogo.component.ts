@@ -22,14 +22,14 @@ export class EditarPersonalDialogoComponent implements OnInit {
   ngOnInit(): void {
     console.log('Datos en el modal:', this.personal);
     this.form = this.fb.group({
+        nombre: [this.personal.usuario.nombre, Validators.required],
+        apellido: [this.personal.usuario.apellido, Validators.required],
         id_personal: [this.personal.id_personal],  // No editable
-        nombre: [this.personal.nombre, Validators.required],
-        apellido: [this.personal.apellido, Validators.required],
-        cedula: [this.personal.cedula, Validators.required],
         sexo: [this.personal.sexo, Validators.required],
         perfil: [this.personal.perfil, Validators.required],
         celular: [this.personal.celular, Validators.required],
-        correo_electronico: [this.personal.correo_electronico],
+        cedula: [this.personal.celular, Validators.required],
+        correo_electronico: [this.personal.usuario.correo_electronico, [Validators.email]],
         observaciones: [this.personal.observaciones]
     });
 } 
@@ -41,7 +41,9 @@ guardar(): void {
   }
 
   // Asegúrate de que los campos id_usuario e id_personal estén presentes
-  const personalData = { ...this.form.value, id_usuario: this.personal.id_usuario, id_personal: this.personal.id_personal };
+  const personalData = 
+  { ...this.form.value, 
+    id_usuario: this.personal.id_usuario,  id_personal: this.personal.id_personal };
 
   console.log(personalData); // Verificar los datos del formulario
   

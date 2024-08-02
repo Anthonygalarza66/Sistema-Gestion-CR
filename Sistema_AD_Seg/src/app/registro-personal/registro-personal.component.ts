@@ -33,7 +33,7 @@ export class RegistroPersonalComponent implements OnInit {
       this.username = localStorage.getItem("username") || "Invitado";
     }
     this.loadPersonal();
-  }
+  } 
 
   loadPersonal(): void {
     console.log("Cargando personal...");
@@ -68,14 +68,15 @@ logout() {
   }
 
   filtrar() {
+    const filtroLower = this.filtro.toLowerCase();
     const filtrados = this.personal.filter(
       (row) =>
-        row.nombre.toLowerCase().includes(this.filtro.toLowerCase()) ||
-        row.apellido.toLowerCase().includes(this.filtro.toLowerCase()) ||
-        row.sexo.toLowerCase().includes(this.filtro.toLowerCase()) ||
-        row.cedula.toLowerCase().includes(this.filtro.toLowerCase()) ||
-        row.perfil.toLowerCase().includes(this.filtro.toLowerCase()) ||
-        row.observaciones.toLowerCase().includes(this.filtro.toLowerCase())
+        (row.usuario.nombre && row.usuario.nombre.toLowerCase().includes(filtroLower)) ||
+        (row.usuario.apellido && row.usuario.apellido.toLowerCase().includes(filtroLower)) ||
+        (row.sexo.toLowerCase().includes(this.filtro.toLowerCase()) )||
+        (row.cedula.toLowerCase().includes(this.filtro.toLowerCase())) ||
+        (row.perfil.toLowerCase().includes(this.filtro.toLowerCase()) )||
+        (row.observaciones.toLowerCase().includes(this.filtro.toLowerCase()))
     );
     return filtrados;
   }

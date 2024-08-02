@@ -15,6 +15,7 @@ export class LectorQrComponent implements AfterViewInit {
   qrData: string = '';
   parsedData: any = {};
   username: string = ''; // Inicialmente vacío
+  idUsuario: number | null = null;
   private loggedIn = false;
 
 
@@ -24,6 +25,18 @@ export class LectorQrComponent implements AfterViewInit {
     if (isPlatformBrowser(this.platformId)) {
       this.username = localStorage.getItem('username') || 'Invitado';
       console.log('Username desde localStorage:', this.username); // Verifica el valor aquí
+      
+      // Obtener el id_usuario asociado al username
+      if (this.username !== 'Invitado') {
+        this.apiService.getUserIdByUsername(this.username).subscribe(
+          user => {
+            this.idUsuario = user.id_usuario;
+          },
+          error => {
+            console.error('Error al obtener el id_usuario:', error);
+          }
+        );
+      }
     } 
   }
 
@@ -45,7 +58,7 @@ export class LectorQrComponent implements AfterViewInit {
   
     // Intentar dividir los datos por saltos de línea
     dataParts = this.qrData.split('\n').filter(Boolean);
-    
+  
     // Si no hay 8 partes, intentar dividir por `;`
     if (dataParts.length !== 8) {
       dataParts = this.qrData.split(';').filter(Boolean);
@@ -62,7 +75,7 @@ export class LectorQrComponent implements AfterViewInit {
         fecha: dataParts[4] ? dataParts[4].trim() : '',
         hora: dataParts[5] ? dataParts[5].trim() : '',
         placa: dataParts[6] ? dataParts[6].trim() : '',
-        observaciones: dataParts[7] ? dataParts[7].trim() : ''
+        observaciones: dataParts[7] ? dataParts[7].trim() : '' 
       };
       console.log('Parsed Data:', this.parsedData); 
     } else {
@@ -101,7 +114,7 @@ export class LectorQrComponent implements AfterViewInit {
       direccion: this.parsedData.direccion,
       fecha_ingreso: `${this.parsedData.fecha} ${this.parsedData.hora}`,
       fecha_salida: '', // Puedes dejar esto vacío si no se requiere
-      id_usuario: 19, // Asegúrate de que este ID sea válido en tu base de datos
+      id_usuario: this.idUsuario, // Usa el id_usuario obtenido de la API
       ingresante: ingresante,
       observaciones: this.parsedData.observaciones || '', // Opcional, por defecto vacío
       placas: this.parsedData.placa,
@@ -124,7 +137,5 @@ export class LectorQrComponent implements AfterViewInit {
         }
       }
     );
-  }  
-  
+  }
 }
-

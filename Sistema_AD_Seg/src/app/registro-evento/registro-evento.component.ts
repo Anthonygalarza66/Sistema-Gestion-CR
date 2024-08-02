@@ -90,55 +90,76 @@ export class RegistroEventoComponent implements OnInit {
 
   cargarDatosResidente() {
     // Paso 1: Obtener id_usuario usando el username
-    this.apiService.getUserIdByUsername(this.username).subscribe((user) => {
-      const idUsuario = user.id_usuario;
-      console.log("ID de usuario:", idUsuario);
+    this.apiService.getUserIdByUsername(this.username).subscribe(
+      (user) => {
+        const idUsuario = user.id_usuario;
+        console.log("ID de usuario:", idUsuario);
   
-      // Paso 2: Obtener todos los residentes
-      this.apiService.getResidentes().subscribe((residentes) => {
-        // Paso 3: Encontrar el residente con el id_usuario
-        const residente = residentes.find((r: any) => r.id_usuario === idUsuario);
-        if (residente) {
-          const idResidente = residente.id_residente;
-          console.log("ID de residente:", idResidente);
+        // Paso 2: Obtener todos los residentes
+        this.apiService.getResidentes().subscribe(
+          (residentes) => {
+            console.log("Lista de residentes:", residentes);
+            // Paso 3: Encontrar el residente con el id_usuario
+            const residente = residentes.find((r: any) => r.id_usuario === idUsuario);
+            if (residente) {
+              const idResidente = residente.id_residente;
+              console.log("ID de residente:", idResidente);
   
-          // Paso 4: Obtener detalles del residente usando id_residente
-          this.apiService.getResidente(idResidente).subscribe((residenteData) => {
-            console.log("Datos del residente:", residenteData);
-            this.nuevoEvento = { 
-              ...this.nuevoEvento,
-              id_usuario: idUsuario,
-              id_residente: idResidente,
-              nombre: residenteData.nombre,
-              apellidos: residenteData.apellido,
-              celular: residenteData.celular,
-              cedula: residenteData.cedula,
-            };
+              // Paso 4: Obtener detalles del residente usando id_residente
+              this.apiService.getResidente(idResidente).subscribe(
+                (residenteData) => {
+                  console.log("Datos del residente:", residenteData);
+                  
+                  // Obtener los datos del usuario
+                  this.apiService.getUsuario(idUsuario).subscribe(
+                    (usuarioData) => {
+                      console.log("Datos del usuario:", usuarioData);
   
-            // Paso 5: Obtener el estado de pago del residente desde la tabla alicuotas
-            this.apiService.getAlicuotasByIdResidente(idResidente).subscribe((alicuotas) => {
-              console.log("Alícuotas del residente:", alicuotas); // Verifica que se están obteniendo las alícuotas correctamente
+                      // Actualizar los datos del evento
+                      this.nuevoEvento = { 
+                        ...this.nuevoEvento,
+                        id_usuario: idUsuario,
+                        id_residente: idResidente,
+                        nombre: usuarioData.nombre,
+                        apellidos: usuarioData.apellido,
+                        celular: residenteData.celular,
+                        cedula: residenteData.cedula,
+                      };
   
-              // Verificar si hay alícuotas pendientes
-              this.tienePagosPendientes = alicuotas.some((alicuota: any) => {
-                console.log("Alícuota pagada (valor):", alicuota.pagado); // Verifica el valor de 'pagado'
-                console.log("Monto por cobrar:", alicuota.monto_por_cobrar); // Verifica el monto por cobrar
-                return !alicuota.pagado; 
-              });              
+                      // Paso 5: Obtener el estado de pago del residente desde la tabla alicuotas
+                      this.apiService.getAlicuotasByIdResidente(idResidente).subscribe(
+                        (alicuotas) => {
+                          console.log("Alícuotas del residente:", alicuotas);
+                          
+                          // Verificar si hay alícuotas pendientes
+                          this.tienePagosPendientes = alicuotas.some((alicuota: any) => {
+                            console.log("Alícuota pagada (valor):", alicuota.pagado);
+                            console.log("Monto por cobrar:", alicuota.monto_por_cobrar);
+                            return !alicuota.pagado;
+                          });
   
-              console.log(
-                "Estado de pagos pendientes:",
-                this.tienePagosPendientes
+                          console.log("Estado de pagos pendientes:", this.tienePagosPendientes);
+                          this.cargarEventos();
+                        },
+                        (error) => console.error('Error al obtener alícuotas:', error)
+                      );
+                    },
+                    (error) => console.error('Error al obtener datos del usuario:', error)
+                  );
+                },
+                (error) => console.error('Error al obtener datos del residente:', error)
               );
-              this.cargarEventos();
-            });
-          });
-        } else {
-          console.error('No se encontró el residente para el id_usuario proporcionado.');
-        }
-      });
-    });
+            } else {
+              console.error('No se encontró el residente para el id_usuario proporcionado.');
+            }
+          },
+          (error) => console.error('Error al obtener residentes:', error)
+        );
+      },
+      (error) => console.error('Error al obtener id_usuario:', error)
+    );
   }
+  
   
   
 

@@ -63,19 +63,19 @@
          <div class="row">
             <div class="form-group col">
                <label for="nombre">Nombre<span class="text-danger"> :</span></label>
-               <input type="text" id="nombre" name="nombre" [(ngModel)]="nuevoEvento.nombre" placeholder="Ingrese nombre" required>
+               <input type="text" id="nombre" name="nombre" [(ngModel)]="nuevoEvento.nombre" placeholder="Ingrese nombre" required [readonly]="true"/>
             </div>
             <div class="form-group col">
                <label for="apellidos">Apellidos<span class="text-danger"> :</span></label>
-               <input type="text" id="apellidos" name="apellidos" [(ngModel)]="nuevoEvento.apellidos" placeholder="Ingrese apellidos" required>
+               <input type="text" id="apellido" name="apellidos" [(ngModel)]="nuevoEvento.apellidos" placeholder="Ingrese apellidos" required [readonly]="true">
             </div>
             <div class="form-group col">
                <label for="celular">Celular<span class="text-danger"> :</span></label>
-               <input type="text" id="celular" name="celular" [(ngModel)]="nuevoEvento.celular" placeholder="+593" required>
+               <input type="text" id="celular" name="celular" [(ngModel)]="nuevoEvento.celular" placeholder="+593" required [readonly]="true">
             </div>
             <div class="form-group col">
                <label for="cedula">Cédula<span class="text-danger"> :</span></label>
-               <input type="text" id="cedula" name="cedula" [(ngModel)]="nuevoEvento.cedula" placeholder="ID / Pasaporte" required>
+               <input type="text" id="cedula" name="cedula" [(ngModel)]="nuevoEvento.cedula" placeholder="ID / Pasaporte" required [readonly]="true">
             </div>
          </div>
          <div class="row">

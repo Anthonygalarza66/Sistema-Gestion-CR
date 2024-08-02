@@ -31,7 +31,7 @@
                <li><i class="fas fa-expand"></i> <a href="lector-qr">Lector QR</a></li>
                <li><i class="fas fa-home"></i> <a href="registro-residentes">Residentes</a></li>
             </ul>
-         </li>
+         </li> 
          <li>
             <i class="fa fa-paper-plane"></i> Notificaciones 
             <ul class="sub-menu">
@@ -83,7 +83,7 @@
       <!-- Filtro aplicado para mostrar los datos -->
       <tbody id="Personal">
          <tr *ngFor="let row of (filtrar() | paginate: { itemsPerPage: 5, currentPage: p })">
-            <td>{{row.nombre}} {{row.apellido}}</td>
+            <td>{{ row.usuario.nombre }} {{ row.usuario.apellido }}</td>
             <td>{{row.sexo}}</td>
             <td>{{row.cedula}}</td>
             <td>{{row.perfil}}</td>

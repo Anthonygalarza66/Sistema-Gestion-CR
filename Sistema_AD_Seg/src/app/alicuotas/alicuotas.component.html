@@ -88,7 +88,7 @@
       <tr *ngFor="let row of (filtrar() | paginate: { itemsPerPage: 5, currentPage: p })">
                <td>{{ row.residente?.solar }}</td>
                <td>{{ row.residente?.m2 }}</td>
-               <td>{{ row.residente?.nombre }}{{ row.residente?.apellido }} </td>
+               <td>{{ row.usuario.nombre }} {{ row.usuario.apellidos }}</td>
                <td>{{ row.residente?.cedula }}</td>
                <td>{{ row.residente?.direccion }}</td>
                <td>{{ row.fecha | date:'yyyy/MM/dd'}}</td>

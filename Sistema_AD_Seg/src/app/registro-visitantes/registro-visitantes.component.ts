@@ -7,6 +7,7 @@ import { ApiService } from "../api.service";
 import { PLATFORM_ID, Inject } from "@angular/core";
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-registro-visitantes',
@@ -58,10 +59,22 @@ export class RegistroVisitantesComponent implements AfterViewInit {
     }
     
 
-  generarQR() {
-    const datosQR = `${this.nombre};${this.apellido};${this.identificacion};${this.direccion};${this.fecha};${this.hora};${this.placas};${this.Observaciones}`;
-    this.qrdata = datosQR;
-  }
+    generarQR() {
+      // Verifica que todos los campos requeridos estén completos
+      if (!this.nombre || !this.apellido || !this.identificacion || !this.direccion || !this.fecha || !this.hora || !this.placas || !this.Observaciones) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Datos incompletos',
+          text: 'Por favor, llene todos los campos requeridos antes de generar el QR.',
+          confirmButtonText: 'OK'
+        });
+        return;
+      }
+  
+      // Si todos los campos están completos, genera el QR
+      const datosQR = `${this.nombre};${this.apellido};${this.identificacion};${this.direccion};${this.fecha};${this.hora};${this.placas};${this.Observaciones}`;
+      this.qrdata = datosQR;
+    }
 
   descargarQR(): void {
     setTimeout(() => {

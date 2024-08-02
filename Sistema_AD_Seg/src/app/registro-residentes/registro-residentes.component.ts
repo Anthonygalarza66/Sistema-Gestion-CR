@@ -34,27 +34,24 @@ export class RegistroResidentesComponent implements OnInit {
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       this.username = localStorage.getItem('username') || 'Invitado';
-    this.apiService.getResidentes().subscribe((data: any) => {
-      this.residentes = data.map((residente: any) => ({
-        ...residente,
-        placas: [residente.vehiculo1_placa, residente.vehiculo2_placa, residente.vehiculo3_placa].filter(placa => placa).join(', '),
-        observacionesVehicular: [residente.vehiculo1_observaciones, residente.vehiculo2_observaciones, residente.vehiculo3_observaciones].filter(obs => obs).join(' | ')
-      }));
-    });
+      this.apiService.getResidentes().subscribe((data: any) => {
+        console.log('Datos recibidos:', data); // Verifica la estructura
+        this.residentes = data.map((residente: any) => ({
+          ...residente,
+          placas: [residente.vehiculo1_placa, residente.vehiculo2_placa, residente.vehiculo3_placa].filter(placa => placa).join(', '),
+          observacionesVehicular: [residente.vehiculo1_observaciones, residente.vehiculo2_observaciones, residente.vehiculo3_observaciones].filter(obs => obs).join(' | ')
+        }));
+      });
+    }
   }
-  }
+  
 
 
   loadResidentes(): void {
     console.log("Cargando residentes...");
-    
-    // Llama al servicio para obtener la lista de residentes
     this.apiService.getResidentes().subscribe(
       (data: any[]) => {
-        // Procesa los datos recibidos
         console.log("Datos recibidos:", data);
-  
-        // Actualiza la lista de residentes
         this.residentes = data.map((residente: any) => ({
           ...residente,
           placas: [residente.vehiculo1_placa, residente.vehiculo2_placa, residente.vehiculo3_placa].filter(placa => placa).join(', '),
@@ -62,7 +59,6 @@ export class RegistroResidentesComponent implements OnInit {
         }));
       },
       (error) => {
-        // Maneja el error en caso de que la llamada a la API falle
         console.error("Error al obtener residentes:", error);
       }
     );
@@ -89,17 +85,17 @@ logout() {
   }
 
   filtrar() {
-    const filtrados = this.residentes.filter(
+    const filtroLower = this.filtro.toLowerCase();
+    return this.residentes.filter(
       (row) =>
-        row.nombre.toLowerCase().includes(this.filtro.toLowerCase()) ||
-        row.apellido.toLowerCase().includes(this.filtro.toLowerCase()) ||
-        row.sexo.toLowerCase().includes(this.filtro.toLowerCase()) ||
-        row.cedula.toLowerCase().includes(this.filtro.toLowerCase()) ||
-        row.perfil.toLowerCase().includes(this.filtro.toLowerCase()) ||
-        row.observaciones.toLowerCase().includes(this.filtro.toLowerCase())
+        (row.usuario.nombre && row.usuario.nombre.toLowerCase().includes(filtroLower)) ||
+        (row.usuario.apellido && row.usuario.apellido.toLowerCase().includes(filtroLower)) ||
+        (row.sexo && row.sexo.toLowerCase().includes(filtroLower)) ||
+        (row.cedula && row.cedula.toLowerCase().includes(filtroLower)) ||
+        (row.perfil && row.perfil.toLowerCase().includes(filtroLower)) ||
+        (row.observaciones && row.observaciones.toLowerCase().includes(filtroLower))
     );
-    return filtrados;
-  }
+  }  
 
   // Métodos para editar residentes
   editResidentes(id: number): void {

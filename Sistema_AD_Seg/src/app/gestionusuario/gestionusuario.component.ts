@@ -104,7 +104,6 @@ logout() {
   
 
   deleteUsuario(id: number): void {
-    // Usar SweetAlert2 para mostrar un cuadro de confirmación
     Swal.fire({
       title: '¿Está seguro?',
       text: "¡Esta acción eliminará el usuario de forma permanente!",
