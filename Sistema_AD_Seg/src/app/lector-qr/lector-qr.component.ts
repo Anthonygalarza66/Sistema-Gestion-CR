@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, Inject, PLATFORM_ID, ViewChild } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
-import { NgxScannerQrcodeComponent, ScannerQRCodeResult } from 'ngx-scanner-qrcode';
+import { NgxScannerQrcodeComponent, ScannerQRCodeResult, ScannerQRCodeDevice } from 'ngx-scanner-qrcode';
 import { ApiService } from "../api.service";
 
 @Component({
@@ -17,6 +17,8 @@ export class LectorQrComponent implements AfterViewInit {
   username: string = ''; // Inicialmente vacío
   idUsuario: number | null = null;
   private loggedIn = false;
+  cameras: ScannerQRCodeDevice[] = [];
+  currentCameraIndex = 0;
 
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object, private router: Router, private apiService: ApiService) {}
@@ -43,6 +45,9 @@ export class LectorQrComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       this.scanner.start();
+      this.scanner.devices.subscribe((devices: ScannerQRCodeDevice[]) => {
+        this.cameras = devices;
+      });
       this.scanner.data.subscribe((results: ScannerQRCodeResult[]) => {
         if (results.length > 0) {
           this.qrData = results[0].value;
@@ -50,6 +55,13 @@ export class LectorQrComponent implements AfterViewInit {
           this.parseQRData();
         }
       });
+    }
+  }
+
+  rotateCamera() {
+    if (this.cameras.length > 1) {
+      this.currentCameraIndex = (this.currentCameraIndex + 1) % this.cameras.length;
+      this.scanner.playDevice(this.cameras[this.currentCameraIndex].deviceId);
     }
   }
 
