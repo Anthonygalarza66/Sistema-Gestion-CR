@@ -35,7 +35,6 @@ export class RegistroResidentesComponent implements OnInit {
     if (isPlatformBrowser(this.platformId)) {
       this.username = localStorage.getItem('username') || 'Invitado';
       this.apiService.getResidentes().subscribe((data: any) => {
-        console.log('Datos recibidos:', data); // Verifica la estructura
         this.residentes = data.map((residente: any) => ({
           ...residente,
           placas: [residente.vehiculo1_placa, residente.vehiculo2_placa, residente.vehiculo3_placa].filter(placa => placa).join(', '),
@@ -44,14 +43,20 @@ export class RegistroResidentesComponent implements OnInit {
       });
     }
   }
-  
 
+/**
+ * Nombre de la función: `loadResidentes`
+ * Autor: Freya López - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función carga la lista de residentes desde la API y actualiza la propiedad `residentes` con los datos obtenidos.
+ * Además de los datos básicos del residente, se combinan y formatean los datos de las placas de los vehículos y las observaciones vehiculares.
+ * Si ocurre un error al obtener los datos, se muestra un mensaje de error en la consola.
+ */
 
   loadResidentes(): void {
-    console.log("Cargando residentes...");
     this.apiService.getResidentes().subscribe(
       (data: any[]) => {
-        console.log("Datos recibidos:", data);
         this.residentes = data.map((residente: any) => ({
           ...residente,
           placas: [residente.vehiculo1_placa, residente.vehiculo2_placa, residente.vehiculo3_placa].filter(placa => placa).join(', '),
@@ -63,7 +68,6 @@ export class RegistroResidentesComponent implements OnInit {
       }
     );
   }
-  
 
 logout() {
   this.loggedIn = false;
@@ -97,35 +101,36 @@ logout() {
     );
   }  
 
-  // Métodos para editar residentes
+/**
+ * Nombre de la función: `editResidentes`
+ * Autor: Freya López - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función permite editar un residente. Primero, obtiene los datos del residente desde la API utilizando su ID.
+ * Luego, abre un modal de edición con los datos del residente. Si el usuario confirma la edición en el modal, se actualiza el residente en la API.
+ * Después de actualizar el residente, se recarga la lista de residentes y se forza la detección de cambios para asegurar que la vista se actualice.
+ * Si se cierra el modal con rechazo, se registra el motivo en la consola.
+ */
+
   editResidentes(id: number): void {
     // Obtiene los datos del residente a editar
     this.apiService.getResidente(id).subscribe(data => {
-      console.log('Datos recibidos:', data);
-
       // Abre el modal para editar el residente
       const modalRef = this.modalService.open(EditarResidenteDialogoComponent, {
         size: 'lg',
         backdrop: 'static',
         centered: true
       });
-
       // Pasa los datos del residente al modal
       modalRef.componentInstance.residente = data;
-
       // Maneja el resultado del modal
       modalRef.result.then(result => {
         if (result) {
-          console.log('Datos del modal:', result);
-
           // Actualiza el residente en la API
           this.apiService.updateResidente(id, result).subscribe(
             response => {
-              console.log('Residente actualizado', response);
-
               // Recarga la lista de residentes para reflejar los cambios
               this.loadResidentes();
-
               // Forza la detección de cambios para asegurar que la vista se actualice
               this.cdr.detectChanges();
             },
@@ -140,6 +145,17 @@ logout() {
     });
   }
   
+/**
+ * Nombre de la función: `deleteResidentes`
+ * Autor: Freya López - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función elimina un residente después de confirmar la acción a través de un cuadro de diálogo de confirmación. 
+ * Si el usuario confirma la eliminación, se realiza una solicitud a la API para eliminar el residente con el ID proporcionado.
+ * Después de eliminar el residente, se recarga la lista de residentes para reflejar los cambios.
+ * Si ocurre un error durante la eliminación, se muestra un mensaje de error en la consola.
+ */
+
   deleteResidentes(id: number): void {
     Swal.fire({
       title: '¿Está seguro?',

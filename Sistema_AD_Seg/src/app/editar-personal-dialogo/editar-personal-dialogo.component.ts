@@ -33,20 +33,27 @@ export class EditarPersonalDialogoComponent implements OnInit {
         observaciones: [this.personal.observaciones]
     });
 } 
-  
+
+/**
+ * Nombre de la función: guardar
+ * Author: Freya Lopez - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función guarda los datos del formulario si es válido. Agrega datos adicionales (ID de usuario e ID de personal) 
+ * al objeto del formulario antes de mostrar un mensaje de éxito usando SweetAlert. 
+ * Una vez que el mensaje de éxito es mostrado y confirmado por el usuario, el modal se cierra con los datos guardados.
+ * 
+ * @returns void
+ */
+
 guardar(): void {
   if (this.form.invalid) {
     console.error('El formulario es inválido.');
     return;
   }
-
-  // Asegúrate de que los campos id_usuario e id_personal estén presentes
   const personalData = 
   { ...this.form.value, 
-    id_usuario: this.personal.id_usuario,  id_personal: this.personal.id_personal };
-
-  console.log(personalData); // Verificar los datos del formulario
-  
+    id_usuario: this.personal.id_usuario,  id_personal: this.personal.id_personal };  
   // Muestra un mensaje de éxito
   Swal.fire({
     title: 'Guardado con éxito',
@@ -57,7 +64,5 @@ guardar(): void {
     // Cierra el modal después de mostrar el mensaje de éxito
     this.modalRef.close(personalData);
   });
-}
-
-  
+}  
 }

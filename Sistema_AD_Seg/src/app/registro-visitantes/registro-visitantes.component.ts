@@ -52,12 +52,19 @@ export class RegistroVisitantesComponent implements AfterViewInit {
   ngAfterViewInit() {
     if (isPlatformBrowser(this.platformId)) {
       this.username = localStorage.getItem('username') || 'Invitado';
-      console.log('Username desde localStorage:', this.username); // Verifica el valor aquí
     } 
     this.cdr.detectChanges();
-      console.log('qrcElement después de detectChanges:', this.qrcElement);
     }
     
+/**
+ * Nombre de la función: `generarQR`
+ * Autor: Freya López - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función genera un código QR a partir de los datos proporcionados. Primero, verifica que todos los campos requeridos (nombre, apellido, identificación, dirección, fecha, hora, placas y observaciones) estén completos.
+ * Si falta algún campo, muestra una advertencia al usuario indicando que debe completar todos los campos antes de generar el QR.
+ * Si todos los campos están completos, construye una cadena de texto con los datos separados por punto y coma y la asigna a `this.qrdata`, que se utiliza para generar el código QR.
+ */
 
     generarQR() {
       // Verifica que todos los campos requeridos estén completos
@@ -70,11 +77,21 @@ export class RegistroVisitantesComponent implements AfterViewInit {
         });
         return;
       }
-  
       // Si todos los campos están completos, genera el QR
       const datosQR = `${this.nombre};${this.apellido};${this.identificacion};${this.direccion};${this.fecha};${this.hora};${this.placas};${this.Observaciones}`;
       this.qrdata = datosQR;
     }
+
+/**
+ * Nombre de la función: `descargarQR`
+ * Autor: Freya López - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función descarga el código QR generado como una imagen PNG. Utiliza `html2canvas` para capturar el contenido del contenedor del QR (`qrContainer`) como un lienzo (canvas). Luego, convierte el lienzo en una URL de datos en formato PNG y crea un enlace de descarga dinámicamente. 
+ * Finalmente, simula un clic en el enlace para iniciar la descarga del archivo con el nombre 'codigo-qr.png'.
+ * 
+ * Nota: La función se retrasa 500 milisegundos antes de ejecutar para asegurar que el contenedor del QR esté completamente renderizado.
+ */
 
   descargarQR(): void {
     setTimeout(() => {
@@ -91,9 +108,19 @@ export class RegistroVisitantesComponent implements AfterViewInit {
       } else {
         console.error('Contenedor QR no encontrado');
       }
-    }, 500); // Ajusta el tiempo si es necesario
+    }, 500); 
   }
-  
+
+/**
+ * Nombre de la función: `descargarPDF`
+ * Autor: Freya López - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función descarga el código QR generado como un archivo PDF. Utiliza `html2canvas` para capturar el contenido del contenedor del QR (`qrContainer`) como un lienzo (canvas). Luego, convierte el lienzo en una URL de datos en formato PNG. A continuación, crea un nuevo PDF utilizando `jsPDF` y agrega la imagen del QR al PDF. Finalmente, guarda el PDF con el nombre 'codigo-qr.pdf'.
+ * 
+ * Nota: La función se retrasa 500 milisegundos antes de ejecutar para asegurar que el contenedor del QR esté completamente renderizado.
+ */
+
   descargarPDF(): void {
     setTimeout(() => {
       if (this.qrContainer && this.qrContainer.nativeElement) {
@@ -110,7 +137,7 @@ export class RegistroVisitantesComponent implements AfterViewInit {
       } else {
         console.error('Contenedor QR no encontrado');
       }
-    }, 500); // Ajusta el tiempo si es necesario
+    }, 500);
   }
 
 
@@ -120,6 +147,22 @@ export class RegistroVisitantesComponent implements AfterViewInit {
     localStorage.removeItem('role'); // Limpiar rol del localStorage
     this.router.navigate(['/login']); // Redirige a la página de inicio de sesión
   }
+  
+/**
+ * Nombre de la función: `validateCedula`
+ * Autor: Freya López - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función valida una cédula ecuatoriana siguiendo el algoritmo de validación establecido. La función realiza las siguientes comprobaciones:
+ * 
+ * 1. Verifica que la cédula tenga exactamente 10 dígitos.
+ * 2. Verifica que el código de la región (los primeros dos dígitos) esté en el rango válido (1 a 24).
+ * 3. Calcula el dígito verificador utilizando el algoritmo específico para cédulas ecuatorianas.
+ * 4. Compara el dígito verificador calculado con el último dígito de la cédula proporcionada.
+ * 5. Muestra un mensaje de error si la cédula es inválida o si el dígito verificador no coincide. De lo contrario, indica que la cédula es correcta.
+ * 
+ * Nota: La función utiliza validaciones específicas para la estructura y el cálculo del dígito verificador de la cédula ecuatoriana.
+ */
 
   validateCedula() {
     const cedula = this.identificacion;

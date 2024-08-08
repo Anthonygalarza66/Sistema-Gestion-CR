@@ -21,6 +21,13 @@ import { authGuard } from './auth.guard';
 import { AccessDeniedComponent } from './access-denied/access-denied.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
 
+/**
+ * Configuración de rutas para la aplicación.
+ * 
+ * Las rutas se definen utilizando el módulo `RouterModule` de Angular. Cada ruta especifica un componente que se debe mostrar
+ * cuando el usuario navega a una URL específica. Algunas rutas requieren autenticación mediante el `authGuard`.
+ */
+
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' } ,// Redirigir la ruta por defecto 
   { path: "login", component: LoginComponent, pathMatch: "full" },

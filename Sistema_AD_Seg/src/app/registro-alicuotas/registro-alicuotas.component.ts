@@ -37,6 +37,23 @@ export class RegistroAlicuotasComponent {
     this.loadResidentes(); // Cargar residentes al inicializar el componente
   }
 
+/**
+ * Nombre de la función: `loadResidentes`
+ * Author: Freya Lopez - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función carga la lista de residentes desde el servicio API y actualiza el estado del componente 
+ * con la información obtenida. Se obtiene una lista de residentes y se procesa cada uno para incluir 
+ * datos básicos como el nombre y el apellido del residente. Si el nombre o apellido del residente no 
+ * está disponible, se asigna un valor por defecto. 
+ * 
+ * Detalles:
+ * - Llama al servicio `getResidentes` para obtener los datos de los residentes.
+ * - Mapea la respuesta para incluir `id_residente`, `nombre` y `apellido`, con valores predeterminados 
+ *   cuando los datos no están disponibles.
+ * - Maneja errores de la solicitud mostrando un mensaje en la consola.
+ */
+
   loadResidentes(): void {
     this.apiService.getResidentes().subscribe(
       (data: any[]) => {
@@ -52,11 +69,9 @@ export class RegistroAlicuotasComponent {
     );
   }
 
-  // Método para manejar el envío del formulario
   guardar(): void {
     this.apiService.createAlicuota(this.nuevoAlicuota).subscribe(
         (response) => {
-            console.log('Alicuota creada:', response);
             Swal.fire({
                 title: 'Éxito',
                 text: 'La alícuota ha sido creada correctamente.',
@@ -84,21 +99,40 @@ export class RegistroAlicuotasComponent {
         }
     );
 }
-onDateChange(event: any): void {
-  const selectedDate = new Date(event.target.value);
-  const monthNames = [
+
+/**
+ * Nombre de la función: `guardar`
+ * Autor: Freya Lopez - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función maneja la creación de una nueva alícuota mediante una solicitud al servicio API. 
+ * Si la creación es exitosa, muestra un mensaje de éxito y redirige al usuario a la lista de alícuotas. 
+ * En caso de error, muestra un mensaje de error adecuado y maneja los errores de validación si es necesario.
+ * 
+ * Detalles:
+ * - Llama al servicio `createAlicuota` para crear una nueva alícuota con los datos de `nuevoAlicuota`.
+ * - Muestra un mensaje de éxito utilizando `Swal.fire` si la creación es exitosa, y luego redirige 
+ *   al usuario a la página de alícuotas.
+ * - Maneja errores de la solicitud mostrando un mensaje de error con `Swal.fire`. 
+ *   Si el error es de validación (estado 422), actualiza `validationErrors` con los errores específicos.
+ *   Para otros errores, muestra un mensaje genérico de error.
+ */
+
+  onDateChange(event: any): void {
+   const selectedDate = new Date(event.target.value);
+   const monthNames = [
     'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 
     'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
-  ];
-  const monthIndex = selectedDate.getMonth(); // Obtén el índice del mes
-  this.nuevoAlicuota.mes = monthNames[monthIndex]; // Asigna el nombre del mes al campo correspondiente
-}
+   ];
+   const monthIndex = selectedDate.getMonth(); // Obtén el índice del mes
+   this.nuevoAlicuota.mes = monthNames[monthIndex]; // Asigna el nombre del mes al campo correspondiente
+  }
 
 
   logout() {
     this.loggedIn = false;
-    localStorage.removeItem('username'); // Limpiar nombre de usuario del localStorage
-    this.router.navigate(['/login']); // Redirige a la página de inicio de sesión
+    localStorage.removeItem('username'); 
+    this.router.navigate(['/login']); 
   }
 
 }

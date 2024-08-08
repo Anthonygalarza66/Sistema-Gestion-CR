@@ -22,7 +22,6 @@ export class EditarResidenteDialogoComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    console.log('Datos en el modal:', this.residente);
     this.form = this.fb.group({
       nombre: [this.residente.usuario.nombre, Validators.required],
       apellido: [this.residente.usuario.apellido, Validators.required],
@@ -45,21 +44,28 @@ export class EditarResidenteDialogoComponent implements OnInit {
     });
   }  
   
+/**
+ * Nombre de la función: guardar
+ * Author: Freya Lopez - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función guarda los datos del formulario si es válido. Prepara los datos del residente, incluyendo el ID de usuario 
+ * y el ID de residente, y luego muestra un mensaje de éxito usando SweetAlert. Después de que el usuario confirma el 
+ * mensaje de éxito, el modal se cierra con los datos del residente guardados.
+ * 
+ * @returns void
+ */
+  
   guardar(): void {
     if (this.form.invalid) {
-      console.error('El formulario es inválido.');
       return;
     }
-
     // Prepara los datos del residente
     const residenteData = { 
       ...this.form.value, 
       id_usuario: this.residente.id_usuario, 
       id_residente: this.residente.id_residente 
-    };
-    
-    console.log(residenteData); // Verificar los datos del formulario
-    
+    };    
     // Muestra un mensaje de éxito
     Swal.fire({
       title: 'Guardado con éxito',

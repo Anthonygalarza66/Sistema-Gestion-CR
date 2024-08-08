@@ -35,11 +35,19 @@ export class RegistroPersonalComponent implements OnInit {
     this.loadPersonal();
   } 
 
+/**
+ * Nombre de la función: `loadPersonal`
+ * Autor: Freya López - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función carga los datos del personal llamando al servicio `getPersonales` de la API. 
+ * Los datos obtenidos se asignan a la propiedad `personal` del componente. 
+ * Si ocurre un error durante la solicitud, se registra en la consola.
+ */
+
   loadPersonal(): void {
-    console.log("Cargando personal...");
     this.apiService.getPersonales().subscribe(
       (data: any[]) => {
-        console.log("Datos recibidos:", data);
         this.personal = data;
       },
       (error) => {
@@ -56,7 +64,6 @@ logout() {
 }
 
   exportarExcel(): void {
-    console.log("Exportando a Excel...");
     if (this.personal.length === 0) {
       console.warn("No hay datos para exportar");
       return;
@@ -66,6 +73,17 @@ logout() {
     XLSX.utils.book_append_sheet(wb, ws, "Personal");
     XLSX.writeFile(wb, "Listado_Personal.xlsx");
   }
+
+/**
+ * Nombre de la función: `exportarExcel`
+ * Autor: Freya López - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función exporta los datos del personal a un archivo Excel. 
+ * Si la propiedad `personal` está vacía, se muestra una advertencia en la consola y se detiene la ejecución.
+ * Si hay datos, se convierte el array de objetos `personal` en una hoja de cálculo, 
+ * se crea un nuevo libro de trabajo, se añade la hoja al libro y se guarda el archivo como "Listado_Personal.xlsx".
+ */
 
   filtrar() {
     const filtroLower = this.filtro.toLowerCase();
@@ -81,10 +99,21 @@ logout() {
     return filtrados;
   }
 
-  // Métodos para editar personal
+/**
+ * Nombre de la función: `editPersonal`
+ * Autor: Freya López - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función abre un modal para editar los datos de un personal específico.
+ * Primero, obtiene los datos del personal mediante el ID proporcionado.
+ * Luego, abre un modal (EditarPersonalDialogoComponent) y pasa los datos del personal al modal.
+ * Cuando el modal se cierra con una confirmación, se actualizan los datos del personal usando la API.
+ * Después de la actualización, se recarga la lista de personales para reflejar los cambios.
+ * Si ocurre un error durante la actualización o al cerrar el modal, se muestra un mensaje en la consola.
+ */
+
   editPersonal(id: number): void {
     this.apiService.getPersonal(id).subscribe(data => {
-      console.log('Datos recibidos:', data);
       const modalRef = this.modalService.open(EditarPersonalDialogoComponent, {
         size: 'md',
         backdrop: 'static',
@@ -94,10 +123,8 @@ logout() {
       
       modalRef.result.then(result => {
         if (result) {
-          console.log('Datos del modal:', result);
           this.apiService.updatePersonal(id, result).subscribe(
             response => {
-              console.log('Personal actualizado', response);
               this.loadPersonal(); // Recargar la lista de personales
             },
             error => {
@@ -111,9 +138,20 @@ logout() {
     });
   }
   
+/**
+ * Nombre de la función: `deletePersonal`
+ * Autor: Freya López - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función solicita confirmación al usuario antes de eliminar un registro de personal.
+ * Utiliza una ventana emergente (Swal.fire) para mostrar una alerta de confirmación con opciones para eliminar o cancelar.
+ * Si el usuario confirma la eliminación, se realiza una llamada a la API para eliminar el registro del personal.
+ * Después de la eliminación, se recarga la lista de personal para reflejar los cambios.
+ * Si ocurre un error durante la eliminación, se muestra un mensaje en la consola.
+ * Si el usuario cancela la eliminación, se registra un mensaje en la consola indicando que la acción fue cancelada.
+ */
 
   deletePersonal(id: number): void {
-    // Usar SweetAlert2 para mostrar un cuadro de confirmación
     Swal.fire({
       title: '¿Está seguro?',
       text: "¡Esta acción eliminará el registro de personal de forma permanente!",
@@ -125,10 +163,8 @@ logout() {
       cancelButtonText: 'Cancelar'
     }).then((result) => {
       if (result.isConfirmed) {
-        console.log("Eliminando personal con ID:", id);
         this.apiService.deletePersonal(id).subscribe(
           () => {
-            console.log("Personal eliminado con éxito");
             this.loadPersonal(); // Volver a cargar la lista de personal después de la eliminación
           },
           (error) => {

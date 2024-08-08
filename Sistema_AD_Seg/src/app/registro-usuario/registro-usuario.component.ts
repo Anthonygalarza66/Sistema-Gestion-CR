@@ -36,13 +36,23 @@ export class RegistroUsuarioComponent {
     };
   }
 
-  // Verificar la disponibilidad del correo electrónico
+/**
+ * Nombre de la función: `checkCorreoUsuarios`
+ * Autor: Freya López - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función verifica si el correo electrónico proporcionado en `nuevoUsuario` ya está registrado en el sistema. 
+ * Si el correo electrónico está vacío, se añade un error de validación indicando que es obligatorio.
+ * Si el correo electrónico ya está registrado, se actualiza el objeto `validationErrors` con un mensaje de error.
+ * Si ocurre un error durante la verificación, se muestra un mensaje de error en la consola y se actualiza el objeto 
+ * `validationErrors` con un mensaje de error genérico.
+ */
+
   checkCorreoUsuarios() {
     if (!this.nuevoUsuario.correo_electronico) {
       this.validationErrors.correo_electronico = ['El correo electrónico es obligatorio.'];
       return;
     }
-
     this.apiService.checkCorreoUsuarios(this.nuevoUsuario.correo_electronico).subscribe(
       (response) => {
         this.correoExists = response.exists;
@@ -59,7 +69,17 @@ export class RegistroUsuarioComponent {
     );
   }
 
-// Verificar la disponibilidad del nombre de usuario
+/**
+ * Nombre de la función: `checkUsernameUsuarios`
+ * Autor: Freya López - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función verifica si el nombre de usuario proporcionado en `nuevoUsuario` ya está registrado en el sistema. 
+ * Si el nombre de usuario está vacío, se muestra una alerta indicando que es obligatorio.
+ * Si el nombre de usuario ya está registrado, se muestra una alerta indicando que el nombre de usuario ya está en uso.
+ * Si ocurre un error durante la verificación, se muestra una alerta con un mensaje de error genérico.
+ */
+
 checkUsernameUsuarios() {
   if (!this.nuevoUsuario.username) {
     Swal.fire({
@@ -70,7 +90,6 @@ checkUsernameUsuarios() {
     });
     return;
   }
-
   this.apiService.checkUsernameUsuarios(this.nuevoUsuario.username).subscribe(
     (response) => {
       if (response.exists) {
@@ -93,7 +112,19 @@ checkUsernameUsuarios() {
   );
 }
 
-  // Actualiza el rol basado en el perfil seleccionado
+/**
+ * Nombre de la función: `updateRol`
+ * Autor: Freya López - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función actualiza el rol del usuario (`nuevoUsuario.rol`) basado en el perfil seleccionado (`nuevoUsuario.perfil`).
+ * Dependiendo del valor del perfil, se asigna un rol específico:
+ * - 'Residente' o 'Propietario' se asigna el rol 'Residente'.
+ * - 'Administracion' se asigna el rol 'Administracion'.
+ * - 'Seguridad' se asigna el rol 'Seguridad'.
+ * Si el perfil no coincide con ninguno de los valores esperados, se asigna un rol vacío.
+ */
+
   updateRol() {
     const perfil = this.nuevoUsuario.perfil;
     if (perfil === 'Residente' || perfil === 'Propietario') {
@@ -107,7 +138,19 @@ checkUsernameUsuarios() {
     }
   }
 
-  // Método para manejar el envío del formulario
+/**
+ * Nombre de la función: `guardar`
+ * Autor: Freya López - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función maneja el proceso de creación de un nuevo usuario. Primero, valida que la contraseña tenga al menos 8 caracteres. Si la validación falla, muestra un mensaje de error y detiene el proceso.
+ * Si la validación es exitosa, envía los datos del nuevo usuario al servidor a través del servicio `apiService.createUsuario`. 
+ * En caso de éxito, muestra un mensaje de confirmación y redirige a la página de gestión de usuarios.
+ * En caso de error, maneja diferentes tipos de errores:
+ * - Si el error es de validación (código 422), muestra mensajes específicos según el tipo de error (por ejemplo, nombre de usuario ya ocupado).
+ * - Para otros errores, muestra un mensaje general de error inesperado.
+ */
+  
   Guardar() {
     // Validar longitud de la contraseña en el frontend
     if (this.nuevoUsuario.contrasena.length < 8) {
@@ -165,8 +208,6 @@ checkUsernameUsuarios() {
       }
     );
   }
-  
-
 
   logout() {
     this.loggedIn = false;

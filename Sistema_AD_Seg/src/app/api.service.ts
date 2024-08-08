@@ -11,8 +11,11 @@ import { tap } from "rxjs/operators";
   providedIn: "root",
 })
 export class ApiService {
+
+  // URL base de la API
   private apiUrl = "http://localhost:8000/api";
 
+  // Opciones por defecto para las peticiones HTTP
   private httpOptions = {
     headers: new HttpHeaders({
       "Content-Type": "application/json",

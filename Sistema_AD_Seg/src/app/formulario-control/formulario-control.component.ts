@@ -45,8 +45,20 @@ export class FormularioControlComponent implements OnInit {
     this.cargarUsuarios();
   }
 
+/**
+ * Nombre de la función: cargarUsuarios
+ * Author: Freya Lopez - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función carga la lista de usuarios desde la API. Realiza una solicitud para obtener los datos de los usuarios 
+ * y, una vez que la respuesta es recibida, almacena los usuarios en la propiedad `usuarios` y llama a 
+ * `filtrarUsuariosSeguridad` para filtrar los usuarios con perfil de seguridad. Si ocurre un error durante la 
+ * solicitud, se registra en la consola.
+ * 
+ * @returns void
+ */
+
   cargarUsuarios(): void {
-    console.log('Solicitando usuarios a la API...');
     this.apiService.getUsuarios().subscribe(
       (response) => {
         console.log('Usuarios obtenidos:', response);
@@ -59,37 +71,68 @@ export class FormularioControlComponent implements OnInit {
     );
   }
 
+/**
+ * Nombre de la función: filtrarUsuariosSeguridad
+ * Author: Freya Lopez - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función filtra la lista de usuarios almacenada en `usuarios` para obtener solo aquellos usuarios 
+ * que tienen el perfil y rol de 'Seguridad'. El resultado se almacena en la propiedad `usuariosSeguridad`.
+ * 
+ * @returns void
+ */
+
   filtrarUsuariosSeguridad(): void {
-    console.log('Filtrando usuarios de seguridad');
     this.usuariosSeguridad = this.usuarios.filter(
       (usuario: any) => usuario.perfil === 'Seguridad' && usuario.rol === 'Seguridad'
     );
-    console.log('Usuarios de seguridad filtrados:', this.usuariosSeguridad);
   }
+
+/**
+ * Nombre de la función: GuardarUsername
+ * Author: Freya Lopez - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función maneja el evento de selección de un usuario y actualiza el campo `username` del objeto `nuevoControl` 
+ * con el nombre de usuario del usuario seleccionado. Primero convierte el valor del evento en un número entero 
+ * para identificar al usuario seleccionado. Luego busca el usuario en la lista de `usuariosSeguridad` 
+ * usando el ID del usuario. Si el usuario se encuentra, se asigna el `username` al objeto `nuevoControl`. 
+ * En caso contrario, se asigna una cadena vacía y se muestra una advertencia en la consola.
+ * 
+ * @param event - El evento de selección que contiene el ID del usuario seleccionado.
+ * @returns void
+ */
 
   GuardarUsername(event: any): void {
     const selectedUserId = event.target.value;
-    console.log('ID de usuario seleccionado:', selectedUserId);
-  
-    // Verificar si selectedUserId es un número
     const selectedIdNumber = parseInt(selectedUserId, 10);
     if (isNaN(selectedIdNumber)) {
-      console.warn('El ID seleccionado no es válido:', selectedUserId);
       return;
     }
-  
     // Buscar el usuario seleccionado en la lista de usuarios de seguridad
     const selectedUser = this.usuariosSeguridad.find((usuario: any) => usuario.id_usuario === selectedIdNumber);
-    
     if (selectedUser) {
       this.nuevoControl.username = selectedUser.username;
-      console.log('Usuario encontrado:', selectedUser);
-      console.log('Username asignado:', this.nuevoControl.username);
     } else {
       this.nuevoControl.username = '';
-      console.warn('Usuario no encontrado para el ID:', selectedUserId);
     }
   }
+
+/**
+ * Nombre de la función: onPlacaChange
+ * Author: Freya Lopez - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función maneja el evento de cambio de la placa ingresada y actualiza los campos del objeto `nuevoControl`
+ * con la información asociada al residente y al usuario correspondiente. Primero, busca el residente asociado a
+ * la placa ingresada. Luego, obtiene el usuario relacionado con el residente para actualizar los campos de nombre
+ * y apellidos. También actualiza otros campos del residente como cédula y sexo. Adicionalmente, verifica el rol
+ * del usuario para actualizar el campo 'ingresante'. Si no se encuentra el residente, el usuario o si ocurre
+ * algún error durante las solicitudes, se limpian los campos correspondientes en `nuevoControl`.
+ * 
+ * @param event - El evento de cambio que contiene el valor de la placa ingresada.
+ * @returns void
+ */
 
   onPlacaChange(event: any): void {
     const placaSeleccionada = event.target.value;
@@ -160,23 +203,29 @@ export class FormularioControlComponent implements OnInit {
     );
   }
   
+/**
+ * Nombre de la función: guardar
+ * Author: Freya Lopez - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función envía los datos del control de acceso (`nuevoControl`) al servidor para su almacenamiento.
+ * Si la solicitud es exitosa, muestra un mensaje de éxito y redirige al usuario a la página de registro de control.
+ * Si ocurre un error, se registran los detalles del error en la consola y se actualizan los mensajes de error
+ * para mostrar al usuario. Los errores de validación específicos se manejan si el código de estado de la respuesta
+ * es 422, mientras que otros errores se manejan con un mensaje general.
+ * 
+ * @returns void
+ */
   
   guardar(): void {
-    // Asegúrate de que el username esté configurado correctamente
-    console.log('Enviando datos para crear control de acceso:', this.nuevoControl);
-  
     this.apiService.createControlAcceso(this.nuevoControl).subscribe(
-      (response) => {
-        console.log('Control de acceso creado:', response);
-        
-        // Mostrar mensaje de éxito
+      (response) => {        
         Swal.fire({
           title: 'Guardado con éxito',
           text: 'El control de acceso se ha guardado correctamente.',
           icon: 'success',
           confirmButtonText: 'Aceptar'
         }).then(() => {
-          // Redirigir después de cerrar el mensaje de éxito
           this.router.navigate(['/registro-control']);
         });
       },
@@ -190,10 +239,22 @@ export class FormularioControlComponent implements OnInit {
       }
     );
   }
+  
+/**
+ * Nombre de la función: logout
+ * Author: Freya Lopez - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función maneja el proceso de cierre de sesión del usuario. Establece la variable `loggedIn` en `false`,
+ * elimina el nombre de usuario del almacenamiento local (`localStorage`) y redirige al usuario a la página de
+ * inicio de sesión.
+ * 
+ * @returns void
+ */
 
   logout(): void {
     this.loggedIn = false;
-    localStorage.removeItem('username'); // Limpiar nombre de usuario del localStorage
-    this.router.navigate(['/login']); // Redirige a la página de inicio de sesión
+    localStorage.removeItem('username'); 
+    this.router.navigate(['/login']); 
   }
 }

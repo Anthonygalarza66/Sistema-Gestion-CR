@@ -20,9 +20,7 @@ export class RegistroControlComponent {
   p: number = 1; // Página actual de paginacion
   private loggedIn = false;
   filtro: string = "";
-
   control_acceso: any[] = [];
-
 
   constructor(
     private router: Router,
@@ -36,15 +34,22 @@ export class RegistroControlComponent {
     if (isPlatformBrowser(this.platformId)) {
       this.username = localStorage.getItem("username") || "Invitado"; 
     }
-    
     this.loadControlAcceso();
   }
 
+/**
+ * Nombre de la función: `loadControlAcceso`
+ * Autor: Freya Lopez - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función se encarga de cargar la lista de control de acceso desde el servicio API y 
+ * asignar los datos recibidos a la variable `control_acceso`. En caso de error, muestra un mensaje de error en la consola.
+ * 
+ */
+
   loadControlAcceso(): void {
-    console.log("Cargando control de acceso...");
     this.apiService.getControlAcceso().subscribe(
       (data: any[]) => {
-        console.log("Datos recibidos:", data);
         this.control_acceso = data;
       },
       (error) => {
@@ -53,17 +58,25 @@ export class RegistroControlComponent {
     );
   }  
 
-logout() {
-  this.loggedIn = false;
-  localStorage.removeItem('username'); // Limpiar nombre de usuario del localStorage
-  localStorage.removeItem('role'); // Limpiar rol del localStorage
-  this.router.navigate(['/login']); // Redirige a la página de inicio de sesión
-}
+  logout() {
+   this.loggedIn = false;
+   localStorage.removeItem('username'); 
+   localStorage.removeItem('role'); 
+   this.router.navigate(['/login']); 
+  }
 
-
+/**
+ * Nombre de la función: `exportarExcel`
+ * Autor: Freya Lopez - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función se encarga de exportar los datos de control de acceso a un archivo Excel.
+ * Verifica si hay datos disponibles antes de proceder con la exportación. Si hay datos, los formatea
+ * y crea un archivo Excel con los datos exportados.
+ * 
+ */
 
   exportarExcel(): void {
-    console.log("Exportando a Excel...");
     if (this.control_acceso.length === 0) {
       console.warn("No hay datos para exportar");
       return;
@@ -81,16 +94,24 @@ logout() {
       Personal_de_turno: row.username,
       Observaciones: row.observaciones,
     }));
-  
     const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData);
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Alicuotas");
     XLSX.writeFile(wb, "Listado_Accesos.xlsx");
   }
 
+/**
+ * Nombre de la función: `filtrar`
+ * Autor: Freya Lopez - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función filtra los datos de control de acceso en base a un término de búsqueda.
+ * El término de búsqueda se compara con varios campos de los datos y se realiza una búsqueda 
+ * insensible a mayúsculas/minúsculas.
+ */
+
   filtrar() {
     const filtroLowerCase = this.filtro.toLowerCase();
-  
     return this.control_acceso.filter(row => {
       return (row.placas?.toLowerCase().includes(filtroLowerCase) ||
               row.fecha_ingreso?.toLowerCase().includes(filtroLowerCase) ||
@@ -106,6 +127,16 @@ logout() {
     });
   }  
 
+/**
+ * Nombre de la función: `editControl`
+ * Autor: Freya Lopez - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función maneja la edición de un registro de control de acceso específico. Abre un modal para 
+ * permitir al usuario editar los detalles del control de acceso y luego actualiza el registro en la 
+ * base de datos con los nuevos datos proporcionados.
+ */
+
   editControl(id: number): void {
     this.apiService.getControlAccesoById(id).subscribe(data => {
       const modalRef = this.modalService.open(EditarControlDialogoComponent, {
@@ -113,10 +144,8 @@ logout() {
         backdrop: 'static', // Opcional: evitar que el modal se cierre al hacer clic fuera
         centered: true, // Opcional: centrar el modal
       });
-  
       // Pasar datos al modal
       modalRef.componentInstance.data = data;
-  
       modalRef.result.then(result => {
         if (result) {
           // Verificar y ajustar el formato de los datos si es necesario
@@ -124,13 +153,9 @@ logout() {
             ...result,
             fecha_ingreso: this.formatDate(result.fecha_ingreso),
             fecha_salida: result.fecha_salida ? this.formatDate(result.fecha_salida) : null
-          };
-  
-          console.log('Datos actualizados antes de enviar al backend:', updatedData);
-  
+          };  
           this.apiService.updateControlAcceso(id, updatedData).subscribe(
             response => {
-              console.log('Control de acceso actualizado', response);
               this.loadControlAcceso(); // Recargar datos
             },
             error => {
@@ -139,19 +164,45 @@ logout() {
           );
         }
       }, (reason) => {
-        // Opcional: manejar el rechazo del modal
       });
     });
   }
+
+/**
+ * Nombre de la función: `formatDate`
+ * Autor: Freya Lopez - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función toma una fecha en formato de entrada (puede ser una cadena o un objeto de fecha) y la 
+ * convierte a una cadena con el formato `YYYY-MM-DD HH:MM:SS`. Esto asegura que la fecha se presente 
+ * en un formato estándar y consistente para su almacenamiento o visualización.
+ * 
+ * Parámetros:
+ * - `date: any`: La fecha que se va a formatear, puede ser una cadena o un objeto `Date`.
+ * 
+ * Valor de retorno:
+ * - `string`: La fecha formateada en el formato `YYYY-MM-DD HH:MM:SS`.
+ */
 
   private formatDate(date: any): string {
     const d = new Date(date);
     return `${d.getFullYear()}-${('0' + (d.getMonth() + 1)).slice(-2)}-${('0' + d.getDate()).slice(-2)} ${('0' + d.getHours()).slice(-2)}:${('0' + d.getMinutes()).slice(-2)}:${('0' + d.getSeconds()).slice(-2)}`;
   }
 
+/**
+ * Nombre de la función: `deleteControl`
+ * Autor: Freya Lopez - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función solicita la confirmación del usuario para eliminar un registro de control de acceso. 
+ * Si el usuario confirma, realiza una solicitud para eliminar el registro y actualiza la lista de 
+ * controles de acceso. Si se cancela, no se realiza ninguna acción.
+ * 
+ * Parámetros:
+ * - `id: number`: El identificador del registro de control de acceso que se desea eliminar.
+ */
 
   deleteControl(id: number): void {
-    // Usar SweetAlert2 para mostrar un cuadro de confirmación
     Swal.fire({
       title: '¿Está seguro?',
       text: "¡Esta acción eliminará el registro de control de acceso de forma permanente!",
@@ -163,10 +214,8 @@ logout() {
       cancelButtonText: 'Cancelar'
     }).then((result) => {
       if (result.isConfirmed) {
-        console.log("Eliminando control de acceso con ID:", id);
         this.apiService.deleteControlAcceso(id).subscribe(
           () => {
-            console.log("Control de acceso eliminado con éxito");
             this.loadControlAcceso(); // Volver a cargar la lista de control de acceso después de la eliminación
           },
           (error) => {
