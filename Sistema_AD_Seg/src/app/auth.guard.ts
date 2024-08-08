@@ -32,7 +32,7 @@ export const authGuard: CanActivateFn = (route, state) => {
     const rolePermissions: Record<Role, string[]> = {
       Administracion: ['*'], // Acceso a todas las rutas
       Seguridad: ['/registro-control', '/formulario-control', '/eventos', '/lector-qr','/registro-residentes','/notificaciones','/alicuotas'],
-      Residente: ['/registro-evento', '/registro-visitantes', '/eventos', '/alicuotas','/notificaciones']
+      Residente: ['/registro-evento', '/registro-visitantes', '/eventos', '/alicuotas']
     };
 
     const permissions = rolePermissions[role];

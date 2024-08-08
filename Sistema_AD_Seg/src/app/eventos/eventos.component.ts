@@ -22,6 +22,8 @@ export class EventosComponent {
 
  
   eventos: any[] = [];
+  residentes: any[] = [];
+  usuarios: any[] = [];
   row: any;
 
 
@@ -38,29 +40,81 @@ export class EventosComponent {
     this.loadEventos();
   }
 
+/**
+ * Nombre de la función: loadEventos
+ * Author: Freya Lopez - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función carga la lista de eventos desde la API y procesa cada evento para incluir información 
+ * adicional sobre el usuario y el residente relacionados. Primero, obtiene la lista de eventos y luego 
+ * para cada evento, realiza llamadas adicionales a la API para obtener los datos del usuario y del residente. 
+ * Los datos combinados se almacenan en la propiedad `eventos`, que luego se ordena por fecha y hora.
+ * 
+ * @returns void
+ */
+
   loadEventos(): void {
-    console.log("Cargando Eventos...");
     this.apiService.getEventos().subscribe(
-      (data: any[]) => {
-        console.log("Datos recibidos:", data);
-        this.eventos = data;
+      (eventos: any[]) => {
+        this.eventos = [];
+        eventos.forEach((evento) => {
+          // Obtener usuario relacionado
+          this.apiService.getUsuario(evento.id_usuario).subscribe((usuario: any) => {
+            // Obtener residente relacionado
+            this.apiService.getResidente(evento.id_residente).subscribe((residente: any) => {
+              // Combinar datos en el objeto evento
+              this.eventos.push({
+                ...evento,
+                usuario: usuario,
+                residente: residente
+              });
+              // Ordenar los eventos por fecha (opcional)
+              this.eventos.sort((a, b) => new Date(b.fecha_hora).getTime() - new Date(a.fecha_hora).getTime());
+            }, (error) => {
+              console.error("Error al obtener residente:", error);
+            });
+          }, (error) => {
+            console.error("Error al obtener usuario:", error);
+          });
+        });
       },
       (error) => {
         console.error("Error al obtener eventos:", error);
       }
     );
   }
+  
+/**
+ * Nombre de la función: logout
+ * Author: Freya Lopez - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función maneja el proceso de cierre de sesión. Establece la propiedad `loggedIn` a `false`, 
+ * elimina el nombre de usuario del `localStorage` y redirige al usuario a la página de inicio de sesión.
+ * 
+ * @returns void
+ */
 
   logout(): void {
     this.loggedIn = false;
-    localStorage.removeItem("username"); // Limpiar nombre de usuario del localStorage
-    this.router.navigate(["/login"]); // Redirige a la página de inicio de sesión
+    localStorage.removeItem("username"); 
+    this.router.navigate(["/login"]); 
   }
 
+/**
+ * Nombre de la función: exportarExcel
+ * Author: Freya Lopez - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función exporta la lista de eventos a un archivo Excel. Primero, verifica si hay eventos disponibles para exportar. 
+ * Luego, convierte la lista de eventos en una hoja de cálculo usando la biblioteca `XLSX`, crea un nuevo libro de trabajo, 
+ * y añade la hoja de cálculo al libro. Finalmente, guarda el archivo Excel con el nombre "Listado_Eventos.xlsx".
+ * 
+ * @returns void
+ */
+
   exportarExcel(): void {
-    console.log("Exportando a Excel...");
     if (this.eventos.length === 0) {
-      console.warn("No hay datos para exportar");
       return;
     }
     const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.eventos);
@@ -69,28 +123,48 @@ export class EventosComponent {
     XLSX.writeFile(wb, "Listado_Eventos.xlsx");
   }
 
+/**
+ * Nombre de la función: filtrar
+ * Author: Freya Lopez - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función filtra la lista de eventos en función del valor de `filtro`. Convierte el filtro a minúsculas y busca 
+ * coincidencias en varios campos del objeto `evento`, incluyendo datos del usuario, residente y otros campos adicionales 
+ * como `sexo`, `perfil`, y `observaciones`. Devuelve una lista filtrada de eventos que coinciden con el criterio de búsqueda.
+ * 
+ * @returns any[] - Una lista de eventos que coinciden con el filtro aplicado.
+ */
+
   filtrar(): any[] {
     const filtroLower = this.filtro.toLowerCase();
-    return this.eventos.filter(row =>
-      row.nombre.toLowerCase().includes(filtroLower) ||
-      row.apellidos.toLowerCase().includes(filtroLower) ||
-      row.cedula.toLowerCase().includes(filtroLower) ||
-      row.nombre_evento.toLowerCase().includes(filtroLower) ||
-      row.direccion_evento.toLowerCase().includes(filtroLower) ||
-      row.tipo_evento.toLowerCase().includes(filtroLower) ||
-      row.observaciones?.toLowerCase().includes(filtroLower) || 
-      row.invitados?.toLowerCase().includes(filtroLower) 
+    return this.eventos.filter(
+      (row) =>
+        // Filtro basado en datos del objeto 'usuario'
+        (row.usuario?.nombre && row.usuario.nombre.toLowerCase().includes(filtroLower)) ||
+        (row.usuario?.apellido && row.usuario.apellido.toLowerCase().includes(filtroLower)) ||
+        // Filtro basado en datos del objeto 'residente'
+        (row.residente?.cedula && row.residente.cedula.toLowerCase().includes(filtroLower)) ||
+        (row.residente?.celular && row.residente.celular.toLowerCase().includes(filtroLower)) ||
+        (row.sexo && row.sexo.toLowerCase().includes(filtroLower)) ||
+        (row.perfil && row.perfil.toLowerCase().includes(filtroLower)) ||
+        (row.observaciones && row.observaciones.toLowerCase().includes(filtroLower))
     );
   }
 
-  // Métodos para editar y eliminar eventos
-  editEventos(id: number): void {
-    console.log("Editando Evento con ID:", id);
-    this.router.navigate(["/formulario-evento", id]);
-  }
+/**
+ * Nombre de la función: deleteEventos
+ * Author: Freya Lopez - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función maneja la eliminación de un evento después de confirmar la acción con el usuario. Muestra una alerta de 
+ * confirmación usando SweetAlert, y si el usuario confirma, realiza una solicitud a la API para eliminar el evento 
+ * especificado por `id`. Tras la eliminación, vuelve a cargar la lista de eventos. Si la eliminación es cancelada, 
+ * 
+ * @param id - El identificador del evento que se desea eliminar.
+ * @returns void
+ */
 
   deleteEventos(id: number): void {
-    // Usar SweetAlert2 para mostrar un cuadro de confirmación
     Swal.fire({
       title: '¿Está seguro?',
       text: "¡Esta acción eliminará el evento de forma permanente!",
@@ -102,10 +176,8 @@ export class EventosComponent {
       cancelButtonText: 'Cancelar'
     }).then((result) => {
       if (result.isConfirmed) {
-        console.log("Eliminando evento con ID:", id);
         this.apiService.deleteEvento(id).subscribe(
           () => {
-            console.log("Evento eliminado con éxito");
             this.loadEventos(); // Volver a cargar la lista de eventos después de la eliminación
           },
           (error) => {
@@ -118,14 +190,53 @@ export class EventosComponent {
     });
   }
 
+/**
+ * Nombre de la función: getFileUrl
+ * Author: Freya Lopez - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función devuelve la URL completa para acceder a un archivo específico basado en su nombre. 
+ * Utiliza el servicio `apiService` para obtener la URL del archivo. 
+ * 
+ * @param filename - El nombre del archivo para el cual se desea obtener la URL.
+ * @returns string - La URL completa del archivo.
+ */
+
   getFileUrl(filename: string): string {
     return this.apiService.getFileUrl(filename); 
   }
+
+/**
+ * Nombre de la función: isRole
+ * Author: Freya Lopez - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función verifica si el rol del usuario, almacenado en `localStorage`, coincide con el rol especificado. 
+ * Devuelve `true` si el rol del usuario coincide con el rol dado y `false` en caso contrario.
+ * 
+ * @param role - El rol que se desea comprobar.
+ * @returns boolean - `true` si el rol del usuario coincide con el rol dado, `false` en caso contrario.
+ */
 
   isRole(role: string): boolean {
     const userRole = localStorage.getItem('role');
     return userRole === role;
   }
+
+/**
+ * Nombre de la función: updateEstado
+ * Author: Freya Lopez - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función actualiza el estado de un evento específico en la base de datos y en el modelo de datos local. 
+ * Realiza una solicitud a la API para actualizar el estado del evento con el identificador `id` y el nuevo estado `nuevoEstado`. 
+ * Después de recibir la respuesta, actualiza el estado del evento correspondiente en la lista local de eventos. 
+ * Si ocurre un error durante el proceso, se registra en la consola.
+ * 
+ * @param id - El identificador del evento cuyo estado se desea actualizar.
+ * @param nuevoEstado - El nuevo estado que se aplicará al evento.
+ * @returns void
+ */
 
   updateEstado(id: number, nuevoEstado: string): void {
   this.apiService.updateEventoEstado(id, nuevoEstado).subscribe(
@@ -141,5 +252,4 @@ export class EventosComponent {
     }
   );
   }
-  
 }

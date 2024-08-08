@@ -5,8 +5,6 @@ import { PLATFORM_ID, Inject } from "@angular/core";
 import { isPlatformBrowser } from "@angular/common";
 import Swal from 'sweetalert2';
 
-
-
 @Component({
   selector: 'app-loginpassword',
   templateUrl: './loginpassword.component.html',
@@ -24,6 +22,16 @@ export class LoginpasswordComponent {
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
+/**
+ * Nombre de la función: 'onSubmit'
+ * Author: Freya Lopez - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Valida el correo electrónico ingresado y, si es válido, verifica su existencia. 
+ * Si el correo electrónico existe, solicita el restablecimiento de la contraseña y notifica al usuario. 
+ * Si el correo no existe o ocurre un error, muestra un mensaje de error.
+ */
+
   onSubmit() {
     if (!this.isValidEmail(this.usernameOrEmail)) {
         Swal.fire({
@@ -34,9 +42,7 @@ export class LoginpasswordComponent {
         });
         return;
     }
-
     this.loading = true;
-
     this.apiService.checkCorreoUsuarios(this.usernameOrEmail).subscribe(
         (response: any) => {
             if (response.exists) {
@@ -87,11 +93,21 @@ export class LoginpasswordComponent {
     );
 }
 
+/**
+ * Nombre de la función: 'isValidEmail'
+ * Author: Freya Lopez - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Valida si el correo electrónico proporcionado cumple con el patrón estándar de una dirección de correo electrónico.
+ * Utiliza una expresión regular para comprobar si el formato del correo electrónico es válido.
+ * 
+ * @param email - El correo electrónico a validar.
+ * @returns true si el correo electrónico es válido, false en caso contrario.
+ */
 
   isValidEmail(email: string): boolean {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailPattern.test(email);
-    
   }
   
 }

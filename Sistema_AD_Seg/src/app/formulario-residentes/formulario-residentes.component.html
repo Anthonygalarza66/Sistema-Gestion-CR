@@ -63,21 +63,20 @@
     <form class="form" (ngSubmit)="guardar()">
       <div class="row">
         <div class="form-group col">
-          <label for="nombre">Nombre<span class="text-danger"> :</span></label>
-          <input type="text" id="nombre" name="nombre" placeholder="Ingrese nombre" required [(ngModel)]="nuevoResidente.nombre" #nombre="ngModel">
-          <div *ngIf="nombre.invalid && (nombre.dirty || nombre.touched)" class="text-danger">
-            <div *ngIf="nombre.errors?.['required']">Nombre es obligatorio</div>
-            <div *ngIf="validationErrors.nombre">{{ validationErrors.nombre[0] }}</div>
-          </div>       
+          <label for="usuario">Nombres:<span class="text-danger"> :</span></label>
+          <select id="usuario" name="usuario" (change)="seleccionarUsuario($event)" required>
+            <option *ngFor="let usuario of usuariosResidentes" [value]="usuario.id_usuario">
+              {{ usuario.nombre }} {{ usuario.apellido }}
+            </option>
+          </select>
+          <div *ngIf="!nuevoResidente.id_usuario" class="text-danger">
+            Seleccione un usuario válido.
+          </div>
         </div>
         <div class="form-group col">
-          <label for="apellido">Apellidos<span class="text-danger"> :</span></label>
-          <input type="text" id="apellido" name="apellido" placeholder="Ingrese apellidos" required [(ngModel)]="nuevoResidente.apellido" #apellido="ngModel">
-          <div *ngIf="apellido.invalid && (apellido.dirty || apellido.touched)" class="text-danger">
-            <div *ngIf="apellido.errors?.['required']">Apellido es obligatorio</div>
-            <div *ngIf="validationErrors.apellido">{{ validationErrors.apellido[0] }}</div>
-          </div>            
-        </div>
+          <label for="correo">Correo Electrónico<span class="text-danger"> :</span></label>
+          <input type="email" id="correo" name="correo" [value]="nuevoResidente.correo_electronico" readonly>
+        </div>        
       </div>
       <div class="row">
         <div class="form-group col">
@@ -93,14 +92,14 @@
         <div class="form-group col">
           <label for="perfil">Perfil<span class="text-danger"> :</span></label>
           <select id="perfil" name="perfil" required [(ngModel)]="nuevoResidente.perfil" #perfil="ngModel">
-            <option value="">Seleccione</option>
-            <option value="Residente">Residente</option>
-            <option value="Propietario">Propietario</option>
+              <option value="">Seleccione</option>
+              <option value="Residente">Residente</option>
+              <option value="Propietario">Propietario</option>
           </select>
           <div *ngIf="perfil.invalid && (perfil.dirty || perfil.touched)" class="text-danger">
-            <div *ngIf="validationErrors.perfil" class="text-danger">{{ validationErrors.perfil[0] }}</div>
+              <div *ngIf="validationErrors.perfil" class="text-danger">{{ validationErrors.perfil[0] }}</div>
           </div>
-        </div>
+      </div>
       </div>
       <div class="row">
         <div class="form-group col">
@@ -130,13 +129,6 @@
             <div *ngFor="let error of validationErrors.celular">{{ error }}</div>
           </div>
         </div>
-        <div class="form-group col">
-          <label for="correo_electronico">Email<span class="text-danger"> :</span></label>
-          <input type="email" id="correo_electronico" name="correo_electronico" placeholder="ejemplo@email.com" [(ngModel)]="nuevoResidente.correo_electronico" (blur)="checkCorreo()">
-          <div *ngIf="validationErrors.correo_electronico" class="text-danger">
-            <div *ngFor="let error of validationErrors.correo_electronico">{{ error }}</div>
-          </div> 
-        </div>        
       </div>
       <div class="row">
         <h5>Información Vehicular:</h5>

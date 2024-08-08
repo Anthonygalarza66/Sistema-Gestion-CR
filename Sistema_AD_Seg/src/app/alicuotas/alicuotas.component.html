@@ -45,7 +45,7 @@
    <div class="navbar-center">
       <img src="./assets/logo_caminoreal.png" width="50" height="50">
       <h4>Camino Real Urbanizacion</h4>
-    </div>
+   </div>
    <div class="navbar-right" >
       <div class="dropdown">
          <button class="dropbtn"><img src="./assets/users.png" width="35" height="40"></button>
@@ -65,7 +65,7 @@
 </button>
 <!-- Enlace para crear un nuevo usuario -->
 <a *ngIf="'Acciones' | role: 'Administracion'" href="registro-alicuotas" class="btn-add">Agregar</a>
-<div class="contenido"> 
+<div class="contenido">
    <!-- Tabla para mostrar los usuarios -->
    <table  mat-table id="alicuota">
       <thead>
@@ -84,28 +84,28 @@
          </tr>
       </thead>
       <tbody id="listado">
-      <!-- Filtro aplicado para mostrar los datos -->
-      <tr *ngFor="let row of (filtrar() | paginate: { itemsPerPage: 5, currentPage: p })">
-               <td>{{ row.residente?.solar }}</td>
-               <td>{{ row.residente?.m2 }}</td>
-               <td>{{ row.residente?.nombre }}{{ row.residente?.apellido }} </td>
-               <td>{{ row.residente?.cedula }}</td>
-               <td>{{ row.residente?.direccion }}</td>
-               <td>{{ row.fecha | date:'yyyy/MM/dd'}}</td>
-               <td>{{ row.mes }}</td>
-               <td>{{ row.monto_por_cobrar }}</td>
-               <td>
-                <span [ngClass]="{'pagado': row.pagado, 'no-pagado': !row.pagado}">
-                  {{ row.pagado ? 'Pagado' : 'No Pagado' }}
-                </span>
-              </td>
-              <td>{{ getTotalAdeudado(row.residente?.id_residente) }}</td>
+         <!-- Filtro aplicado para mostrar los datos -->
+         <tr *ngFor="let row of (filtrar() | paginate: { itemsPerPage: 5, currentPage: p })">
+            <td>{{ row.residente?.solar }}</td>
+            <td>{{ row.residente?.m2 }}</td>
+            <td>{{ row.usuario.nombre }} {{ row.usuario.apellidos }}</td>
+            <td>{{ row.residente?.cedula }}</td>
+            <td>{{ row.residente?.direccion }}</td>
+            <td>{{ row.fecha | date:'yyyy/MM/dd'}}</td>
+            <td>{{ row.mes }}</td>
+            <td>{{ row.monto_por_cobrar }}</td>
+            <td>
+               <span [ngClass]="{'pagado': row.pagado, 'no-pagado': !row.pagado}">
+               {{ row.pagado ? 'Pagado' : 'No Pagado' }}
+               </span>
+            </td>
+            <td>{{ getTotalAdeudado(row.residente?.id_residente) }}</td>
             <td *ngIf="'Acciones' | role: 'Administracion'">
-          <!-- Boton para pagar deuda mensual -->
-             <button class="btn-pagar" *ngIf="!row.pagado" (click)="marcarpago(row.id_alicuota)">
-             <i class="fas fa-hand-holding-usd"></i>
-             </button>
-           <!-- Botones para editar y eliminar -->
+               <!-- Boton para pagar deuda mensual -->
+               <button class="btn-pagar" *ngIf="!row.pagado" (click)="marcarpago(row.id_alicuota) " title="Pagar Alicuota">
+               <i class="fas fa-hand-holding-usd"></i>
+               </button>
+               <!-- Botones para editar y eliminar -->
                <button class="btn-edit" (click)="editAlicuota(row.id_alicuota)">
                <i class="fas fa-edit"></i>
                </button>
@@ -116,6 +116,6 @@
          </tr>
       </tbody>
    </table>
-    <!-- Controles de paginación -->
-    <pagination-controls (pageChange)="p = $event" previousLabel="Anterior" nextLabel="Siguiente"></pagination-controls>
+   <!-- Controles de paginación -->
+   <pagination-controls (pageChange)="p = $event" previousLabel="Anterior" nextLabel="Siguiente"></pagination-controls>
 </div>

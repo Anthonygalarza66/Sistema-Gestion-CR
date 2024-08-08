@@ -29,6 +29,17 @@ export class EditarAlicuotasDialogoComponent implements OnInit {
       pagado: [this.data.pagado]
     });
   }
+  
+/**
+ * Nombre de la función: save
+ * Author: Freya Lopez - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función guarda los datos del formulario si el formulario es válido.
+ * Si el formulario contiene errores, muestra una advertencia al usuario.
+ * Convierte el valor del campo `pagado` a un número antes de enviar los datos a la API para actualizar la alícuota.
+ * Muestra notificaciones de éxito o error según el resultado de la operación de actualización.
+ */
 
   save(): void {
     if (this.form.invalid) {
@@ -38,21 +49,15 @@ export class EditarAlicuotasDialogoComponent implements OnInit {
             icon: 'warning',
             confirmButtonText: 'Aceptar'
         });
-        console.error('El formulario es inválido.');
         return;
     }
-
     // Convertir el valor de 'pagado' a número (0 o 1)
     const formData = { 
         ...this.form.value, 
         pagado: Number(this.form.value.pagado)
-    };
-
-    console.log('Datos del formulario antes de guardar:', formData);
-    
+    };    
     this.apiService.updateAlicuota(this.data.id_alicuota, formData).subscribe(
         (response) => {
-            console.log('Alícuota actualizada:', response);
             Swal.fire({
                 title: 'Éxito',
                 text: 'La alícuota ha sido actualizada con éxito.',

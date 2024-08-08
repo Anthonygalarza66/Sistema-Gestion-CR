@@ -22,29 +22,38 @@ export class EditarPersonalDialogoComponent implements OnInit {
   ngOnInit(): void {
     console.log('Datos en el modal:', this.personal);
     this.form = this.fb.group({
+        nombre: [this.personal.usuario.nombre, Validators.required],
+        apellido: [this.personal.usuario.apellido, Validators.required],
         id_personal: [this.personal.id_personal],  // No editable
-        nombre: [this.personal.nombre, Validators.required],
-        apellido: [this.personal.apellido, Validators.required],
-        cedula: [this.personal.cedula, Validators.required],
         sexo: [this.personal.sexo, Validators.required],
         perfil: [this.personal.perfil, Validators.required],
         celular: [this.personal.celular, Validators.required],
-        correo_electronico: [this.personal.correo_electronico],
+        cedula: [this.personal.celular, Validators.required],
+        correo_electronico: [this.personal.usuario.correo_electronico, [Validators.email]],
         observaciones: [this.personal.observaciones]
     });
 } 
-  
+
+/**
+ * Nombre de la función: guardar
+ * Author: Freya Lopez - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función guarda los datos del formulario si es válido. Agrega datos adicionales (ID de usuario e ID de personal) 
+ * al objeto del formulario antes de mostrar un mensaje de éxito usando SweetAlert. 
+ * Una vez que el mensaje de éxito es mostrado y confirmado por el usuario, el modal se cierra con los datos guardados.
+ * 
+ * @returns void
+ */
+
 guardar(): void {
   if (this.form.invalid) {
     console.error('El formulario es inválido.');
     return;
   }
-
-  // Asegúrate de que los campos id_usuario e id_personal estén presentes
-  const personalData = { ...this.form.value, id_usuario: this.personal.id_usuario, id_personal: this.personal.id_personal };
-
-  console.log(personalData); // Verificar los datos del formulario
-  
+  const personalData = 
+  { ...this.form.value, 
+    id_usuario: this.personal.id_usuario,  id_personal: this.personal.id_personal };  
   // Muestra un mensaje de éxito
   Swal.fire({
     title: 'Guardado con éxito',
@@ -55,7 +64,5 @@ guardar(): void {
     // Cierra el modal después de mostrar el mensaje de éxito
     this.modalRef.close(personalData);
   });
-}
-
-  
+}  
 }

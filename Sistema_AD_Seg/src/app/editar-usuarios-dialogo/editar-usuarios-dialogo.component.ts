@@ -29,6 +29,18 @@ export class EditarUsuariosDialogoComponent implements OnInit {
       perfil: [this.data.perfil, Validators.required],
     });
   }
+  
+/**
+ * Nombre de la función: save
+ * Author: Freya Lopez - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función guarda los datos del formulario si es válido. Muestra los datos en la consola 
+ * y luego cierra el modal con los datos del formulario. 
+ * Si el formulario no es válido, no realiza ninguna acción.
+ * 
+ * @returns void
+ */
 
   save(): void {
     if (this.form.valid) {

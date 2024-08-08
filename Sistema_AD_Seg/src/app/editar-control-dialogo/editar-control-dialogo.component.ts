@@ -38,16 +38,25 @@ export class EditarControlDialogoComponent implements OnInit {
       username: [this.data.username],
       observaciones: [this.data.observaciones]
     });
-
     // Cargar los usuarios al inicializar el componente
     this.cargarUsuarios();
   }
 
+/**
+ * Nombre de la función: cargarUsuarios
+ * Author: Freya Lopez - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función carga la lista de usuarios llamando a la API. 
+ * Una vez que se obtienen los usuarios, se guarda la respuesta en la propiedad `usuarios` 
+ * y se llama a la función `filtrarUsuariosSeguridad` para realizar cualquier procesamiento adicional.
+ * 
+ * @returns void
+ */
+
   cargarUsuarios(): void {
-    console.log('Solicitando usuarios a la API...');
     this.apiService.getUsuarios().subscribe(
       (response) => {
-        console.log('Usuarios obtenidos:', response);
         this.usuarios = response; // Asume que la respuesta es un array de usuarios
         this.filtrarUsuariosSeguridad();
       },
@@ -57,21 +66,40 @@ export class EditarControlDialogoComponent implements OnInit {
     );
   }
 
+/**
+ * Nombre de la función: filtrarUsuariosSeguridad
+ * Author: Freya Lopez - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función filtra la lista de usuarios para obtener únicamente aquellos que tienen el perfil y rol de "Seguridad".
+ * Los usuarios filtrados se almacenan en la propiedad `usuariosSeguridad`.
+ * 
+ * @returns void
+ */
+
   filtrarUsuariosSeguridad(): void {
-    console.log('Filtrando usuarios de seguridad');
     this.usuariosSeguridad = this.usuarios.filter(
       (usuario: any) => usuario.perfil === 'Seguridad' && usuario.rol === 'Seguridad'
     );
-    console.log('Usuarios de seguridad filtrados:', this.usuariosSeguridad);
   }
 
+/**
+ * Nombre de la función: GuardarUsername
+ * Author: Freya Lopez - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función maneja el evento de selección de un nombre de usuario. Busca el usuario seleccionado en la lista 
+ * de usuarios de seguridad y actualiza el valor del campo `username` en el formulario con el nombre de usuario 
+ * encontrado. Si el usuario no se encuentra, el campo `username` se limpia. 
+ * 
+ * @param event - El evento que contiene el valor del nombre de usuario seleccionado.
+ * @returns void
+ */
+
   GuardarUsername(event: any): void {
-    const selectedUsername = event.target.value;
-    console.log('Username seleccionado:', selectedUsername);
-  
+    const selectedUsername = event.target.value;  
     // Buscar el usuario seleccionado en la lista de usuarios de seguridad
     const selectedUser = this.usuariosSeguridad.find((usuario: any) => usuario.username === selectedUsername);
-    
     if (selectedUser) {
       this.form.patchValue({ username: selectedUser.username });
       console.log('Usuario encontrado:', selectedUser);
@@ -82,13 +110,23 @@ export class EditarControlDialogoComponent implements OnInit {
     }
   }
 
+/**
+ * Nombre de la función: save
+ * Author: Freya Lopez - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función guarda los datos del formulario y muestra una alerta de éxito usando SweetAlert. 
+ * Los valores de las fechas se formatean usando la función `formatDate`. 
+ * Si la operación es exitosa, el modal se cierra con los datos guardados. 
+ * En caso de error al mostrar la alerta, se muestra un mensaje de error.
+ * 
+ * @returns void
+ */
+
   save(): void {
     const formData = { ...this.form.value };
     formData.fecha_ingreso = this.formatDate(formData.fecha_ingreso);
     formData.fecha_salida = formData.fecha_salida ? this.formatDate(formData.fecha_salida) : null;
-    
-    console.log('Datos del formulario antes de guardar:', formData);
-
     // Mostrar alerta de éxito antes de cerrar el modal
     Swal.fire({
         title: 'Éxito',
@@ -108,6 +146,19 @@ export class EditarControlDialogoComponent implements OnInit {
     });
 }
   
+/**
+ * Nombre de la función: formatDate
+ * Author: Freya Lopez - Flopezl@ug.edu.ec
+ * 
+ * Resumen:
+ * Esta función formatea una fecha en una cadena con el formato "YYYY-MM-DD HH:MM:SS". 
+ * Convierte el valor de entrada a un objeto `Date` y luego construye una cadena 
+ * que incluye el año, mes, día, hora, minutos y segundos en el formato especificado.
+ * 
+ * @param date - La fecha a formatear, puede ser una cadena, número o un objeto `Date`.
+ * @returns string - La fecha formateada en el formato "YYYY-MM-DD HH:MM:SS".
+ */
+
   private formatDate(date: any): string {
     const d = new Date(date);
     return `${d.getFullYear()}-${('0' + (d.getMonth() + 1)).slice(-2)}-${('0' + d.getDate()).slice(-2)} ${('0' + d.getHours()).slice(-2)}:${('0' + d.getMinutes()).slice(-2)}:${('0' + d.getSeconds()).slice(-2)}`;
