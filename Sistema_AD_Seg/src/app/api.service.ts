@@ -204,16 +204,18 @@ export class ApiService {
       .pipe(catchError(this.handleError));
   }
 
-  // Método para crear un nuevo evento
-  createEvento(evento: FormData): Observable<any> {
-    console.log("Enviando datos para crear evento:", evento);
-    return this.http
-      .post<any>(`${this.apiUrl}/eventos`, evento, {
-        headers: new HttpHeaders({}),
-      })
-      .pipe(catchError(this.handleError));
-  }
-
+    // Método para crear un nuevo evento
+    createEvento(evento: FormData): Observable<any> {
+      console.log("Enviando datos para crear evento:", evento);
+      return this.http.post<any>(`${this.apiUrl}/eventos`, evento)
+        .pipe(
+          tap(response => {
+            console.log('Respuesta del servidor al crear evento:', response);
+          }),
+          catchError(this.handleError)
+        );
+    }
+    
   // Método para actualizar un evento existente
   updateEvento(id: number, evento: any): Observable<any> {
     console.log(`Enviando datos para actualizar evento con ID ${id}:`, evento);
@@ -232,19 +234,16 @@ export class ApiService {
 
   // Método para obtener todos los residentes
   getResidentes(): Observable<any> {
-    console.log("Solicitando residentes a la API...");
     return this.http
       .get<any>(`${this.apiUrl}/residentes`)
       .pipe(catchError(this.handleError));
   }
 
   getResidente(id_residente: number): Observable<any> {
-    console.log(`Solicitando residente con ID ${id_residente} a la API...`);
   return this.http.get<any>(`${this.apiUrl}/residentes/${id_residente}`)
     .pipe(
       tap(response => {
         // Verifica la respuesta
-        console.log('Respuesta recibida:', response);
       }),
       catchError(this.handleError)
     );
@@ -258,12 +257,10 @@ export class ApiService {
   // Método para guardar (crear o actualizar) un residente
   guardarResidente(residente: any): Observable<any> {
     if (residente.id) {
-      console.log(`Actualizando residente con ID ${residente.id}...`);
       return this.http
         .put<any>(`${this.apiUrl}/residentes/${residente.id}`, residente)
         .pipe(catchError(this.handleError));
     } else {
-      console.log("Creando un nuevo residente...");
       return this.http
         .post<any>(`${this.apiUrl}/residentes`, residente)
         .pipe(catchError(this.handleError));
@@ -272,7 +269,6 @@ export class ApiService {
 
   // Método para crear un nuevo residente
   createResidente(residente: any): Observable<any> {
-    console.log("Enviando datos para crear residente:", residente);
     return this.http
       .post<any>(`${this.apiUrl}/residentes`, residente, this.httpOptions)
       .pipe(catchError(this.handleError));
@@ -285,7 +281,6 @@ export class ApiService {
   
   // Método para eliminar un residente
   deleteResidente(id: number): Observable<any> {
-    console.log(`Eliminando residente con ID ${id}...`);
     return this.http
       .delete<any>(`${this.apiUrl}/residentes/${id}`)
       .pipe(catchError(this.handleError));
@@ -293,7 +288,6 @@ export class ApiService {
 
   // Método para obtener todos los registros de control de acceso
   getControlAcceso(): Observable<any> {
-    console.log("Solicitando registros de control de acceso a la API...");
     return this.http
       .get<any>(`${this.apiUrl}/control-acceso`)
       .pipe(catchError(this.handleError));
@@ -301,9 +295,6 @@ export class ApiService {
 
   // Método para obtener un registro de control de acceso por ID
   getControlAccesoById(id: number): Observable<any> {
-    console.log(
-      `Solicitando registro de control de acceso con ID ${id} a la API...`
-    );
     return this.http
       .get<any>(`${this.apiUrl}/control-acceso/${id}`)
       .pipe(catchError(this.handleError));
@@ -311,7 +302,6 @@ export class ApiService {
 
   // Método para crear un nuevo registro de control de acceso
   createControlAcceso(controlAcceso: FormData): Observable<any> {
-    console.log("Enviando datos para crear control de acceso:", controlAcceso);
     return this.http
       .post<any>(`${this.apiUrl}/control-acceso`, controlAcceso)
       .pipe(catchError(this.handleError));
@@ -327,9 +317,6 @@ export class ApiService {
   // Método para guardar (crear o actualizar) un registro de control de acceso
   guardarControlAcceso(controlAcceso: any): Observable<any> {
     if (controlAcceso.id_acceso) {
-      console.log(
-        `Actualizando registro de control de acceso con ID ${controlAcceso.id_acceso}...`
-      );
       return this.http
         .put<any>(
           `${this.apiUrl}/control-acceso/${controlAcceso.id_acceso}`,
@@ -338,7 +325,6 @@ export class ApiService {
         )
         .pipe(catchError(this.handleError));
     } else {
-      console.log("Creando un nuevo registro de control de acceso...");
       return this.http
         .post<any>(
           `${this.apiUrl}/control-acceso`,
@@ -451,10 +437,6 @@ export class ApiService {
     return throwError(() => new Error(errorMessage));
   }
 
-  getFileUrl(filename: string): string {
-    return `${this.apiUrl}/uploads/${filename}`;
-  }
-
   updateEventoEstado(id: number, nuevoEstado: string): Observable<any> {
     return this.http.patch(`${this.apiUrl}/eventos/${id}/estado`, {
       estado: nuevoEstado,
@@ -467,5 +449,20 @@ export class ApiService {
         correo_electronico: correoElectronico,
       })
       .pipe(catchError(this.handleError));
+  }
+
+  getFileUrl(filename: string): string {
+    return `${this.apiUrl}/uploads/${filename}`;
+  }
+  
+  getInvitadosByEvento(eventoId: number): Observable<any> {
+    console.log("Evento ID recibido en getInvitadosByEvento:", eventoId); // Verifica el valor de eventoId
+    const url = `${this.apiUrl}/eventos/${encodeURIComponent(eventoId)}/invitados`;
+    console.log("URL de solicitud en getInvitadosByEvento:", url); // Verifica la URL
+    return this.http.get(url);
+  }
+  
+  guardarInvitados(data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/invitados`, data);
   }
 }

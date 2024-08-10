@@ -1,4 +1,5 @@
 import { Component, OnInit } from "@angular/core";
+import { HttpClient } from '@angular/common/http';
 import { Router } from "@angular/router";
 import { ApiService } from "../api.service";
 import { PLATFORM_ID, Inject } from "@angular/core";
@@ -6,6 +7,8 @@ import { isPlatformBrowser } from "@angular/common";
 import * as XLSX from "xlsx";
 import Swal from 'sweetalert2';
 import { RolePipe } from "../role.pipe";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { InvitadosModalComponent } from "../invitados-modal/invitados-modal.component";
 
 
 @Component({
@@ -30,6 +33,7 @@ export class EventosComponent {
   constructor(
     private router: Router,
     private apiService: ApiService,
+    private modalService: NgbModal,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
@@ -37,6 +41,7 @@ export class EventosComponent {
     if (isPlatformBrowser(this.platformId)) {
       this.username = localStorage.getItem("username") || "Invitado";
     }
+    // Carga los eventos, esto podría ser una llamada a la API
     this.loadEventos();
   }
 
@@ -252,4 +257,24 @@ export class EventosComponent {
     }
   );
   }
+
+  openInvitadosModal(eventoId: number): void {
+    console.log('Evento ID antes de llamar a la API:', eventoId); 
+    this.apiService.getInvitadosByEvento(eventoId).subscribe(
+      (data: any) => {
+        const modalRef = this.modalService.open(InvitadosModalComponent, {
+          size: 'lg',
+          backdrop: 'static',
+          centered: true
+        });
+        modalRef.componentInstance.data = data; 
+      },
+      (error) => {
+        console.error('Error al obtener invitados del evento:', error);
+      }
+    );
+  }
+  
+  
+  
 }

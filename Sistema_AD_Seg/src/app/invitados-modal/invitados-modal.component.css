@@ -1,0 +1,67 @@
+.modal-header {
+    background-color: #007bff; /* Color de fondo para el encabezado */
+    color: white; /* Color del texto del encabezado */
+    border-bottom: 1px solid #dee2e6; /* Borde inferior */
+    padding: 15px; /* Espaciado interno */
+    font-family: 'Times New Roman', Times, serif;
+  }
+  
+  .modal-title {
+    margin: 0; /* Sin margen */
+    font-size: 1.5rem; /* Tamaño de la fuente del título */
+    font-family: 'Times New Roman', Times, serif;
+  }
+  
+  .close {
+    color: white; /* Color de la "X" de cerrar */
+    font-size: 1.5rem; /* Tamaño de la "X" de cerrar */
+    opacity: 0.8; /* Opacidad */
+  }
+  
+  .close:hover {
+    opacity: 1; /* Aumentar la opacidad al pasar el ratón */
+  }
+  
+  .modal-body {
+    padding: 20px; /* Espaciado interno */
+  }
+  
+  .table {
+    width: 100%; /* Ancho completo */
+    margin-bottom: 20px; /* Margen inferior */
+    background-color: #f8f9fa; /* Color de fondo de la tabla */
+  }
+  
+  .table th, .table td {
+    padding: 12px; /* Espaciado interno en celdas */
+    vertical-align: middle; /* Alineación vertical al centro */
+    border-top: 1px solid #dee2e6; /* Borde superior */
+    font-family: 'Times New Roman', Times, serif;
+  }
+  
+  .table th {
+    background-color: #007bff; /* Color de fondo del encabezado de la tabla */
+    color: white; /* Color del texto del encabezado de la tabla */
+    text-align: left; /* Alineación del texto */
+    font-family: 'Times New Roman', Times, serif;
+  }
+  
+  .table tbody tr:nth-child(even) {
+    background-color: #f2f2f2; /* Fondo de filas pares */
+  }
+  
+  .modal-footer {
+    padding: 15px; /* Espaciado interno */
+    border-top: 1px solid #dee2e6; /* Borde superior */
+    background-color: #f1f1f1; /* Color de fondo del pie del modal */
+  }
+  
+  .modal-footer .btn-secondary {
+    background-color: #6c757d; /* Color del botón Cerrar */
+    border: none; /* Sin borde */
+  }
+  
+  .modal-footer .btn-secondary:hover {
+    background-color: #5a6268; /* Color al pasar el ratón sobre el botón Cerrar */
+  }
+  

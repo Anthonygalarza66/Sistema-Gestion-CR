@@ -44,6 +44,7 @@ import { EditarUsuariosDialogoComponent } from './editar-usuarios-dialogo/editar
 import { EditarAlicuotasDialogoComponent } from './editar-alicuotas-dialogo/editar-alicuotas-dialogo.component';
 import { EditarPersonalDialogoComponent } from './editar-personal-dialogo/editar-personal-dialogo.component';
 import { EditarResidenteDialogoComponent } from './editar-residente-dialogo/editar-residente-dialogo.component';
+import { InvitadosModalComponent } from './invitados-modal/invitados-modal.component';
 
 @NgModule({
   declarations: [
@@ -72,7 +73,8 @@ import { EditarResidenteDialogoComponent } from './editar-residente-dialogo/edit
     EditarUsuariosDialogoComponent,
     EditarAlicuotasDialogoComponent,
     EditarPersonalDialogoComponent,
-    EditarResidenteDialogoComponent
+    EditarResidenteDialogoComponent,
+    InvitadosModalComponent
   ],
   imports: [
     BrowserModule,

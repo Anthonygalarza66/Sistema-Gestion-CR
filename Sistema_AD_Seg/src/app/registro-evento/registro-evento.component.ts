@@ -663,71 +663,76 @@ export class RegistroEventoComponent implements OnInit {
  * como nombres, apellidos, cédula, placa y observaciones.
  */
 
-  extractDataFromHtml(html: string) {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, "text/html");
-    // Extraer datos del HTML
-    const nombreEvento =
-      doc
-        .querySelector("table tr:nth-child(2) td:nth-child(2)")
-        ?.textContent?.trim() || "";
-    const nombreEncargado =
-      doc
-        .querySelector("table tr:nth-child(3) td:nth-child(2)")
-        ?.textContent?.trim() || "";
-    const celular =
-      doc
-        .querySelector("table tr:nth-child(3) td:nth-child(4)")
-        ?.textContent?.trim() || "";
-    const fechaEvento =
-      doc
-        .querySelector("table tr:nth-child(4) td:nth-child(2)")
-        ?.textContent?.trim() || "";
-    const horaEvento =
-      doc
-        .querySelector("table tr:nth-child(4) td:nth-child(4)")
-        ?.textContent?.trim() || "";
-    const direccionEvento =
-      doc
-        .querySelector("table tr:nth-child(5) td:nth-child(2)")
-        ?.textContent?.trim() || "";
+extractDataFromHtml(html: string) {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, "text/html");
+  
+  // Extraer datos del HTML
+  const nombreEvento =
+    doc.querySelector("table tr:nth-child(2) td:nth-child(2)")?.textContent?.trim() || "";
+  const nombreEncargado =
+    doc.querySelector("table tr:nth-child(3) td:nth-child(2)")?.textContent?.trim() || "";
+  const celular =
+    doc.querySelector("table tr:nth-child(3) td:nth-child(4)")?.textContent?.trim() || "";
+  const fechaEvento =
+    doc.querySelector("table tr:nth-child(4) td:nth-child(2)")?.textContent?.trim() || "";
+  const horaEvento =
+    doc.querySelector("table tr:nth-child(4) td:nth-child(4)")?.textContent?.trim() || "";
+  const direccionEvento =
+    doc.querySelector("table tr:nth-child(5) td:nth-child(2)")?.textContent?.trim() || "";
 
-    // Extraer los datos de los invitados
-    const invitados: any[] = [];
-    const rows = doc.querySelectorAll("table tr");
-    let isReadingInvitados = false;
+  // Extraer los datos de los invitados
+  const invitados: any[] = [];
+  const rows = doc.querySelectorAll("table tr");
+  let isReadingInvitados = false;
 
-    rows.forEach((row) => {
-      const cells = row.querySelectorAll("td");
+  rows.forEach((row) => {
+    const cells = row.querySelectorAll("td");
 
-      if (cells.length === 5 && cells[0]?.textContent?.trim() === "Nombres") {
-        isReadingInvitados = true; // Comienza a leer los datos de los invitados
-        return; // Salta la fila de encabezado
+    if (cells.length === 5 && cells[0]?.textContent?.trim() === "Nombres") {
+      isReadingInvitados = true; // Comienza a leer los datos de los invitados
+      return; // Salta la fila de encabezado
+    }
+
+    if (isReadingInvitados && cells.length === 5) {
+      // Solo agrega filas si tienen contenido en las celdas esperadas
+      if (cells[0]?.textContent?.trim() && cells[1]?.textContent?.trim()) {
+        invitados.push({
+          nombres: cells[0]?.textContent?.trim() || "",
+          apellidos: cells[1]?.textContent?.trim() || "",
+          cedula: cells[2]?.textContent?.trim() || "",
+          placa: cells[3]?.textContent?.trim() || "",
+          observaciones: cells[4]?.textContent?.trim() || "",
+        });
       }
+    }
+  });
 
-      if (isReadingInvitados && cells.length === 5) {
-        // Solo agrega filas si tienen contenido en las celdas esperadas
-        if (cells[0]?.textContent?.trim() && cells[1]?.textContent?.trim()) {
-          invitados.push({
-            nombres: cells[0]?.textContent?.trim() || "",
-            apellidos: cells[1]?.textContent?.trim() || "",
-            cedula: cells[2]?.textContent?.trim() || "",
-            placa: cells[3]?.textContent?.trim() || "",
-            observaciones: cells[4]?.textContent?.trim() || "",
-          });
-        }
-      }
-    });
-    return {
-      nombreEvento,
-      nombreEncargado,
-      celular,
-      fechaEvento,
-      horaEvento,
-      direccionEvento,
-      invitados,
-    };
-  }
+  // Console log para verificar los datos extraídos
+  console.log({
+    nombreEvento,
+    nombreEncargado,
+    celular,
+    fechaEvento,
+    horaEvento,
+    direccionEvento,
+    invitados,
+  });   
+   // Guardar los datos extraídos temporalmente
+   this.data = {
+    nombreEvento,
+    nombreEncargado,
+    celular,
+    fechaEvento,
+    horaEvento,
+    direccionEvento,
+    invitados,
+  };
+
+  // No llamar a guardarInvitados aquí, solo extraer los datos
+  return this.data;
+}
+
 
 /**
  * Nombre de la función: `generateQRCodes`
@@ -866,71 +871,114 @@ export class RegistroEventoComponent implements OnInit {
  * Finalmente, muestra una alerta de éxito y redirige a la vista de eventos. En caso de error, muestra una alerta correspondiente y maneja errores de validación o errores generales.
  */
 
-  guardar(): void {
-    const formData = new FormData();
+guardar(): void {
+  const formData = new FormData();
+
+  Object.keys(this.nuevoEvento).forEach((key) => {
+    if (this.nuevoEvento[key] !== null) {
+      formData.append(key, this.nuevoEvento[key]);
+    }
+  });
   
-    Object.keys(this.nuevoEvento).forEach((key) => {
-      if (this.nuevoEvento[key] !== null) {
-        formData.append(key, this.nuevoEvento[key]);
-      }
-    });
-    
-    this.apiService.createEvento(formData).subscribe(
-      (response) => {  
-        // Generar los códigos QR después de guardar el evento
-        this.generatePDFs()
-          .then((pdfs) => {
-            // Descargar los PDFs después de generarlos
-            pdfs.forEach(({ pdf, nombreArchivo }) => {
-              pdf.save(nombreArchivo);
-              console.log(`PDF guardado como ${nombreArchivo}`);
-            });
+  this.apiService.createEvento(formData).subscribe(
+    (response) => {
+      // Accede al ID del evento en la propiedad correcta
+      const eventoId = response.id_evento;
+
+      // Verifica que el ID del evento se haya obtenido correctamente
+      console.log('ID del evento recibido:', eventoId);
   
-            // Mostrar alerta de éxito y redirigir a /eventos después de generar y descargar los PDFs
-            Swal.fire({
-              title: 'Evento Creado',
-              text: 'El evento ha sido creado exitosamente y los PDFs se han guardado.',
-              icon: 'success',
-              confirmButtonText: 'Aceptar'
-            }).then(() => {
-              this.router.navigate(['/eventos']);
-            });
-          })
-          .catch((error) => {
-            console.error("Error al generar los PDFs:", error);
-            Swal.fire({
-              title: 'Error',
-              text: 'Se produjo un error al generar los PDFs. Por favor, inténtelo de nuevo más tarde.',
-              icon: 'error',
-              confirmButtonText: 'Aceptar'
-            });
+      // Almacenar los datos de los invitados temporalmente
+      this.guardarInvitados(eventoId, this.data.invitados);
+
+      // Generar los códigos QR después de guardar el evento
+      this.generatePDFs()
+        .then((pdfs) => {
+          // Descargar los PDFs después de generarlos
+          pdfs.forEach(({ pdf, nombreArchivo }) => {
+            pdf.save(nombreArchivo);
+            console.log(`PDF guardado como ${nombreArchivo}`);
           });
-      },
-      (error) => {
-        console.error("Error al crear evento:", error);
-        if (error.status === 422) {
-          this.validationErrors = error.error.errors;
+
+          // Mostrar alerta de éxito y redirigir a /eventos después de generar y descargar los PDFs
           Swal.fire({
-            title: 'Error de Validación',
-            text: 'Por favor, revise los errores en el formulario.',
-            icon: 'warning',
+            title: 'Evento Creado',
+            text: 'El evento ha sido creado exitosamente y los PDFs se han guardado.',
+            icon: 'success',
             confirmButtonText: 'Aceptar'
+          }).then(() => {
+            this.router.navigate(['/eventos']);
           });
-        } else {
-          this.validationErrors = {
-            general:
-              "Ocurrió un error inesperado. Por favor, inténtelo de nuevo más tarde.",
-          };
+        })
+        .catch((error) => {
+          console.error("Error al generar los PDFs:", error);
           Swal.fire({
             title: 'Error',
-            text: 'Ocurrió un error inesperado. Por favor, inténtelo de nuevo más tarde.',
+            text: 'Se produjo un error al generar los PDFs. Por favor, inténtelo de nuevo más tarde.',
             icon: 'error',
             confirmButtonText: 'Aceptar'
           });
-        }
+        });
+    },
+    (error) => {
+      console.error("Error al crear evento:", error);
+      if (error.status === 422) {
+        this.validationErrors = error.error.errors;
+        Swal.fire({
+          title: 'Error de Validación',
+          text: 'Por favor, revise los errores en el formulario.',
+          icon: 'warning',
+          confirmButtonText: 'Aceptar'
+        });
+      } else {
+        this.validationErrors = {
+          general:
+            "Ocurrió un error inesperado. Por favor, inténtelo de nuevo más tarde.",
+        };
+        Swal.fire({
+          title: 'Error',
+          text: 'Ocurrió un error inesperado. Por favor, inténtelo de nuevo más tarde.',
+          icon: 'error',
+          confirmButtonText: 'Aceptar'
+        });
       }
-    );
-  }
+    }
+  );
+}
+
+guardarInvitados(eventoId: number, invitados: any[]): void {
+  // Verifica que el eventoId esté siendo recibido correctamente
+  console.log('ID del evento recibido en guardarInvitados:', eventoId);
+
+  // Asegúrate de que el objeto data tenga el eventoId
+  const data = {
+    evento_id: eventoId,
+    invitados: invitados
+  };
+
+  console.log('Datos a enviar:', data);
+
+  this.apiService.guardarInvitados(data).subscribe(
+    (response) => {
+      console.log('Datos guardados exitosamente');
+      Swal.fire({
+        title: 'Datos Guardados',
+        text: 'Los datos se han guardado exitosamente.',
+        icon: 'success',
+        confirmButtonText: 'Aceptar'
+      });
+    },
+    (error) => {
+      console.error('Error al guardar los datos:', error);
+      Swal.fire({
+        title: 'Error',
+        text: 'Ocurrió un error al guardar los datos. Por favor, inténtelo de nuevo más tarde.',
+        icon: 'error',
+        confirmButtonText: 'Aceptar'
+      });
+    }
+  );
+}
 
   logout() {
     this.loggedIn = false;
