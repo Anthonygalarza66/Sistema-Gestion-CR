@@ -207,35 +207,6 @@ export class RegistroEventoComponent implements OnInit {
     });
   }
 
-  bloquearHoras() {
-    if (!this.fechaSeleccionada) {
-      this.horasDisponibles = [];
-      return;
-    }
-    const fechaSeleccionada = new Date(this.fechaSeleccionada + "T00:00:00"); 
-    fechaSeleccionada.setHours(0, 0, 0, 0); 
-    // Filtra eventos para el día seleccionado
-    const ocupados = this.eventos
-      .filter((evento) => {
-        const eventoFecha = new Date(evento.fecha_hora);
-        eventoFecha.setHours(0, 0, 0, 0); 
-        return (
-          eventoFecha.getTime() === fechaSeleccionada.getTime() &&
-          evento.tipo_evento !== "Hogar"
-        );
-      })
-      .map((evento) => ({
-        start: new Date(evento.fecha_hora),
-        end: new Date(
-          new Date(evento.fecha_hora).getTime() +
-            evento.duracion_evento * 60 * 60 * 1000
-        ),
-      }));
-    this.horasDisponibles = this.generarHorasDisponibles(
-      fechaSeleccionada,
-      ocupados
-    );
-  }
 
 /**
  * Nombre de la función: `bloquearHoras`
@@ -247,36 +218,82 @@ export class RegistroEventoComponent implements OnInit {
  * - Filtra los eventos para el día seleccionado que no sean de tipo "Hogar".
  * - Genera un array de horas ocupadas y actualiza la lista de horas disponibles utilizando esos datos.
  */
+bloquearHoras() {
+  if (!this.fechaSeleccionada) {
+    this.horasDisponibles = [];
+    return;
+  }
+  
+  const fechaSeleccionada = new Date(this.fechaSeleccionada + "T00:00:00");
+  fechaSeleccionada.setHours(0, 0, 0, 0);
 
-  generarHorasDisponibles(
-    fechaSeleccionada: Date,
-    ocupados: { start: Date; end: Date }[]
-  ): string[] {
-    const horasDisponibles: string[] = [];
-    // Verifica que fechaSeleccionada sea una instancia de Date
-    if (!(fechaSeleccionada instanceof Date)) {
-      console.error(
-        "La fecha seleccionada no es una instancia de Date:",
-        fechaSeleccionada
-      );
-      return horasDisponibles;
-    }
-    const fecha = new Date(fechaSeleccionada);
-    fecha.setHours(7, 0, 0, 0); // Empezar desde las 07:00 del día seleccionado
-    const finDia = new Date(fechaSeleccionada);
-    finDia.setHours(22, 0, 0, 0); // Fin del día seleccionado a las 22:00
-    while (fecha <= finDia) {
-      const esOcupado = ocupados.some(
-        (ocupado) => fecha >= ocupado.start && fecha < ocupado.end
-      );
-      if (!esOcupado) {
-        const horaFormateada = fecha.toTimeString().slice(0, 5);
-        horasDisponibles.push(horaFormateada);
-      }
-      fecha.setMinutes(fecha.getMinutes() + 30); // Incrementar por 30 minutos
-    }
+  console.log("Tipo de evento:", this.nuevoEvento.tipo_evento); // Depuración
+
+  if (this.nuevoEvento.tipo_evento === "Hogar") {
+    // Para eventos de tipo 'Hogar', mostrar horas entre 07:00 y 22:00 con intervalos de 10 minutos.
+    this.horasDisponibles = this.generarHorasDisponiblesHogar(fechaSeleccionada);
+  } else {
+    // Para otros tipos de eventos, bloquear horas ocupadas en días con más de 2 eventos.
+    const diasOcupados = this.eventos
+      .filter(evento => {
+        const eventoFecha = new Date(evento.fecha_hora);
+        eventoFecha.setHours(0, 0, 0, 0);
+        return eventoFecha.getTime() === fechaSeleccionada.getTime();
+      })
+      .reduce((acc, evento) => {
+        const fechaEvento = new Date(evento.fecha_hora);
+        const finEvento = new Date(fechaEvento.getTime() + evento.duracion_evento * 60 * 60 * 1000);
+        acc.push({ start: fechaEvento, end: finEvento });
+        return acc;
+      }, []);
+
+    this.horasDisponibles = this.generarHorasDisponibles(fechaSeleccionada, diasOcupados);
+  }
+}
+
+
+generarHorasDisponibles(
+  fechaSeleccionada: Date,
+  ocupados: { start: Date; end: Date }[]
+): string[] {
+  const horasDisponibles: string[] = [];
+  if (!(fechaSeleccionada instanceof Date)) {
+    console.error("La fecha seleccionada no es una instancia de Date:", fechaSeleccionada);
     return horasDisponibles;
   }
+  const fecha = new Date(fechaSeleccionada);
+  fecha.setHours(7, 0, 0, 0); // Empezar desde las 07:00 del día seleccionado
+  const finDia = new Date(fechaSeleccionada);
+  finDia.setHours(22, 0, 0, 0); // Fin del día seleccionado a las 22:00
+
+  while (fecha <= finDia) {
+    const esOcupado = ocupados.some(
+      ocupado => fecha >= ocupado.start && fecha < ocupado.end
+    );
+    if (!esOcupado) {
+      const horaFormateada = fecha.toTimeString().slice(0, 5);
+      horasDisponibles.push(horaFormateada);
+    }
+    fecha.setMinutes(fecha.getMinutes() + 30); // Incrementar por 30 minutos
+  }
+  return horasDisponibles;
+}
+
+generarHorasDisponiblesHogar(fechaSeleccionada: Date): string[] {
+  const horasDisponibles: string[] = [];
+  const fecha = new Date(fechaSeleccionada);
+  fecha.setHours(7, 0, 0, 0); // Empezar desde las 07:00 del día seleccionado
+  const finDia = new Date(fechaSeleccionada);
+  finDia.setHours(22, 0, 0, 0); // Fin del día seleccionado a las 22:00
+
+  while (fecha <= finDia) {
+    const horaFormateada = fecha.toTimeString().slice(0, 5);
+    horasDisponibles.push(horaFormateada);
+    fecha.setMinutes(fecha.getMinutes() + 10); // Incrementar por 15 minutos
+  }
+
+  return horasDisponibles;
+} 
 
 /**
  * Nombre de la función: `verificarHorasDisponibles`
@@ -292,7 +309,7 @@ export class RegistroEventoComponent implements OnInit {
 
   verificarHorasDisponibles(ocupados?: { start: Date; end: Date }[]) {
     const tipoEvento = this.nuevoEvento.tipo_evento;
-    if (tipoEvento === "Hogar") {
+    if (tipoEvento !== "Hogar") {
       return;
     }
     if (!this.nuevoEvento.fecha_hora) {
@@ -404,28 +421,46 @@ export class RegistroEventoComponent implements OnInit {
  */
 
   deshabilitarDias() {
-    const ahora = new Date();
-    const ahoraKey = `${ahora.getFullYear()}-${(ahora.getMonth() + 1)
-      .toString()
-      .padStart(2, "0")}-${ahora.getDate().toString().padStart(2, "0")}`;
-    // Reiniciar días deshabilitados
-    this.diasDeshabilitados = new Set();
-    // Bloquear días anteriores a hoy para todos los eventos
+  const ahora = new Date();
+  const ahoraKey = `${ahora.getFullYear()}-${(ahora.getMonth() + 1).toString().padStart(2, "0")}-${ahora.getDate().toString().padStart(2, "0")}`;
+
+  // Reiniciar días deshabilitados
+  this.diasDeshabilitados = new Set<string>();
+
+  if (this.nuevoEvento.tipo_evento === 'Hogar') {
+    // Bloquear días y meses anteriores a hoy para eventos de tipo "Hogar"
     this.diasDeshabilitados.add(ahoraKey);
     this.eventos.forEach((evento) => {
-      if (evento.tipo_evento !== "Hogar") {
+      if (evento.tipo_evento === 'Hogar') {
         const fecha = new Date(evento.fecha_hora);
-        const fechaKey = `${fecha.getFullYear()}-${(fecha.getMonth() + 1)
-          .toString()
-          .padStart(2, "0")}-${fecha.getDate().toString().padStart(2, "0")}`;
+        const fechaKey = `${fecha.getFullYear()}-${(fecha.getMonth() + 1).toString().padStart(2, "0")}-${fecha.getDate().toString().padStart(2, "0")}`;
         if (fechaKey < ahoraKey) {
           this.diasDeshabilitados.add(fechaKey);
         }
       }
     });
-    // Actualiza flatpickr solo después de recalcular días deshabilitados
-    this.actualizarFlatpickrConDiasDeshabilitados();
+  } else {
+    // Para otros tipos de eventos, bloquear días con al menos dos eventos creados
+    const eventosPorDia = new Map<string, number>();
+    this.eventos.forEach((evento) => {
+      if (evento.tipo_evento !== 'Hogar') {
+        const fecha = new Date(evento.fecha_hora);
+        const fechaKey = `${fecha.getFullYear()}-${(fecha.getMonth() + 1).toString().padStart(2, "0")}-${fecha.getDate().toString().padStart(2, "0")}`;
+        eventosPorDia.set(fechaKey, (eventosPorDia.get(fechaKey) || 0) + 1);
+      }
+    });
+
+    eventosPorDia.forEach((count, fechaKey) => {
+      if (count >= 2) {
+        this.diasDeshabilitados.add(fechaKey);
+      }
+    });
   }
+
+  this.actualizarFlatpickrConDiasDeshabilitados();
+ }
+
+
 
 /**
  * Nombre de la función: `actualizarFlatpickrConDiasDeshabilitados`
@@ -438,13 +473,12 @@ export class RegistroEventoComponent implements OnInit {
  */
 
   actualizarFlatpickrConDiasDeshabilitados(): void {
-    if (this.flatpickrInstance) {
-      this.flatpickrInstance.set(
-        "disable",
-        Array.from(this.diasDeshabilitados)
-      );
-    }
+  if (this.flatpickrInstance) {
+    this.flatpickrInstance.set('disable', Array.from(this.diasDeshabilitados));
+    this.flatpickrInstance.redraw(); // Redibuja el calendario para reflejar los cambios
   }
+}
+
 
 /**
  * Nombre de la función: `initializeFlatpickr`
@@ -456,29 +490,26 @@ export class RegistroEventoComponent implements OnInit {
  * 
  */
 
-  initializeFlatpickr(): void {
-    if (!this.flatpickrInstance) {
-      // Solo inicializar si no está ya inicializado
-      this.flatpickrInstance = flatpickr("#fecha", {
-        minDate: this.minFecha,
-        maxDate: this.maxFecha,
-        disable: Array.from(this.diasDeshabilitados), // Esto se actualizará después
-        onChange: (selectedDates) => {
-          this.fechaSeleccionada = selectedDates[0]
-            ? selectedDates[0].toISOString().slice(0, 10)
-            : "";
-          console.log(
-            "Fecha seleccionada en flatpickr:",
-            this.fechaSeleccionada
-          ); // Verifica aquí
-          this.onFechaChange();
-        },
-      });
-    } else {
-      // Actualizar los días deshabilitados si la instancia ya está inicializada
-      this.actualizarFlatpickrConDiasDeshabilitados();
-    }
+initializeFlatpickr(): void {
+  if (!this.flatpickrInstance) {
+    // Solo inicializar si no está ya inicializado
+    this.flatpickrInstance = flatpickr("#fecha", {
+      minDate: "today",
+      maxDate: this.maxFecha,
+      disable: Array.from(this.diasDeshabilitados), // Esto se actualizará después
+      onChange: (selectedDates) => {
+        this.fechaSeleccionada = selectedDates[0]
+          ? selectedDates[0].toISOString().slice(0, 10)
+          : "";
+        console.log("Fecha seleccionada en flatpickr:", this.fechaSeleccionada);
+        this.onFechaChange();
+      },
+    });
+  } else {
+    // Actualizar los días deshabilitados si la instancia ya está inicializada
+    this.actualizarFlatpickrConDiasDeshabilitados();
   }
+}
 
 /**
  * Nombre de la función: `onTipoEventoSelect`
@@ -529,9 +560,10 @@ export class RegistroEventoComponent implements OnInit {
  * Una fecha se considera deshabilitada si está incluida en el conjunto de días deshabilitados (`this.diasDeshabilitados`).
  */
   isFechaDeshabilitada(fecha: string): boolean {
-    const fechaKey = `${fecha.split("-").join("-")}`;
-    return this.diasDeshabilitados.has(fechaKey);
+  const fechaKey = `${fecha.split("-").join("-")}`;
+  return this.diasDeshabilitados.has(fechaKey);
   }
+
 
 /**
  * Nombre de la función: `calcularMinMaxFecha`
@@ -566,17 +598,33 @@ export class RegistroEventoComponent implements OnInit {
  * - Si el tipo de evento no es "Hogar", llama a `bloquearHoras` para recalcular las horas disponibles basadas en la fecha seleccionada.
  * - Si el tipo de evento es "Hogar", limpia las horas disponibles estableciendo `horasDisponibles` como un arreglo vacío.
  * - Llama a `actualizarFechaHora` para actualizar la información de fecha y hora del evento.
- */
+ */ 
 
-  onFechaChange() {
-    if (this.nuevoEvento.tipo_evento !== "Hogar") {
-      this.bloquearHoras(); // Recalcular horas disponibles solo para el día seleccionado
-    } else {
-      // Limpiar horas disponibles si es hogar
-      this.horasDisponibles = [];
-    }
-    this.actualizarFechaHora();
+onFechaChange() {
+  const fechaSeleccionada = new Date(this.fechaSeleccionada);
+
+  if (this.nuevoEvento.tipo_evento === "Hogar") {
+    this.bloquearHoras(); // Recalcular horas disponibles para eventos tipo 'Hogar'
+  } else {
+    // Para otros tipos de eventos, calcular horas disponibles bloqueadas
+    const diasOcupados = this.eventos
+      .filter(evento => {
+        const eventoFecha = new Date(evento.fecha_hora);
+        eventoFecha.setHours(0, 0, 0, 0);
+        return eventoFecha.getTime() === fechaSeleccionada.getTime();
+      })
+      .reduce((acc, evento) => {
+        const fechaEvento = new Date(evento.fecha_hora);
+        const finEvento = new Date(fechaEvento.getTime() + evento.duracion_evento * 60 * 60 * 1000);
+        acc.push({ start: fechaEvento, end: finEvento });
+        return acc;
+      }, []);
+
+    this.horasDisponibles = this.generarHorasDisponibles(fechaSeleccionada, diasOcupados);
   }
+
+  this.actualizarFechaHora();
+}
 
   onHoraChange() {
     this.actualizarFechaHora();
@@ -663,71 +711,76 @@ export class RegistroEventoComponent implements OnInit {
  * como nombres, apellidos, cédula, placa y observaciones.
  */
 
-  extractDataFromHtml(html: string) {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, "text/html");
-    // Extraer datos del HTML
-    const nombreEvento =
-      doc
-        .querySelector("table tr:nth-child(2) td:nth-child(2)")
-        ?.textContent?.trim() || "";
-    const nombreEncargado =
-      doc
-        .querySelector("table tr:nth-child(3) td:nth-child(2)")
-        ?.textContent?.trim() || "";
-    const celular =
-      doc
-        .querySelector("table tr:nth-child(3) td:nth-child(4)")
-        ?.textContent?.trim() || "";
-    const fechaEvento =
-      doc
-        .querySelector("table tr:nth-child(4) td:nth-child(2)")
-        ?.textContent?.trim() || "";
-    const horaEvento =
-      doc
-        .querySelector("table tr:nth-child(4) td:nth-child(4)")
-        ?.textContent?.trim() || "";
-    const direccionEvento =
-      doc
-        .querySelector("table tr:nth-child(5) td:nth-child(2)")
-        ?.textContent?.trim() || "";
+extractDataFromHtml(html: string) {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, "text/html");
+  
+  // Extraer datos del HTML
+  const nombreEvento =
+    doc.querySelector("table tr:nth-child(2) td:nth-child(2)")?.textContent?.trim() || "";
+  const nombreEncargado =
+    doc.querySelector("table tr:nth-child(3) td:nth-child(2)")?.textContent?.trim() || "";
+  const celular =
+    doc.querySelector("table tr:nth-child(3) td:nth-child(4)")?.textContent?.trim() || "";
+  const fechaEvento =
+    doc.querySelector("table tr:nth-child(4) td:nth-child(2)")?.textContent?.trim() || "";
+  const horaEvento =
+    doc.querySelector("table tr:nth-child(4) td:nth-child(4)")?.textContent?.trim() || "";
+  const direccionEvento =
+    doc.querySelector("table tr:nth-child(5) td:nth-child(2)")?.textContent?.trim() || "";
 
-    // Extraer los datos de los invitados
-    const invitados: any[] = [];
-    const rows = doc.querySelectorAll("table tr");
-    let isReadingInvitados = false;
+  // Extraer los datos de los invitados
+  const invitados: any[] = [];
+  const rows = doc.querySelectorAll("table tr");
+  let isReadingInvitados = false;
 
-    rows.forEach((row) => {
-      const cells = row.querySelectorAll("td");
+  rows.forEach((row) => {
+    const cells = row.querySelectorAll("td");
 
-      if (cells.length === 5 && cells[0]?.textContent?.trim() === "Nombres") {
-        isReadingInvitados = true; // Comienza a leer los datos de los invitados
-        return; // Salta la fila de encabezado
+    if (cells.length === 5 && cells[0]?.textContent?.trim() === "Nombres") {
+      isReadingInvitados = true; // Comienza a leer los datos de los invitados
+      return; // Salta la fila de encabezado
+    }
+
+    if (isReadingInvitados && cells.length === 5) {
+      // Solo agrega filas si tienen contenido en las celdas esperadas
+      if (cells[0]?.textContent?.trim() && cells[1]?.textContent?.trim()) {
+        invitados.push({
+          nombres: cells[0]?.textContent?.trim() || "",
+          apellidos: cells[1]?.textContent?.trim() || "",
+          cedula: cells[2]?.textContent?.trim() || "",
+          placa: cells[3]?.textContent?.trim() || "",
+          observaciones: cells[4]?.textContent?.trim() || "",
+        });
       }
+    }
+  });
 
-      if (isReadingInvitados && cells.length === 5) {
-        // Solo agrega filas si tienen contenido en las celdas esperadas
-        if (cells[0]?.textContent?.trim() && cells[1]?.textContent?.trim()) {
-          invitados.push({
-            nombres: cells[0]?.textContent?.trim() || "",
-            apellidos: cells[1]?.textContent?.trim() || "",
-            cedula: cells[2]?.textContent?.trim() || "",
-            placa: cells[3]?.textContent?.trim() || "",
-            observaciones: cells[4]?.textContent?.trim() || "",
-          });
-        }
-      }
-    });
-    return {
-      nombreEvento,
-      nombreEncargado,
-      celular,
-      fechaEvento,
-      horaEvento,
-      direccionEvento,
-      invitados,
-    };
-  }
+  // Console log para verificar los datos extraídos
+  console.log({
+    nombreEvento,
+    nombreEncargado,
+    celular,
+    fechaEvento,
+    horaEvento,
+    direccionEvento,
+    invitados,
+  });   
+   // Guardar los datos extraídos temporalmente
+   this.data = {
+    nombreEvento,
+    nombreEncargado,
+    celular,
+    fechaEvento,
+    horaEvento,
+    direccionEvento,
+    invitados,
+  };
+
+  // No llamar a guardarInvitados aquí, solo extraer los datos
+  return this.data;
+}
+
 
 /**
  * Nombre de la función: `generateQRCodes`
@@ -866,71 +919,117 @@ export class RegistroEventoComponent implements OnInit {
  * Finalmente, muestra una alerta de éxito y redirige a la vista de eventos. En caso de error, muestra una alerta correspondiente y maneja errores de validación o errores generales.
  */
 
-  guardar(): void {
-    const formData = new FormData();
+guardar(): void {
+  const formData = new FormData();
+
+  Object.keys(this.nuevoEvento).forEach((key) => {
+    if (this.nuevoEvento[key] !== null) {
+      formData.append(key, this.nuevoEvento[key]);
+    }
+  });
   
-    Object.keys(this.nuevoEvento).forEach((key) => {
-      if (this.nuevoEvento[key] !== null) {
-        formData.append(key, this.nuevoEvento[key]);
-      }
-    });
-    
-    this.apiService.createEvento(formData).subscribe(
-      (response) => {  
-        // Generar los códigos QR después de guardar el evento
-        this.generatePDFs()
-          .then((pdfs) => {
-            // Descargar los PDFs después de generarlos
-            pdfs.forEach(({ pdf, nombreArchivo }) => {
-              pdf.save(nombreArchivo);
-              console.log(`PDF guardado como ${nombreArchivo}`);
-            });
+  this.apiService.createEvento(formData).subscribe(
+    (response) => {
+      // Accede al ID del evento en la propiedad correcta
+      const eventoId = response.id_evento;
+
+      // Verifica que el ID del evento se haya obtenido correctamente
+      console.log('ID del evento recibido:', eventoId);
   
-            // Mostrar alerta de éxito y redirigir a /eventos después de generar y descargar los PDFs
-            Swal.fire({
-              title: 'Evento Creado',
-              text: 'El evento ha sido creado exitosamente y los PDFs se han guardado.',
-              icon: 'success',
-              confirmButtonText: 'Aceptar'
-            }).then(() => {
-              this.router.navigate(['/eventos']);
-            });
-          })
-          .catch((error) => {
-            console.error("Error al generar los PDFs:", error);
-            Swal.fire({
-              title: 'Error',
-              text: 'Se produjo un error al generar los PDFs. Por favor, inténtelo de nuevo más tarde.',
-              icon: 'error',
-              confirmButtonText: 'Aceptar'
-            });
+      // Almacenar los datos de los invitados temporalmente
+      this.guardarInvitados(eventoId, this.data.invitados);
+
+      // Generar los códigos QR después de guardar el evento
+      this.generatePDFs()
+        .then((pdfs) => {
+          // Descargar los PDFs después de generarlos
+          pdfs.forEach(({ pdf, nombreArchivo }) => {
+            pdf.save(nombreArchivo);
+            console.log(`PDF guardado como ${nombreArchivo}`);
           });
-      },
-      (error) => {
-        console.error("Error al crear evento:", error);
-        if (error.status === 422) {
-          this.validationErrors = error.error.errors;
+
+          // Mostrar alerta de éxito y redirigir a /eventos después de generar y descargar los PDFs
           Swal.fire({
-            title: 'Error de Validación',
-            text: 'Por favor, revise los errores en el formulario.',
-            icon: 'warning',
+            title: 'Evento Creado',
+            text: 'El evento ha sido creado exitosamente y los PDFs se han guardado.',
+            icon: 'success',
             confirmButtonText: 'Aceptar'
+          }).then(() => {
+            this.router.navigate(['/eventos']);
           });
-        } else {
-          this.validationErrors = {
-            general:
-              "Ocurrió un error inesperado. Por favor, inténtelo de nuevo más tarde.",
-          };
+        })
+        .catch((error) => {
+          console.error("Error al generar los PDFs:", error);
           Swal.fire({
             title: 'Error',
-            text: 'Ocurrió un error inesperado. Por favor, inténtelo de nuevo más tarde.',
+            text: 'Se produjo un error al generar los PDFs. Por favor, inténtelo de nuevo más tarde.',
             icon: 'error',
             confirmButtonText: 'Aceptar'
           });
-        }
+        });
+    },
+    (error) => {
+      console.error("Error al crear evento:", error);
+      if (error.status === 422) {
+        this.validationErrors = error.error.errors;
+        Swal.fire({
+          title: 'Error de Validación',
+          text: 'Por favor, revise los errores en el formulario.',
+          icon: 'warning',
+          confirmButtonText: 'Aceptar'
+        });
+      } else {
+        this.validationErrors = {
+          general:
+            "Ocurrió un error inesperado. Por favor, inténtelo de nuevo más tarde.",
+        };
+        Swal.fire({
+          title: 'Error',
+          text: 'Ocurrió un error inesperado. Por favor, inténtelo de nuevo más tarde.',
+          icon: 'error',
+          confirmButtonText: 'Aceptar'
+        });
       }
-    );
-  }
+    }
+  );
+}
+
+guardarInvitados(eventoId: number, invitados: any[]): void {
+  console.log('ID del evento recibido en guardarInvitados:', eventoId);
+
+  // Usar datos de fecha y hora desde this.data
+  const data = {
+    evento_id: eventoId,
+    fecha_evento: this.data.fechaEvento,
+    hora_evento: this.data.horaEvento,
+    invitados: invitados
+  };
+
+  console.log('Datos a enviar:', data);
+
+  this.apiService.guardarInvitados(data).subscribe(
+    (response) => {
+      console.log('Datos guardados exitosamente');
+      Swal.fire({
+        title: 'Datos Guardados',
+        text: 'Los datos se han guardado exitosamente.',
+        icon: 'success',
+        confirmButtonText: 'Aceptar'
+      });
+    },
+    (error) => {
+      console.error('Error al guardar los datos:', error);
+      Swal.fire({
+        title: 'Error',
+        text: 'Ocurrió un error al guardar los datos. Por favor, inténtelo de nuevo más tarde.',
+        icon: 'error',
+        confirmButtonText: 'Aceptar'
+      });
+    }
+  );
+}
+
+
 
   logout() {
     this.loggedIn = false;

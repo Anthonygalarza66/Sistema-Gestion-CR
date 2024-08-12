@@ -92,48 +92,52 @@
         </thead>
         <tbody id="listado">
           <tr *ngFor="let row of (filtrar() | paginate: { itemsPerPage: 5, currentPage: p })">
-            <td *ngIf="!(isRole('Residente') && row.tipo_evento === 'Hogar')">{{ row.usuario.nombre }} {{ row.usuario.apellidos }}</td>
-            <td  *ngIf="!isRole('Residente' )">{{ row.residente.celular }}</td>
-            <td *ngIf="!isRole('Residente')">{{ row.residente.cedula }}</td>
-            <td *ngIf="!(isRole('Residente') && row.tipo_evento === 'Hogar')">{{ row.nombre_evento }}</td>
-            <td *ngIf="!(isRole('Residente') && row.tipo_evento === 'Hogar')">{{ row.direccion_evento }}</td>
-            <td *ngIf="!(isRole('Residente') && row.tipo_evento === 'Hogar')">{{ row.cantidad_vehiculos }}</td>
-            <td *ngIf="!(isRole('Residente') && row.tipo_evento === 'Hogar')">{{ row.cantidad_personas }}</td>
-            <td *ngIf="!(isRole('Residente') && row.tipo_evento === 'Hogar')">{{ row.tipo_evento }}</td>
-            <td *ngIf="!(isRole('Residente') && row.tipo_evento === 'Hogar')">{{ row.fecha_hora | date: 'yyyy-MM-dd HH:mm' }}</td>
-            <td *ngIf="!(isRole('Residente') && row.tipo_evento === 'Hogar')">{{ row.duracion_evento }}</td>
-            <td *ngIf="!(isRole('Residente') && row.tipo_evento === 'Hogar')">{{ row.observaciones }}</td>
-            <td *ngIf="!isRole('Residente')" class="file-cell">
-              <a *ngIf="row.listado_evento" [href]="getFileUrl(row.listado_evento)" download="{{ row.listado_evento }}" class="download-link">
-                Descargar
-              </a>
-              <span *ngIf="!row.listado_evento" class="no-available">
-                No disponible
-              </span>
-            </td>
-            <td *ngIf="!(isRole('Residente') && row.tipo_evento === 'Hogar')" [ngClass]="{
-              'estado-aceptado': row.estado === 'Aceptado',
-              'estado-denegado': row.estado === 'Denegado',
-              'estado-proceso': row.estado === 'En proceso de aceptación'
-             }">
-            {{ row.estado }}
-          </td>
-            <td *ngIf="'Acciones' | role: 'Administracion'">
-            <!-- Botones para cambiar el estado -->
-            <button *ngIf="row.estado !== 'Aceptado'" class="btn-accept" (click)="updateEstado(row.id_evento, 'Aceptado')" title="Aceptar evento">
-            <i class="fas fa-check"></i>
-            </button>
-            <button *ngIf="row.estado !== 'Denegado'" class="btn-reject" (click)="updateEstado(row.id_evento, 'Denegado')" title="Rechazar evento">
-              <i class="fas fa-times"></i>
-            </button>
-             <!-- Boton para eliminar -->
-            <button class="btn-trash" (click)="deleteEventos(row.id_evento)">
-            <i class="fas fa-trash"></i> 
-            </button>
-            </td>
+            <!-- Mostrar solo si no es un evento de tipo 'Hogar' o si el evento 'Hogar' fue creado por el usuario en sesión -->
+            <ng-container *ngIf="!(isRole('Residente') && row.tipo_evento === 'Hogar' && row.id_usuario !== idUsuario)">
+              <td>{{ row.usuario.nombre }} {{ row.usuario.apellidos }}</td>
+              <td *ngIf="!isRole('Residente')">{{ row.residente.celular }}</td>
+              <td *ngIf="!isRole('Residente')">{{ row.residente.cedula }}</td>
+              <td>{{ row.nombre_evento }}</td>
+              <td>{{ row.direccion_evento }}</td>
+              <td>{{ row.cantidad_vehiculos }}</td>
+              <td>{{ row.cantidad_personas }}</td>
+              <td>{{ row.tipo_evento }}</td>
+              <td>{{ row.fecha_hora | date: 'yyyy-MM-dd HH:mm' }}</td>
+              <td>{{ row.duracion_evento }}</td>
+              <td>{{ row.observaciones }}</td>
+              <td *ngIf="!isRole('Residente')" class="file-cell">
+                <a *ngIf="row.listado_evento" [href]="getFileUrl(row.listado_evento)" download="{{ row.listado_evento }}" class="download-link">
+                  Descargar
+                </a>
+                <i class="fas fa-eye" (click)="openInvitadosModal(row.id_evento)"></i>
+                <span *ngIf="!row.listado_evento" class="no-available">
+                  No disponible
+                </span>
+              </td>
+              <td [ngClass]="{
+                'estado-aceptado': row.estado === 'Aceptado',
+                'estado-denegado': row.estado === 'Denegado',
+                'estado-proceso': row.estado === 'En proceso de aceptación'
+               }">
+                {{ row.estado }}
+              </td>
+              <td *ngIf="'Acciones' | role: 'Administracion'">
+                <!-- Botones para cambiar el estado -->
+                <button *ngIf="row.estado !== 'Aceptado'" class="btn-accept" (click)="updateEstado(row.id_evento, 'Aceptado')" title="Aceptar evento">
+                  <i class="fas fa-check"></i>
+                </button>
+                <button *ngIf="row.estado !== 'Denegado'" class="btn-reject" (click)="updateEstado(row.id_evento, 'Denegado')" title="Rechazar evento">
+                  <i class="fas fa-times"></i>
+                </button>
+                <!-- Boton para eliminar -->
+                <button class="btn-trash" (click)="deleteEventos(row.id_evento)">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </td>
+            </ng-container>
           </tr>
         </tbody>
-      </table>
+      </table>      
        </div>
     </div>  
        <!-- Controles de paginación -->

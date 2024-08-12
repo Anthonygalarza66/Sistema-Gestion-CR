@@ -463,3 +463,15 @@ ul {
     font-family: 'Times New Roman', Times, serif;
     font-size: 14px;
   }
+
+  .fas.fa-eye {
+    color: #033c6b; 
+    font-size: 1.5rem; 
+    cursor: pointer;
+    transition: color 0.3s ease, transform 0.3s ease; 
+}
+
+.fas.fa-eye:hover {
+    color: #02223b; 
+    transform: scale(1.2); 
+}
