@@ -11,6 +11,8 @@
           <th>Apellidos</th>
           <th>Cédula</th>
           <th>Placa</th>
+          <th>Fecha Evento:</th>
+          <th>Hora:</th>
           <th>Observaciones</th>
           <th>Estado</th>
         </tr>
@@ -21,8 +23,12 @@
           <td>{{ invitado.apellidos }}</td>
           <td>{{ invitado.cedula }}</td>
           <td>{{ invitado.placa }}</td>
+          <td>{{ invitado.fecha_evento }}</td>
+          <td>{{ invitado.hora_evento }}</td>
           <td>{{ invitado.observaciones }}</td>
-          <td>{{ invitado.estado }}</td>
+          <td [ngClass]="{'text-blue': invitado.estado === 'Sin ingreso', 'text-green': invitado.estado === 'Ingresado'}">
+            {{ invitado.estado }}
+          </td>          
         </tr>
       </tbody>
     </table>

@@ -28,7 +28,7 @@ export class EventosComponent {
   residentes: any[] = [];
   usuarios: any[] = [];
   row: any;
-
+  idUsuario: number | null = null;
 
   constructor(
     private router: Router,
@@ -41,10 +41,24 @@ export class EventosComponent {
     if (isPlatformBrowser(this.platformId)) {
       this.username = localStorage.getItem("username") || "Invitado";
     }
-    // Carga los eventos, esto podría ser una llamada a la API
-    this.loadEventos();
+    this.loadUserId();
   }
 
+  loadUserId(): void {
+    this.apiService.getUserIdByUsername(this.username).subscribe(
+      (response: any) => {
+        this.idUsuario = response.id_usuario;
+        console.log("ID Usuario cargado:", this.idUsuario);
+  
+        // Ahora que tenemos el ID del usuario, cargamos los eventos
+        this.loadEventos();
+      },
+      (error) => {
+        console.error("Error al cargar el ID del usuario:", error);
+      }
+    );
+  }
+  
 /**
  * Nombre de la función: loadEventos
  * Author: Freya Lopez - Flopezl@ug.edu.ec
@@ -58,11 +72,40 @@ export class EventosComponent {
  * @returns void
  */
 
-  loadEventos(): void {
-    this.apiService.getEventos().subscribe(
-      (eventos: any[]) => {
-        this.eventos = [];
-        eventos.forEach((evento) => {
+loadEventos(): void {
+  const userRole = this.isRole('Residente') ? 'Residente' : 'Otro'; 
+  this.apiService.getEventos().subscribe(
+    (eventos: any[]) => {
+      this.eventos = [];
+      eventos.forEach((evento) => {
+        // Verificar si el evento debe ser mostrado según el rol del usuario
+        if (userRole === 'Residente') {
+          // Filtrar eventos de tipo 'Hogar' solo si el usuario en sesión es el creador
+          if (evento.tipo_evento !== 'Hogar' || (evento.tipo_evento === 'Hogar' && evento.id_usuario === this.idUsuario)) {
+            // Obtener usuario relacionado
+            this.apiService.getUsuario(evento.id_usuario).subscribe((usuario: any) => {
+              // Obtener residente relacionado
+              this.apiService.getResidente(evento.id_residente).subscribe((residente: any) => {
+                // Combinar datos en el objeto evento
+                this.eventos.push({
+                  ...evento,
+                  usuario: usuario,
+                  residente: residente
+                });
+                // Ordenar los eventos por fecha (opcional)
+                this.eventos.sort((a, b) => new Date(b.fecha_hora).getTime() - new Date(a.fecha_hora).getTime());
+              }, (error) => {
+                console.error("Error al obtener residente:", error);
+              });
+            }, (error) => {
+              console.error("Error al obtener usuario:", error);
+            });
+          } else {
+            console.log("Evento excluido por tipo 'Hogar' y creador no coincide:", evento);
+          }
+        } else {
+          // Para otros roles, no aplicar el filtro y mostrar todos los eventos
+          console.log("Evento incluido para rol diferente:", evento);
           // Obtener usuario relacionado
           this.apiService.getUsuario(evento.id_usuario).subscribe((usuario: any) => {
             // Obtener residente relacionado
@@ -81,13 +124,14 @@ export class EventosComponent {
           }, (error) => {
             console.error("Error al obtener usuario:", error);
           });
-        });
-      },
-      (error) => {
-        console.error("Error al obtener eventos:", error);
-      }
-    );
-  }
+        }
+      });
+    },
+    (error) => {
+      console.error("Error al obtener eventos:", error);
+    }
+  );
+}
   
 /**
  * Nombre de la función: logout

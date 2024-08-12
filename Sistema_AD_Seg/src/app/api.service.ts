@@ -39,6 +39,10 @@ export class ApiService {
         })
       );
   }
+  
+  logout(): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/logout`, {});
+  }
 
   getUserIdByUsername(username: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/usuarios/username/${username}`);
